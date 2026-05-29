@@ -929,6 +929,7 @@
   }
 
   async function fs_get(col) { const r=await fetch(`${BASE}/${col}?key=${API_KEY}&pageSize=100`); return await r.json(); }
+  async function fs_get_doc(path) { const r=await fetch(`${BASE}/${path}?key=${API_KEY}`); return await r.json(); }
   async function fs_post(col,fields) { const r=await fetch(`${BASE}/${col}?key=${API_KEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields})}); return await r.json(); }
   async function fs_patch(path,fields) { const mask=Object.keys(fields).map(f=>`updateMask.fieldPaths=${f}`).join('&'); const r=await fetch(`${BASE}/${path}?key=${API_KEY}&${mask}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields})}); return await r.json(); }
   async function fs_delete(path) { await fetch(`${BASE}/${path}?key=${API_KEY}`,{method:'DELETE'}); }
@@ -2224,7 +2225,7 @@
 
   async function approveEventRequest(id, btn) {
     try {
-      var data = await fs_get('eventRequests/' + id);
+      var data = await fs_get_doc('eventRequests/' + id);
       var f = data.fields;
       await fs_post('events', {
         title: f.title || {stringValue:''},
