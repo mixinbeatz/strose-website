@@ -2177,12 +2177,12 @@
           (f.location && f.location.stringValue ? '<div style="font-size:13px;color:var(--soil);opacity:0.7;margin-bottom:2px">📍 ' + f.location.stringValue + '</div>' : '') +
           (f.description && f.description.stringValue ? '<div style="font-size:13px;color:var(--soil);opacity:0.7;margin-bottom:10px">' + f.description.stringValue + '</div>' : '') +
           '<div style="display:flex;gap:10px;margin-top:12px">' +
-          '<button class="btn btn-primary" onclick="approveEventRequest('' + id + '',this)">✅ Approve</button>' +
-          '<button class="btn btn-outline" onclick="showDenyForm('' + id + '')">❌ Deny</button>' +
+          '<button class="btn btn-primary" onclick="approveEventRequest(\'' + id + '\',this)">✅ Approve</button>' +
+          '<button class="btn btn-outline" onclick="showDenyForm(\'' + id + '\')">❌ Deny</button>' +
           '</div>' +
           '<div id="deny-form-' + id + '" style="display:none;margin-top:12px">' +
           '<input class="form-input" id="deny-reason-' + id + '" placeholder="Reason for denial (sent to ministry leader)..." style="margin-bottom:8px" />' +
-          '<button class="btn btn-outline" onclick="denyEventRequest('' + id + '')">Send Denial</button>' +
+          '<button class="btn btn-outline" onclick="denyEventRequest(\'' + id + '\')">Send Denial</button>' +
           '</div>' +
           '</div>';
       }).join('');
