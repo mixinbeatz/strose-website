@@ -208,12 +208,14 @@
       <div class="nav-item ministry-only" style="display:none" onclick="showPage('cda-members',this)"><span class="nav-icon">👥</span> My Members</div>
       <div class="nav-item ministry-only" style="display:none" onclick="showPage('prayer-chain',this)"><span class="nav-icon">🙏</span> Prayer Chain</div>
       <div class="nav-item ministry-only" style="display:none" onclick="showPage('prayer-submissions',this)"><span class="nav-icon">📬</span> Submissions <span class="nav-badge" id="prayer-sub-count" style="display:none">0</span></div>
+      <div class="nav-item ministry-only" style="display:none" onclick="showPage('submit-event',this)"><span class="nav-icon">📅</span> Submit Event</div>
       <div class="nav-section staff-only">Music Ministry</div>
       <div class="nav-item staff-only" onclick="showPage('music-ministry',this)"><span class="nav-icon">🎵</span> Post to Music Ministry</div>
       <div class="nav-item staff-only" onclick="showPage('music-members',this)"><span class="nav-icon">👥</span> Music Members</div>
       <div class="nav-section staff-only">Directory</div>
       <div class="nav-item staff-only" onclick="showPage('approvals',this)"><span class="nav-icon">👥</span> Parish Family Approvals <span class="nav-badge" id="approval-count">0</span></div>
       <div class="nav-item staff-only" onclick="showPage('partners',this)"><span class="nav-icon">🏢</span> Partner Requests <span class="nav-badge" id="partner-count">0</span></div>
+      <div class="nav-item staff-only" onclick="showPage('event-requests',this)"><span class="nav-icon">📋</span> Event Requests <span class="nav-badge" id="event-req-count" style="display:none">0</span></div>
       <div class="nav-item staff-only" onclick="showPage('directory',this)"><span class="nav-icon">📋</span> Parish Family Directory</div>
     </nav>
     <div class="sidebar-footer">
@@ -858,7 +860,7 @@
     document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
     document.getElementById('page-'+id).classList.add('active');
     if(el) el.classList.add('active');
-    const titles = {dashboard:'Dashboard',events:'Events',announcement:'Post Announcement',fastblast:'Fast Blast',reflection:'Weekly Reflection',daily:'Daily Reflection',songsheet:'Mass Songsheet',welcome:'Welcome Message','music-ministry':'Music Ministry','music-members':'Music Ministry Members',approvals:'Parish Family Approvals',partners:'Partner Requests',directory:'Parish Family Directory','ministry-post':'Post to Members','cda-members':'My Members','prayer-chain':'Prayer Chain','prayer-submissions':'Prayer Submissions'};
+    const titles = {dashboard:'Dashboard',events:'Events',announcement:'Post Announcement',fastblast:'Fast Blast',reflection:'Weekly Reflection',daily:'Daily Reflection',songsheet:'Mass Songsheet',welcome:'Welcome Message','music-ministry':'Music Ministry','music-members':'Music Ministry Members',approvals:'Parish Family Approvals',partners:'Partner Requests',directory:'Parish Family Directory','ministry-post':'Post to Members','cda-members':'My Members','prayer-chain':'Prayer Chain','prayer-submissions':'Prayer Submissions','submit-event':'Submit Event','event-requests':'Event Requests'};
     document.getElementById('page-title').textContent = titles[id]||id;
     if(id==='approvals') loadApprovals();
     if(id==='partners') loadPartners();
@@ -870,6 +872,7 @@
     if(id==='reflection') loadCurrentReflection();
     if(id==='daily') { buildDailyRows(); loadScheduledReflections(); }
     if(id==='events') loadRecentEvents();
+    if(id==='event-requests') loadEventRequests();
   }
 
   function switchInnerTab(id, el) {
@@ -2112,11 +2115,157 @@
     } catch(e) { showToast('No welcome message saved yet.', 'error'); }
   }
 
+
+  async function submitEventRequest() {
+    var title = document.getElementById('se-title').value.trim();
+    var date = document.getElementById('se-date').value.trim();
+    var time = document.getElementById('se-time').value.trim();
+    var location = document.getElementById('se-location').value.trim();
+    var description = document.getElementById('se-description').value.trim();
+    var link = document.getElementById('se-link').value.trim();
+    if (!title || !date) { showToast('Title and date are required.', 'error'); return; }
+    var ministry = currentUser === 'nponiato' ? 'Catholic Daughters' : 'Ministry';
+    var submittedBy = currentUser === 'nponiato' ? 'Nancy Poniatowski' : currentUser;
+    try {
+      await fs_post('eventRequests', {
+        title: {stringValue: title},
+        date: {stringValue: date},
+        time: {stringValue: time},
+        location: {stringValue: location},
+        description: {stringValue: description},
+        linkUrl: {stringValue: link},
+        ministry: {stringValue: ministry},
+        submittedBy: {stringValue: submittedBy},
+        status: {stringValue: 'pending'},
+        createdAt: {stringValue: new Date().toISOString()}
+      });
+      document.getElementById('se-title').value = '';
+      document.getElementById('se-date').value = '';
+      document.getElementById('se-time').value = '';
+      document.getElementById('se-location').value = '';
+      document.getElementById('se-description').value = '';
+      document.getElementById('se-link').value = '';
+      document.getElementById('se-success').style.display = 'block';
+      setTimeout(function() { document.getElementById('se-success').style.display = 'none'; }, 4000);
+      showToast('Event submitted for approval!', 'success');
+    } catch(e) { showToast('Error submitting event.', 'error'); }
+  }
+
+  async function loadEventRequests() {
+    try {
+      var data = await fs_get('eventRequests');
+      var docs = (data.documents || []).filter(function(d) {
+        return d.fields && d.fields.status && d.fields.status.stringValue === 'pending';
+      }).sort(function(a,b) {
+        return new Date(b.fields.createdAt.stringValue) - new Date(a.fields.createdAt.stringValue);
+      });
+      var el = document.getElementById('event-requests-list');
+      if (docs.length === 0) {
+        el.innerHTML = '<p style="opacity:0.5;font-size:14px">No pending event requests.</p>';
+        document.getElementById('event-req-count').style.display = 'none';
+        return;
+      }
+      document.getElementById('event-req-count').style.display = 'inline';
+      document.getElementById('event-req-count').textContent = docs.length;
+      el.innerHTML = docs.map(function(d) {
+        var f = d.fields;
+        var id = d.name.split('/').pop();
+        return '<div style="border:1px solid var(--linen);border-radius:10px;padding:16px;margin-bottom:14px">' +
+          '<div style="font-size:11px;color:var(--dusty-rose);letter-spacing:0.8px;margin-bottom:4px">' + (f.ministry && f.ministry.stringValue ? f.ministry.stringValue.toUpperCase() : 'MINISTRY') + ' · SUBMITTED BY ' + (f.submittedBy && f.submittedBy.stringValue ? f.submittedBy.stringValue.toUpperCase() : '') + '</div>' +
+          '<div style="font-size:18px;font-family:var(--font-heading);color:var(--soil);margin-bottom:6px">' + (f.title && f.title.stringValue ? f.title.stringValue : '') + '</div>' +
+          '<div style="font-size:13px;color:var(--soil);opacity:0.7;margin-bottom:2px">📅 ' + (f.date && f.date.stringValue ? f.date.stringValue : '') + (f.time && f.time.stringValue ? ' @ ' + f.time.stringValue : '') + '</div>' +
+          (f.location && f.location.stringValue ? '<div style="font-size:13px;color:var(--soil);opacity:0.7;margin-bottom:2px">📍 ' + f.location.stringValue + '</div>' : '') +
+          (f.description && f.description.stringValue ? '<div style="font-size:13px;color:var(--soil);opacity:0.7;margin-bottom:10px">' + f.description.stringValue + '</div>' : '') +
+          '<div style="display:flex;gap:10px;margin-top:12px">' +
+          '<button class="btn btn-primary" onclick="approveEventRequest('' + id + '',this)">✅ Approve</button>' +
+          '<button class="btn btn-outline" onclick="showDenyForm('' + id + '')">❌ Deny</button>' +
+          '</div>' +
+          '<div id="deny-form-' + id + '" style="display:none;margin-top:12px">' +
+          '<input class="form-input" id="deny-reason-' + id + '" placeholder="Reason for denial (sent to ministry leader)..." style="margin-bottom:8px" />' +
+          '<button class="btn btn-outline" onclick="denyEventRequest('' + id + '')">Send Denial</button>' +
+          '</div>' +
+          '</div>';
+      }).join('');
+    } catch(e) { document.getElementById('event-requests-list').innerHTML = '<p style="opacity:0.5;font-size:14px">Error loading requests.</p>'; }
+  }
+
+  function showDenyForm(id) {
+    var el = document.getElementById('deny-form-' + id);
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function approveEventRequest(id, btn) {
+    try {
+      var data = await fs_get('eventRequests/' + id);
+      var f = data.fields;
+      await fs_post('events', {
+        title: f.title || {stringValue:''},
+        date: f.date || {stringValue:''},
+        time: f.time || {stringValue:''},
+        location: f.location || {stringValue:''},
+        description: f.description || {stringValue:''},
+        linkUrl: f.linkUrl || {stringValue:''},
+        category: {stringValue: f.ministry && f.ministry.stringValue ? f.ministry.stringValue : 'Parish'},
+        postedBy: {stringValue: f.submittedBy && f.submittedBy.stringValue ? f.submittedBy.stringValue : 'Ministry Leader'},
+        source: {stringValue: 'ministry'},
+        createdAt: {stringValue: new Date().toISOString()},
+        startAt: {stringValue: new Date().toISOString()},
+        expiresAt: {stringValue: new Date(Date.now() + 90*24*60*60*1000).toISOString()}
+      });
+      await fs_patch('eventRequests/' + id, {status: {stringValue: 'approved'}});
+      showToast('Event approved and added to calendar!', 'success');
+      loadEventRequests();
+    } catch(e) { showToast('Error approving event.', 'error'); }
+  }
+
+  async function denyEventRequest(id) {
+    var reason = document.getElementById('deny-reason-' + id).value.trim();
+    if (!reason) { showToast('Please enter a reason.', 'error'); return; }
+    try {
+      await fs_patch('eventRequests/' + id, {
+        status: {stringValue: 'denied'},
+        denialReason: {stringValue: reason},
+        deniedAt: {stringValue: new Date().toISOString()}
+      });
+      showToast('Event denied. Reason saved.', 'success');
+      loadEventRequests();
+    } catch(e) { showToast('Error denying event.', 'error'); }
+  }
   function showToast(msg,type='success'){
     const t=document.getElementById('toast');
     t.textContent=msg;t.className=`toast ${type} show`;
     setTimeout(()=>t.className='toast',3500);
   }
 </script>
+
+  <!-- Submit Event Page (Ministry Leaders) -->
+  <div class="page" id="page-submit-event" style="display:none">
+    <div class="card">
+      <div class="card-title">📅 Submit Event to Parish Calendar</div>
+      <p style="color:var(--soil);opacity:0.7;margin-bottom:20px;font-size:14px">Submit an event for Matt's approval. Once approved it will appear in the app and calendar.</p>
+      <label class="form-label">Event Title *</label>
+      <input class="form-input" id="se-title" placeholder="e.g. Catholic Daughters Monthly Meeting" />
+      <label class="form-label">Date *</label>
+      <input class="form-input" id="se-date" placeholder="e.g. Sat, Jun 14 or Mon, Jun 8 - Fri, Jun 12" />
+      <label class="form-label">Time</label>
+      <input class="form-input" id="se-time" placeholder="e.g. 10:00 AM - 12:00 PM" />
+      <label class="form-label">Location</label>
+      <input class="form-input" id="se-location" placeholder="e.g. Parish Hall" />
+      <label class="form-label">Description</label>
+      <textarea class="form-input" id="se-description" rows="4" placeholder="Details about the event..."></textarea>
+      <label class="form-label">Registration Link (optional)</label>
+      <input class="form-input" id="se-link" placeholder="https://..." />
+      <button class="btn btn-primary" style="margin-top:16px" onclick="submitEventRequest()">Submit for Approval</button>
+      <div id="se-success" style="display:none;margin-top:12px;color:green;font-size:14px">✅ Event submitted! Matt will review it shortly.</div>
+    </div>
+  </div>
+
+  <!-- Event Requests Page (Staff) -->
+  <div class="page" id="page-event-requests" style="display:none">
+    <div class="card">
+      <div class="card-title">📋 Event Requests</div>
+      <div id="event-requests-list"><p style="opacity:0.5;font-size:14px">Loading...</p></div>
+    </div>
+  </div>
 </body>
 </html>
