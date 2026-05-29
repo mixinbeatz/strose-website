@@ -798,8 +798,10 @@
           <p style="color:var(--soil);opacity:0.7;margin-bottom:20px;font-size:14px">Submit an event for Matt's approval. Once approved it will appear in the app and calendar.</p>
           <label class="form-label">Event Title *</label>
           <input class="form-input" id="se-title" placeholder="e.g. Catholic Daughters Monthly Meeting" />
-          <label class="form-label">Date *</label>
-          <input class="form-input" id="se-date" placeholder="e.g. Sat, Jun 14 or Mon, Jun 8 - Fri, Jun 12" />
+          <label class="form-label">Start Date *</label>
+          <input class="form-input" id="se-date-start" type="date" />
+          <label class="form-label">End Date <span style="opacity:0.5;font-size:12px">(leave blank for single day)</span></label>
+          <input class="form-input" id="se-date-end" type="date" />
           <label class="form-label">Time</label>
           <input class="form-input" id="se-time" placeholder="e.g. 10:00 AM - 12:00 PM" />
           <label class="form-label">Location</label>
@@ -2147,12 +2149,21 @@
 
   async function submitEventRequest() {
     var title = document.getElementById('se-title').value.trim();
-    var date = document.getElementById('se-date').value.trim();
+    var startDateRaw = document.getElementById('se-date-start').value;
+    var endDateRaw = document.getElementById('se-date-end').value;
+    if (!startDateRaw) { showToast('Please select a start date.', 'error'); return; }
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    function fmtDate(raw) {
+      var d = new Date(raw + 'T12:00:00');
+      return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+    }
+    var date = endDateRaw ? fmtDate(startDateRaw) + ' - ' + fmtDate(endDateRaw) : fmtDate(startDateRaw);
     var time = document.getElementById('se-time').value.trim();
     var eventLocation = document.getElementById('se-location').value.trim();
     var description = document.getElementById('se-description').value.trim();
     var link = document.getElementById('se-link').value.trim();
-    if (!title || !date) { showToast('Title and date are required.', 'error'); return; }
+    if (!title) { showToast('Title is required.', 'error'); return; }
     var ministry = currentUser === 'nponiato' ? 'Catholic Daughters' : 'Ministry';
     var submittedBy = currentUser === 'nponiato' ? 'Nancy Poniatowski' : currentUser;
     try {
@@ -2169,7 +2180,8 @@
         createdAt: {stringValue: new Date().toISOString()}
       });
       document.getElementById('se-title').value = '';
-      document.getElementById('se-date').value = '';
+      document.getElementById('se-date-start').value = '';
+      document.getElementById('se-date-end').value = '';
       document.getElementById('se-time').value = '';
       document.getElementById('se-location').value = '';
       document.getElementById('se-description').value = '';
