@@ -2228,7 +2228,7 @@
       var data = await fs_get_doc('eventRequests/' + id);
       console.log('eventRequest data:', JSON.stringify(data));
       var f = data.fields;
-      await fs_post('events', {
+      var result = await fs_post('events', {
         title: f.title || {stringValue:''},
         date: f.date || {stringValue:''},
         time: f.time || {stringValue:''},
@@ -2242,6 +2242,7 @@
         startAt: {stringValue: new Date().toISOString()},
         expiresAt: {stringValue: new Date(Date.now() + 90*24*60*60*1000).toISOString()}
       });
+      console.log('fs_post events result:', JSON.stringify(result));
       await fs_patch('eventRequests/' + id, {status: {stringValue: 'approved'}});
       showToast('Event approved and added to calendar!', 'success');
       loadEventRequests();
