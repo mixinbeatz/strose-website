@@ -59,6 +59,8 @@
     font-weight: 600 !important;
   }
   .nav-cta:hover { background: var(--gold-light) !important; color: var(--burgundy-dark) !important; }
+  .nav-admin { color: rgba(232,221,208,0.3) !important; font-size: 11px !important; letter-spacing: 1px !important; }
+  .nav-admin:hover { color: rgba(232,221,208,0.6) !important; }
 
   /* ── HERO ── */
   .hero {
@@ -81,9 +83,9 @@
     position: absolute; inset: 0;
     background: linear-gradient(
       to bottom,
-      rgba(61,15,30,0.1) 0%,
-      rgba(61,15,30,0.2) 40%,
-      rgba(61,15,30,0.75) 75%,
+      rgba(61,15,30,0.45) 0%,
+      rgba(61,15,30,0.35) 35%,
+      rgba(61,15,30,0.75) 70%,
       rgba(61,15,30,0.95) 100%
     );
   }
@@ -100,6 +102,7 @@
     margin-bottom: 16px;
     opacity: 0;
     animation: fadeUp 0.8s ease 0.3s forwards;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
   }
   .hero-title {
     font-family: 'Cinzel', serif;
@@ -110,6 +113,7 @@
     margin-bottom: 8px;
     opacity: 0;
     animation: fadeUp 0.8s ease 0.5s forwards;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
   }
   .hero-title em { color: var(--gold); font-style: normal; }
   .hero-location {
@@ -663,6 +667,7 @@
     <a href="#new-church">Our Church</a>
     <a href="#location">Visit</a>
     <a href="#app" class="nav-cta">Get the App</a>
+    <a href="https://mixinbeatz.github.io/strose-admin" target="_blank" class="nav-admin">Admin</a>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
