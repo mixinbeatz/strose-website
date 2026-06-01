@@ -1018,14 +1018,23 @@
       const events = docs
         .map(doc => {
           const f = doc.fields || {};
-          const startAt = f.startAt?.stringValue || f.date?.stringValue || '';
+          const startAt = f.startAt?.stringValue || '';
+          const dateStr = f.date?.stringValue || '';
           const expiresAt = f.expiresAt?.stringValue || '';
+          // Try startAt first, then parse date string
+          let date = startAt ? new Date(startAt) : null;
+          if (!date || isNaN(date) || date < now) {
+            // Try parsing date string like "Jun 18" or "Sat, Jun 14"
+            if (dateStr) {
+              const parsed = new Date(dateStr + ' 2026');
+              if (!isNaN(parsed)) date = parsed;
+            }
+          }
           return {
             title: f.title?.stringValue || '',
             time: f.time?.stringValue || '',
-            startAt,
             expiresAt,
-            date: startAt ? new Date(startAt) : null,
+            date,
           };
         })
         .filter(e => {
