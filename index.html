@@ -1013,7 +1013,7 @@
       const data = await res.json();
       const docs = data.documents || [];
       const now = new Date();
-      const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+      const twoWeeks = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
 
       const events = docs
         .map(doc => {
