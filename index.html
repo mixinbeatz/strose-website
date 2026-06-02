@@ -406,7 +406,10 @@
     margin-top: 40px;
   }
   .dedication-gallery .gallery-item:first-child { grid-row: span 2; }
-  .dedication-gallery .gallery-item { border-radius: 4px; }
+  .dedication-gallery .gallery-item { border-radius: 4px; cursor: pointer; }
+  #lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; cursor:pointer; }
+  #lightbox.active { display:flex; }
+  #lightbox img { max-width:90%; max-height:90vh; border-radius:8px; object-fit:contain; }
 
   /* ── QUICK LINKS ── */
   .quick-links {
@@ -802,23 +805,23 @@
   </div>
   <div class="dedication-gallery reveal">
     <div class="gallery-item">
-      <img src="Dedication/main.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
+      <img src="Dedication/main.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('Dedication/main.jpg')" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item">
-      <img src="Dedication/1.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
+      <img src="Dedication/1.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('Dedication/1.jpg')" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item">
-      <img src="Dedication/2.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
+      <img src="Dedication/2.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('Dedication/2.jpg')" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item">
-      <img src="Dedication/3.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
+      <img src="Dedication/3.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('Dedication/3.jpg')" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item">
-      <img src="Dedication/4.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
+      <img src="Dedication/4.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" onclick="openLightbox('Dedication/4.jpg')" />
       <div class="gallery-item-overlay"></div>
     </div>
   </div>
@@ -975,6 +978,14 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightbox-img').src = '';
+  }
   // Firestore events
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
@@ -1048,5 +1059,6 @@
 
   loadEvents();
 </script>
+<div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="" /></div>
 </body>
 </html>
