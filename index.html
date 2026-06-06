@@ -671,7 +671,13 @@
     <a href="#location">Visit</a>
     <a href="partner.html">Partners</a>
     <a href="#app" class="nav-cta">Get the App</a>
-    <a href="https://mixinbeatz.github.io/strose-admin" target="_blank" class="nav-admin">Admin</a>
+    <div style="position:relative;display:inline-block" onmouseenter="this.querySelector('.admin-dropdown').style.display='block'" onmouseleave="this.querySelector('.admin-dropdown').style.display='none'">
+      <a href="#" class="nav-admin" onclick="return false;">Admin ▾</a>
+      <div class="admin-dropdown" style="display:none;position:absolute;right:0;top:100%;background:#3D2B2B;border-radius:8px;padding:8px 0;min-width:160px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+        <a href="https://mixinbeatz.github.io/strose-admin" target="_blank" style="display:block;padding:10px 16px;color:#E8DDD0;font-size:13px;text-decoration:none;font-family:'Faustina',serif;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background=''">Parish Staff</a>
+        <a href="https://mixinbeatz.github.io/strose-admin/finance.html" target="_blank" style="display:block;padding:10px 16px;color:#E8DDD0;font-size:13px;text-decoration:none;font-family:'Faustina',serif;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background=''">Finance Council</a>
+      </div>
+    </div>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -686,6 +692,7 @@
   <a href="#app" onclick="toggleMenu()">Get the App</a>
   <div class="mobile-menu-divider"></div>
   <a href="https://mixinbeatz.github.io/strose-admin" target="_blank" class="mobile-menu-admin">Admin Portal</a>
+  <a href="https://mixinbeatz.github.io/strose-admin/finance.html" target="_blank" class="mobile-menu-admin">Finance Portal</a>
 </div>
 
 <!-- HERO -->
