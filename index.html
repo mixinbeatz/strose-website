@@ -263,8 +263,8 @@
   }
   .this-week-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 60px;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 48px;
     align-items: start;
     margin-top: 48px;
   }
@@ -756,6 +756,10 @@
       </div>
       <div id="events-container"><div class="events-empty">Loading events...</div></div>
     </div>
+    <div class="schedule-static reveal">
+      <div class="schedule-day" style="margin-bottom:16px;">MASS INTENTIONS</div>
+      <div id="intentions-container"><div class="events-empty">Loading...</div></div>
+    </div>
   </div>
 </section>
 
@@ -1049,6 +1053,73 @@
   }
 
   loadEvents();
+
+  // Week navigation state
+  var intentionWeekOffset = 0;
+
+  function getWeekRange(offset) {
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - day + (offset * 7));
+    startOfWeek.setHours(0,0,0,0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23,59,59,999);
+    return {start: startOfWeek, end: endOfWeek};
+  }
+
+  async function loadIntentions(offset) {
+    if(offset !== undefined) intentionWeekOffset = offset;
+    const container = document.getElementById('intentions-container');
+    if(!container) return;
+    container.innerHTML = '<div class="events-empty">Loading...</div>';
+    try {
+      const res = await fetch('https://firestore.googleapis.com/v1/projects/' + PROJECT_ID + '/databases/(default)/documents/massIntentions?key=' + API_KEY + '&pageSize=100');
+      const data = await res.json();
+      const docs = data.documents || [];
+      const {start, end} = getWeekRange(intentionWeekOffset);
+      const items = docs
+        .map(doc => {
+          const f = doc.fields || {};
+          return {
+            date: f.date?.stringValue || '',
+            mass: f.mass?.stringValue || '',
+            intention: f.intention?.stringValue || '',
+          };
+        })
+        .filter(i => {
+          if(!i.date) return false;
+          const d = new Date(i.date + 'T12:00:00');
+          return d >= start && d <= end;
+        })
+        .sort((a,b) => a.date.localeCompare(b.date));
+
+      const weekLabel = intentionWeekOffset === 0 ? 'This Week' : intentionWeekOffset === 1 ? 'Next Week' : intentionWeekOffset === -1 ? 'Last Week' : '';
+      const nav = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
+        '<button onclick="loadIntentions(' + (intentionWeekOffset-1) + ')" style="background:none;border:none;color:var(--burgundy);font-size:18px;cursor:pointer;">&#8592;</button>' +
+        '<span style="font-size:11px;letter-spacing:1px;color:var(--soil);opacity:0.5;">' + weekLabel + '</span>' +
+        '<button onclick="loadIntentions(' + (intentionWeekOffset+1) + ')" style="background:none;border:none;color:var(--burgundy);font-size:18px;cursor:pointer;">&#8594;</button>' +
+        '</div>';
+
+      if(items.length === 0) {
+        container.innerHTML = nav + '<div class="events-empty">No intentions posted for this week.</div>';
+        return;
+      }
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      container.innerHTML = nav + items.map(i => {
+        const dt = new Date(i.date + 'T12:00:00');
+        const dayName = days[dt.getDay()];
+        return '<div class="schedule-block" style="margin-bottom:12px;">' +
+          '<div style="font-size:10px;letter-spacing:1px;color:var(--dusty-rose);margin-bottom:4px;">' + dayName.toUpperCase() + ' · ' + i.mass + '</div>' +
+          '<div style="font-size:14px;color:var(--soil);line-height:1.5;">' + i.intention + '</div>' +
+          '</div>';
+      }).join('');
+    } catch(e) {
+      container.innerHTML = '<div class="events-empty">Could not load intentions.</div>';
+    }
+  }
+  loadIntentions(0);
 </script>
 <div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="" /></div>
 </body>
