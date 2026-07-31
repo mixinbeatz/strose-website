@@ -74,7 +74,12 @@
 
   /* FORM */
   .form-wrapper { background: var(--white); padding: 56px 40px; }
-  .form-section { max-width: 860px; margin: 0 auto; }
+  .form-layout { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
+  @media(max-width:1024px){ .form-layout { grid-template-columns: 1fr; } .preview-panel { position: static; } }
+  .preview-panel { position: sticky; top: 24px; }
+  .preview-sticky { background: var(--sand); border-radius: 16px; padding: 24px; border: 1px solid var(--linen); }
+  .preview-panel-eyebrow { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 600; }
+  .form-section { max-width: 860px; }
   .form-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--burgundy); margin-bottom: 8px; }
   .form-sub { font-size: 15px; color: var(--dusty-rose); margin-bottom: 40px; line-height: 1.6; }
   .form-block { margin-bottom: 36px; }
@@ -250,8 +255,9 @@
 
 <!-- FORM -->
 <div class="form-wrapper">
-  <div class="form-section">
-    <div id="form-content">
+  <div class="form-layout">
+    <div class="form-section">
+      <div id="form-content">
       <div class="form-title">Apply to Become a Parish Partner</div>
       <p class="form-sub">Complete the form below. Saint Rose Parish staff will review your application and reach out within 2 business days. Fields marked <span class="required">*</span> are required.</p>
 
@@ -445,11 +451,18 @@
       <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Saint Rose Parish staff will review your application and reach out within 2 business days.</div>
     </div>
 
-    <!-- SUCCESS -->
-    <div class="success-screen" id="success-screen">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Application Received</div>
-      <p class="success-sub">Thank you for applying to become a Parish Partner at Saint Rose. Our staff will review your application and reach out within 2 business days. We look forward to welcoming you to the community.</p>
+      <!-- SUCCESS -->
+      <div class="success-screen" id="success-screen">
+        <div class="success-icon">✓</div>
+        <div class="success-title">Application Received</div>
+        <p class="success-sub">Thank you for applying to become a Parish Partner at Saint Rose. Our staff will review your application and reach out within 2 business days. We look forward to welcoming you to the community.</p>
+      </div>
+    </div>
+    <div class="preview-panel" id="preview-panel">
+      <div class="preview-sticky">
+        <div class="preview-panel-eyebrow">Live Preview</div>
+        <div id="preview-content"></div>
+      </div>
     </div>
   </div>
 </div>
