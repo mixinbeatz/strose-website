@@ -213,7 +213,7 @@
       <div class="tier-feature"><span class="tier-check">✓</span> After-hours availability badge</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Parishioner testimonial</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Tap analytics — calls, clicks, views</div>
-      <button class="preview-btn" onclick="event.stopPropagation();openPreview()">See what this looks like →</button>
+      <button class="preview-btn" onclick="event.stopPropagation();document.getElementById('preview-panel').scrollIntoView({behavior:'smooth',block:'center'});">See what this looks like →</button>
     </div>
 
     <div class="tier-card" onclick="selectTierCard(this,'Standard - $50/mo')">
@@ -226,7 +226,7 @@
       <div class="tier-feature"><span class="tier-check">✓</span> One-tap Call & Website buttons</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Category listing & search</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Parish endorsement</div>
-      <button class="preview-btn" onclick="event.stopPropagation();openPreview()">See what this looks like →</button>
+      <button class="preview-btn" onclick="event.stopPropagation();document.getElementById('preview-panel').scrollIntoView({behavior:'smooth',block:'center'});">See what this looks like →</button>
     </div>
 
     <div class="tier-card" onclick="selectTierCard(this,'Parish Pro - $10/mo')">
@@ -238,7 +238,7 @@
       <div class="tier-feature"><span class="tier-check">✓</span> Name, category & personal description</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Contact buttons</div>
       <div class="tier-feature"><span class="tier-check">✓</span> Community marketplace tone</div>
-      <button class="preview-btn" onclick="event.stopPropagation();openPreview()">See what this looks like →</button>
+      <button class="preview-btn" onclick="event.stopPropagation();document.getElementById('preview-panel').scrollIntoView({behavior:'smooth',block:'center'});">See what this looks like →</button>
     </div>
 
   </div>
@@ -474,57 +474,6 @@
   <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
 </div>
 
-<!-- PREVIEW MODAL -->
-<div class="modal-overlay" id="preview-modal" onclick="closePreview()">
-  <div class="modal-sheet" onclick="event.stopPropagation()">
-    <div class="modal-handle"></div>
-    <button class="modal-close-btn" onclick="closePreview()">✕</button>
-    <div class="modal-eyebrow">Premium Listing Preview</div>
-    <div class="modal-title">What parishioners see</div>
-    <div class="modal-cat">This is how your Premium listing appears inside the Saint Rose app</div>
-
-    <div class="modal-hero">
-      <div class="modal-hero-logo">A</div>
-      <div>
-        <div class="modal-hero-name">Your Business Name</div>
-        <div class="modal-hero-tag">Your Category · Anthem, AZ</div>
-      </div>
-    </div>
-
-    <div class="modal-offer">
-      <div class="modal-offer-label">⭐ PARISHIONER OFFER</div>
-      Your special offer for Saint Rose parishioners appears here prominently
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">ABOUT</div>
-      <div class="modal-body-text">Your full business description appears here. Parishioners can read your complete story, specialties, and why you're a trusted member of the community.</div>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-section-title">SERVICES</div>
-      <div class="modal-chips">
-        <div class="modal-chip">Service One</div>
-        <div class="modal-chip">Service Two</div>
-        <div class="modal-chip">Service Three</div>
-        <div class="modal-chip">Service Four</div>
-      </div>
-    </div>
-
-    <div class="modal-btns">
-      <button class="modal-btn modal-btn-primary">📞 Call</button>
-      <button class="modal-btn modal-btn-primary">💬 Text</button>
-      <button class="modal-btn modal-btn-outline">🌐 Website</button>
-    </div>
-    <div class="modal-btns">
-      <button class="modal-btn modal-btn-outline">📍 Directions</button>
-      <button class="modal-btn modal-btn-outline" style="grid-column:span 2;">↗ Share this listing</button>
-    </div>
-
-    <div class="modal-footer">Proud Parish Partner · Saint Rose Philippine Duchesne</div>
-  </div>
-</div>
-
 <script>
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
@@ -637,8 +586,6 @@
     } catch(e) { return ''; }
   }
 
-  function openPreview() { document.getElementById('preview-modal').classList.add('show'); }
-  function closePreview() { document.getElementById('preview-modal').classList.remove('show'); }
 
   async function submitForm() {
     const biz = document.getElementById('f-biz').value.trim();
