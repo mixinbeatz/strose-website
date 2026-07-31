@@ -729,7 +729,7 @@
 <section class="this-week" id="this-week">
   <div class="reveal">
     <span class="section-eyebrow">PARISH LIFE</span>
-    <h2 class="section-title">This Week at Saint Rose</h2>
+    <h2 class="section-title">The Week Ahead</h2>
   </div>
   <div class="this-week-grid">
     <div class="events-live reveal">
@@ -994,7 +994,7 @@
       const data = await res.json();
       const docs = data.documents || [];
       const now = new Date();
-      const twoWeeks = new Date(now.getTime() + 60 * 24 * 60 * 60 * 1000);
+      const weekAhead = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
       const events = docs
         .map(doc => {
@@ -1021,7 +1021,7 @@
         .filter(e => {
           if (!e.date || isNaN(e.date)) return false;
           if (e.expiresAt && new Date(e.expiresAt) < now) return false;
-          return e.date >= now && e.date <= twoWeeks;
+          return e.date >= now && e.date <= weekAhead;
         })
         .sort((a, b) => a.date - b.date);
 
