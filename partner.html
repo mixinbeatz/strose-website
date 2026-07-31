@@ -267,11 +267,11 @@
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Business Name <span class="required">*</span></label>
-            <input type="text" class="form-input" id="f-biz" placeholder="e.g. Anthem Law" />
+            <input type="text" class="form-input" id="f-biz" placeholder="e.g. Anthem Law" oninput="renderPreview()" />
           </div>
           <div class="form-group">
             <label class="form-label">Category <span class="required">*</span></label>
-            <select class="form-select" id="f-cat">
+            <select class="form-select" id="f-cat" onchange="renderPreview()">
               <option value="">Select a category...</option>
               <option>Auto</option>
               <option>Education</option>
@@ -289,12 +289,12 @@
           </div>
           <div class="form-group form-full">
             <label class="form-label">Tagline</label>
-            <input type="text" class="form-input" id="f-tagline" placeholder="e.g. Your neighborhood law office." maxlength="80" />
+            <input type="text" class="form-input" id="f-tagline" placeholder="e.g. Your neighborhood law office." maxlength="80" oninput="renderPreview()" />
             <div class="form-hint">Short phrase that appears under your business name. Max 80 characters.</div>
           </div>
           <div class="form-group form-full">
             <label class="form-label">About Your Business <span class="required">*</span></label>
-            <textarea class="form-textarea" id="f-desc" placeholder="Tell parishioners what you do, how long you've been serving the community, and what makes you the right choice..."></textarea>
+            <textarea class="form-textarea" id="f-desc" placeholder="Tell parishioners what you do, how long you've been serving the community, and what makes you the right choice..." oninput="renderPreview()"></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Website</label>
@@ -306,7 +306,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Special Offer for Parishioners</label>
-            <input type="text" class="form-input" id="f-offer" placeholder="e.g. 10% off for Saint Rose parishioners" />
+            <input type="text" class="form-input" id="f-offer" placeholder="e.g. 10% off for Saint Rose parishioners" oninput="renderPreview()" />
             <div class="form-hint">Optional — shown prominently on your listing.</div>
           </div>
           <div class="form-group">
@@ -345,7 +345,7 @@
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">Contact Name <span class="required">*</span></label>
-            <input type="text" class="form-input" id="f-contact" placeholder="Your name" />
+            <input type="text" class="form-input" id="f-contact" placeholder="Your name" oninput="renderPreview()" />
           </div>
           <div class="form-group">
             <label class="form-label">Phone Number <span class="required">*</span></label>
@@ -397,7 +397,7 @@
         <div class="form-hint" style="margin-top:8px;">Photos will be reviewed by parish staff. Professional, community-appropriate images only.</div>
         <div class="form-group form-full" style="margin-top:20px;">
           <label class="form-label">Specialties</label>
-          <input type="text" class="form-input" id="f-specialties" placeholder="e.g. Eye Exams, Contact Lenses, Designer Frames" />
+          <input type="text" class="form-input" id="f-specialties" placeholder="e.g. Eye Exams, Contact Lenses, Designer Frames" oninput="renderPreview()" />
           <div class="form-hint">Separate with commas — shown as tags on your listing.</div>
         </div>
       </div>
@@ -462,6 +462,7 @@
       <div class="preview-sticky">
         <div class="preview-panel-eyebrow">Live Preview</div>
         <div id="preview-content"></div>
+        <div style="font-size:11px;color:var(--dusty-rose);opacity:0.8;line-height:1.5;margin-top:14px;padding-top:14px;border-top:1px solid var(--linen);">This is a rough mockup so you can see the general idea. Our design team will polish the final artwork — cropping, transparency, and layout — before your listing goes live.</div>
       </div>
     </div>
   </div>
@@ -532,10 +533,70 @@
 
   const images = { cardimg: '', heroimg: '', iconimg: '', photo: '' };
 
+  function escapeHtml(s) {
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderPreview() {
+    const tierVal = document.getElementById('f-tier').value;
+    const tierName = tierVal.split(' - ')[0];
+    const biz = escapeHtml(document.getElementById('f-biz').value.trim()) || 'Your Business Name';
+    const cat = escapeHtml(document.getElementById('f-cat').value) || 'Category';
+    const tagline = escapeHtml(document.getElementById('f-tagline').value.trim());
+    const desc = escapeHtml(document.getElementById('f-desc').value.trim()) || 'Your business description will appear here as you type.';
+    const offer = escapeHtml(document.getElementById('f-offer').value.trim());
+    const contact = escapeHtml(document.getElementById('f-contact').value.trim());
+    const el = document.getElementById('preview-content');
+
+    if (tierName === 'Premium') {
+      const heroSrc = images.heroimg ? 'data:image/jpeg;base64,' + images.heroimg : (images.cardimg ? 'data:image/jpeg;base64,' + images.cardimg : '');
+      const iconSrc = images.iconimg ? 'data:image/jpeg;base64,' + images.iconimg : '';
+      const specialtiesRaw = document.getElementById('f-specialties').value.trim();
+      const chips = specialtiesRaw ? specialtiesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+      el.innerHTML = `
+        <div style="background:var(--burgundy);border-radius:14px;overflow:hidden;border:1.5px solid var(--gold);">
+          <div style="background:var(--burgundy);padding:14px;display:flex;align-items:center;gap:12px;">
+            ${iconSrc ? `<img src="${iconSrc}" style="width:44px;height:44px;border-radius:10px;object-fit:contain;background:var(--white);" />` : `<div style="width:44px;height:44px;border-radius:10px;background:var(--white);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;color:var(--burgundy);font-size:18px;">${biz.charAt(0)}</div>`}
+            <div>
+              <div style="color:var(--white);font-family:'Cinzel',serif;font-size:15px;">${biz}</div>
+              <div style="color:var(--dusty-rose);font-size:11px;">${cat}</div>
+            </div>
+          </div>
+          ${heroSrc ? `<img src="${heroSrc}" style="width:100%;height:140px;object-fit:cover;" />` : ''}
+          <div style="background:var(--white);padding:14px;">
+            ${tagline ? `<div style="color:var(--burgundy);font-size:12px;font-style:italic;margin-bottom:8px;">${tagline}</div>` : ''}
+            ${offer ? `<div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:12px;color:var(--soil);"><strong style="color:var(--gold-light);">★ OFFER</strong> ${offer}</div>` : ''}
+            <div style="color:var(--soil);font-size:13px;line-height:1.5;margin-bottom:10px;">${desc}</div>
+            ${chips.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">${chips.map(c => `<span style="background:var(--sand);border:1px solid var(--linen);border-radius:12px;padding:3px 10px;font-size:11px;color:var(--soil);">${escapeHtml(c)}</span>`).join('')}</div>` : ''}
+            <div style="text-align:center;font-size:10px;color:var(--gold);letter-spacing:0.5px;">TAP TO LEARN MORE</div>
+          </div>
+        </div>`;
+    } else if (tierName === 'Standard') {
+      el.innerHTML = `
+        <div style="background:var(--white);border-radius:12px;border:1px solid var(--linen);border-left:3px solid var(--gold);padding:14px;">
+          <div style="font-family:'Cinzel',serif;font-size:15px;color:var(--soil);margin-bottom:2px;">${biz}</div>
+          <div style="color:var(--dusty-rose);font-size:12px;margin-bottom:8px;">${cat}</div>
+          <div style="color:var(--soil);font-size:13px;line-height:1.5;">${desc}</div>
+        </div>`;
+    } else {
+      const photoSrc = images.photo ? 'data:image/jpeg;base64,' + images.photo : '';
+      const displayName = contact || biz;
+      el.innerHTML = `
+        <div style="background:var(--white);border-radius:12px;border:1px solid var(--linen);padding:14px;display:flex;gap:10px;align-items:center;">
+          ${photoSrc ? `<img src="${photoSrc}" style="width:40px;height:40px;border-radius:20px;object-fit:cover;" />` : `<div style="width:40px;height:40px;border-radius:20px;background:var(--burgundy);display:flex;align-items:center;justify-content:center;color:var(--white);font-family:'Cinzel',serif;font-size:16px;">${displayName.charAt(0)}</div>`}
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--soil);">${displayName}</div>
+            <div style="color:var(--dusty-rose);font-size:12px;">${cat}</div>
+          </div>
+        </div>`;
+    }
+  }
+
   function updateTierVisibility(val) {
     const tierName = val.split(' - ')[0];
     document.getElementById('tier-images-premium').style.display = tierName === 'Premium' ? '' : 'none';
     document.getElementById('tier-images-parish').style.display = tierName === 'Parish Pro' ? '' : 'none';
+    renderPreview();
   }
 
   function selectTierCard(el, val) {
@@ -556,9 +617,12 @@
       preview.src = e.target.result;
       preview.style.display = 'block';
       images[type] = base64;
+      renderPreview();
     };
     reader.readAsDataURL(file);
   }
+
+  document.addEventListener('DOMContentLoaded', renderPreview);
 
   async function uploadImage(base64, filename) {
     if(!base64) return '';
