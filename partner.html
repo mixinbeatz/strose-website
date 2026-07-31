@@ -389,6 +389,11 @@
           </div>
         </div>
         <div class="form-hint" style="margin-top:8px;">Photos will be reviewed by parish staff. Professional, community-appropriate images only.</div>
+        <div class="form-group form-full" style="margin-top:20px;">
+          <label class="form-label">Specialties</label>
+          <input type="text" class="form-input" id="f-specialties" placeholder="e.g. Eye Exams, Contact Lenses, Designer Frames" />
+          <div class="form-hint">Separate with commas — shown as tags on your listing.</div>
+        </div>
       </div>
 
       <!-- PHOTOS: PARISH PRO (1 slot) -->
@@ -594,6 +599,7 @@
           businessName: {stringValue: biz},
           category: {stringValue: cat},
           tagline: {stringValue: document.getElementById('f-tagline').value.trim()},
+          specialties: {stringValue: document.getElementById('f-specialties').value.trim()},
           description: {stringValue: desc},
           website: {stringValue: document.getElementById('f-website').value.trim()},
           address: {stringValue: document.getElementById('f-address').value.trim()},
