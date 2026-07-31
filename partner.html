@@ -237,6 +237,7 @@
     </div>
 
   </div>
+  <input type="hidden" id="f-tier" value="Premium - $100/mo" />
 </div>
 
 <!-- PARISH NOTE -->
@@ -352,58 +353,60 @@
         </div>
       </div>
 
-      <!-- PHOTOS -->
-      <div class="form-block">
-        <div class="form-block-title">Photos & Logo</div>
+      <!-- PHOTOS: PREMIUM (3 slots) -->
+      <div class="form-block" id="tier-images-premium">
+        <div class="form-block-title">Listing Images</div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Business Logo</label>
-            <div class="upload-zone" id="logo-zone">
-              <input type="file" accept="image/*" onchange="handleUpload(this,'logo')" />
-              <div class="upload-icon">🖼</div>
-              <div class="upload-label">Upload Logo</div>
-              <div class="upload-hint">PNG or JPG, square preferred</div>
-              <img class="upload-preview" id="logo-preview" />
+            <label class="form-label">Card Image</label>
+            <div class="upload-zone" id="cardimg-zone">
+              <input type="file" accept="image/*" onchange="handleUpload(this,'cardimg')" />
+              <div class="upload-icon">🏢</div>
+              <div class="upload-label">Upload Card Image</div>
+              <div class="upload-hint">Small image shown in the directory list</div>
+              <img class="upload-preview" id="cardimg-preview" />
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Business Photo</label>
-            <div class="upload-zone" id="photo-zone">
-              <input type="file" accept="image/*" onchange="handleUpload(this,'photo')" />
-              <div class="upload-icon">📷</div>
-              <div class="upload-label">Upload Photo</div>
-              <div class="upload-hint">Storefront, team, or service photo</div>
-              <img class="upload-preview" id="photo-preview" />
+            <label class="form-label">Detail Page Hero</label>
+            <div class="upload-zone" id="heroimg-zone">
+              <input type="file" accept="image/*" onchange="handleUpload(this,'heroimg')" />
+              <div class="upload-icon">🖼️</div>
+              <div class="upload-label">Upload Hero Image</div>
+              <div class="upload-hint">Large image at the top of your detail popup</div>
+              <img class="upload-preview" id="heroimg-preview" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Detail Page Icon</label>
+            <div class="upload-zone" id="iconimg-zone">
+              <input type="file" accept="image/*" onchange="handleUpload(this,'iconimg')" />
+              <div class="upload-icon">🔖</div>
+              <div class="upload-label">Upload Icon</div>
+              <div class="upload-hint">Small image next to your name in the popup</div>
+              <img class="upload-preview" id="iconimg-preview" />
             </div>
           </div>
         </div>
         <div class="form-hint" style="margin-top:8px;">Photos will be reviewed by parish staff. Professional, community-appropriate images only.</div>
       </div>
 
-      <!-- TIER -->
-      <div class="form-block">
-        <div class="form-block-title">Listing Tier <span class="required">*</span></div>
-        <div class="tier-selector">
-          <div class="tier-option selected" onclick="selectTierOption(this,'Premium - $100/mo')">
-            <div class="tier-option-name">Premium</div>
-            <div class="tier-option-price">$100/month</div>
-            <div class="tier-option-desc">Full profile, hero placement, analytics</div>
-          </div>
-          <div class="tier-option" onclick="selectTierOption(this,'Standard - $50/mo')">
-            <div class="tier-option-name">Standard</div>
-            <div class="tier-option-price">$50/month</div>
-            <div class="tier-option-desc">Photo, description, contact</div>
-          </div>
-          <div class="tier-option" onclick="selectTierOption(this,'Parish Pro - $10/mo')">
-            <div class="tier-option-name">Parish Pro</div>
-            <div class="tier-option-price">$10/month</div>
-            <div class="tier-option-desc">Parishioner services marketplace</div>
+      <!-- PHOTOS: PARISH PRO (1 slot) -->
+      <div class="form-block" id="tier-images-parish" style="display:none;">
+        <div class="form-block-title">Your Photo</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Your Photo</label>
+            <div class="upload-zone" id="photo-zone">
+              <input type="file" accept="image/*" onchange="handleUpload(this,'photo')" />
+              <div class="upload-icon">🙂</div>
+              <div class="upload-label">Upload Photo</div>
+              <div class="upload-hint">Helps fellow parishioners recognize you</div>
+              <img class="upload-preview" id="photo-preview" />
+            </div>
           </div>
         </div>
-        <input type="hidden" id="f-tier" value="Premium - $100/mo" />
-        <div style="margin-top:16px;padding:14px 16px;background:var(--sand);border-radius:10px;font-size:14px;color:var(--soil);">
-          <strong style="font-family:'Cinzel',serif;color:var(--burgundy);">Annual option:</strong> Pay for 10 months, get 12. Ask about annual billing after approval.
-        </div>
+        <div class="form-hint" style="margin-top:8px;">Photos will be reviewed by parish staff. Professional, community-appropriate images only.</div>
       </div>
 
       <!-- TERMS -->
@@ -509,28 +512,20 @@
   const BUCKET = 'saint-rose-anthem.firebasestorage.app';
   const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 
-  let logoBase64 = '';
-  let photoBase64 = '';
+  const images = { cardimg: '', heroimg: '', iconimg: '', photo: '' };
+
+  function updateTierVisibility(val) {
+    const tierName = val.split(' - ')[0];
+    document.getElementById('tier-images-premium').style.display = tierName === 'Premium' ? '' : 'none';
+    document.getElementById('tier-images-parish').style.display = tierName === 'Parish Pro' ? '' : 'none';
+  }
 
   function selectTierCard(el, val) {
     document.querySelectorAll('.tier-card').forEach(c=>c.classList.remove('selected'));
     el.classList.add('selected');
     document.getElementById('f-tier').value = val;
-    document.querySelectorAll('.tier-option').forEach(o=>o.classList.remove('selected'));
-    document.querySelectorAll('.tier-option').forEach(o=>{
-      if(o.querySelector('.tier-option-name').textContent === val.split(' - ')[0]) o.classList.add('selected');
-    });
-    document.getElementById('f-tier').scrollIntoView({behavior:'smooth',block:'center'});
-  }
-
-  function selectTierOption(el, val) {
-    document.querySelectorAll('.tier-option').forEach(o=>o.classList.remove('selected'));
-    el.classList.add('selected');
-    document.getElementById('f-tier').value = val;
-    document.querySelectorAll('.tier-card').forEach(c=>c.classList.remove('selected'));
-    document.querySelectorAll('.tier-card').forEach(c=>{
-      if(c.querySelector('.tier-name')?.textContent === val.split(' - ')[0]) c.classList.add('selected');
-    });
+    updateTierVisibility(val);
+    document.getElementById('form-content').scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function handleUpload(input, type) {
@@ -542,8 +537,7 @@
       const preview = document.getElementById(type+'-preview');
       preview.src = e.target.result;
       preview.style.display = 'block';
-      if(type==='logo') logoBase64 = base64;
-      else photoBase64 = base64;
+      images[type] = base64;
     };
     reader.readAsDataURL(file);
   }
@@ -586,8 +580,10 @@
     try {
       const ts = Date.now();
       const bizSlug = biz.replace(/\s+/g,'_');
-      const logoUrl = await uploadImage(logoBase64, `partnerLogos/${ts}_${bizSlug}_logo.jpg`);
-      const photoUrl = await uploadImage(photoBase64, `partnerPhotos/${ts}_${bizSlug}_photo.jpg`);
+      const logoUrl = await uploadImage(images.cardimg, `partnerLogos/${ts}_${bizSlug}_card.jpg`);
+      const modalHeroUrl = await uploadImage(images.heroimg, `partnerModalHero/${ts}_${bizSlug}_hero.jpg`);
+      const modalLogoUrl = await uploadImage(images.iconimg, `partnerModalLogo/${ts}_${bizSlug}_icon.jpg`);
+      const photoUrl = await uploadImage(images.photo, `partnerPhotos/${ts}_${bizSlug}_photo.jpg`);
 
       btn.textContent = 'Submitting application...';
 
@@ -611,6 +607,8 @@
           afterHours: {booleanValue: document.getElementById('f-afterhours').checked},
           acceptTexts: {booleanValue: document.getElementById('f-accepttexts').checked},
           logoUrl: {stringValue: logoUrl},
+          modalHeroUrl: {stringValue: modalHeroUrl},
+          modalLogoUrl: {stringValue: modalLogoUrl},
           photoUrl: {stringValue: photoUrl},
           parishApproved: {booleanValue: false},
           status: {stringValue: 'pending'},
