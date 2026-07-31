@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advertiser Directory — Saint Rose Philippine Duchesne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+    --success: #4A7C59;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
+  a { color: inherit; }
+
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: '✝'; position: absolute; font-size: 300px; color: rgba(255,255,255,0.03); top: -60px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; }
+  .hero-back { display: inline-block; font-size: 12px; letter-spacing: 1px; color: var(--dusty-rose); text-decoration: none; margin-bottom: 20px; position: relative; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; position: relative; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--linen); line-height: 1.2; margin-bottom: 12px; position: relative; }
+  .hero-sub { font-size: 15px; color: var(--linen); opacity: 0.8; max-width: 560px; margin: 0 auto; position: relative; }
+
+  .controls { max-width: 1000px; margin: -28px auto 0; padding: 0 24px; position: relative; z-index: 5; }
+  .search-box { background: var(--white); border-radius: 14px; padding: 4px; box-shadow: 0 8px 30px rgba(92,26,46,0.15); display: flex; align-items: center; }
+  .search-box input { flex: 1; border: none; outline: none; padding: 14px 18px; font-family: 'Faustina', serif; font-size: 15px; color: var(--soil); background: transparent; }
+  .search-box input::placeholder { color: var(--dusty-rose); opacity: 0.7; }
+  .search-icon { padding: 0 14px; color: var(--dusty-rose); font-size: 16px; }
+
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0 8px; }
+  .filter-chip { background: var(--white); border: 1.5px solid var(--linen); border-radius: 20px; padding: 7px 16px; font-size: 13px; color: var(--soil); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .filter-chip:hover { border-color: var(--dusty-rose); }
+  .filter-chip.active { background: var(--burgundy); border-color: var(--burgundy); color: var(--linen); }
+
+  .listings-wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; }
+  .tier-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--dusty-rose); margin: 32px 0 14px; }
+  .tier-label:first-child { margin-top: 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+  .card-premium { background: var(--burgundy); border: 1.5px solid var(--gold); border-radius: 14px; padding: 20px; }
+  .card-premium .name { font-family: 'Cinzel', serif; font-size: 17px; color: var(--white); margin-bottom: 2px; }
+  .card-premium .cat { font-size: 12px; color: var(--dusty-rose); margin-bottom: 10px; }
+  .card-premium .tagline { font-size: 12px; font-style: italic; color: var(--gold-light); margin-bottom: 10px; }
+  .card-premium .desc { font-size: 13px; color: var(--linen); opacity: 0.85; line-height: 1.5; margin-bottom: 12px; }
+  .card-premium .offer { background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: 12px; color: var(--linen); }
+  .card-premium .offer strong { color: var(--gold-light); }
+
+  .card-standard { background: var(--white); border: 1px solid var(--linen); border-left: 3px solid var(--gold); border-radius: 12px; padding: 18px; }
+  .card-standard .name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--soil); margin-bottom: 2px; }
+  .card-standard .cat { font-size: 12px; color: var(--dusty-rose); margin-bottom: 8px; }
+  .card-standard .desc { font-size: 13px; color: var(--soil); opacity: 0.85; line-height: 1.5; margin-bottom: 12px; }
+
+  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .action-btn { flex: 1; min-width: 80px; text-align: center; padding: 8px 10px; border-radius: 8px; font-size: 12px; text-decoration: none; font-family: 'Faustina', serif; font-weight: 600; }
+  .card-premium .action-btn.primary { background: var(--gold); color: var(--burgundy-dark); }
+  .card-premium .action-btn.outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: var(--linen); }
+  .card-standard .action-btn.primary { background: var(--burgundy); color: var(--white); }
+  .card-standard .action-btn.outline { background: transparent; border: 1px solid var(--linen); color: var(--soil); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--dusty-rose); font-size: 14px; }
+
+  .footer { background: var(--soil); text-align: center; padding: 32px; }
+  .footer-logo { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; }
+  .footer-sub { font-size: 12px; color: var(--linen); opacity: 0.6; margin-top: 6px; }
+
+  @media(max-width:600px){ .hero{padding:44px 20px 40px;} .grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="hero-back">← Back to Home</a>
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Advertiser Directory</h1>
+  <p class="hero-sub">Local, parish-supported businesses trusted by our community. Every listing helps fund Saint Rose.</p>
+</div>
+
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Search businesses..." oninput="render()" />
+  </div>
+  <div class="filter-row" id="filterRow"></div>
+</div>
+
+<div class="listings-wrap" id="listingsWrap"></div>
+
+<div class="footer">
+  <div class="footer-logo">Sacred Apps</div>
+  <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
+</div>
+
+<script>
+  const ADVERTISERS = [
+    { name: 'North Valley Eye Care', category: 'Health', tier: 'premium', description: 'High quality and comprehensive eye care. Dr. Justin Kohls and Dr. Michelle Kohls.', phone: '623-582-3937', website: 'https://www.DrKohls.com', tagline: 'Your family eye care professionals since 2007.', discount: null },
+    { name: 'Gavilan Peak Dental Care', category: 'Health', tier: 'premium', description: "Dr. Alice L. Shaw, DMD. Cosmetic dentistry, preventive oral health, and restorative dentistry. Invisalign provider.", phone: '623-303-4110', website: 'https://gavilanpeakdentalcare.com/', tagline: 'Comprehensive, comfortable dental care for the whole family.', discount: null },
+    { name: 'RE/MAX Summit Properties', category: 'Real Estate', tier: 'premium', description: 'Nearly two decades of experience in Anthem and the North Valley. Buying, selling, or investing — trust the name your community already does.', phone: '602-677-4653', website: 'https://www.remaxsummitproperties.com', tagline: 'Your Anthem neighbors in real estate.', discount: null },
+    { name: 'Anthem Law', category: 'Legal', tier: 'premium', description: 'Your neighborhood law office. Wills and trusts, business law, personal injury, litigation, probate, and nursing home neglect.', phone: '623-551-9366', website: 'https://www.AnthemLaw.com', tagline: 'Where your attorney is your neighbor.', discount: null },
+    { name: 'Hansen Desert Hills Mortuary & Cemetery', category: 'Faith', tier: 'premium', description: 'Family owned and operated. Serving the Diocese of Phoenix since 1949.', phone: '480-991-5800', website: 'https://www.hansenmortuary.com', tagline: 'Serving families with dignity since 1949.', discount: null },
+    { name: 'Safeguard Estate & Financial', category: 'Financial', tier: 'premium', description: 'Living trusts, estate planning. Local, trusted, experienced professionals. Affordable, transparent pricing.', phone: '602-675-9000', website: 'https://safeguardyourestate.com/', tagline: 'Protecting what matters most.', discount: 'Mention the SaintRose app and receive 50% off the price of your living trust.' },
+    { name: 'Honest Hands Home Repair', category: 'Home', tier: 'standard', description: 'Christian-based handyman service in North Phoenix. No job too small. Transparent billing, hourly basis.', phone: '480-815-7723', website: 'https://www.honesthandshomerepair.com' },
+    { name: "Mike's Absolute Glass & Detail", category: 'Auto', tier: 'standard', description: 'PPF, clear bra, vinyl wraps, auto glass, detailing, and window tint.', phone: '623-986-2354', website: 'https://mikesabsolute.com' },
+    { name: 'DCM Pools', category: 'Home', tier: 'standard', description: 'Custom pools, remodeling, and complete outdoor living space.', phone: '480-570-6612', website: 'https://dcmpools.com' },
+    { name: 'Rain Man Roofing & Waterproofing', category: 'Home', tier: 'standard', description: 'Commercial, industrial, and residential roofing. Repairs, new installation, and maintenance. Licensed, bonded, and insured.', phone: '623-670-2835', website: 'https://rainmanroofing.com' },
+    { name: 'Dryer Vent Wizard', category: 'Home', tier: 'standard', description: 'Professionally trained technicians who inspect, clean, and repair dryer vents. Fire prevention and energy savings.', phone: '602-960-2917', website: 'https://dryerventwizard.com' },
+    { name: 'Merrill Gardens', category: 'Services', tier: 'standard', description: 'Senior living in Anthem. Visit today.', phone: '623-745-3689', website: 'https://merrillgardensanthem.com' },
+    { name: 'Sacred Apps', category: 'Tech', tier: 'standard', description: 'Mobile app development for Catholic parishes. Creator of the SaintRose app.', phone: null, website: 'https://sacredapps.com' },
+  ];
+
+  const CATEGORIES = ['All', ...Array.from(new Set(ADVERTISERS.map(a => a.category))).sort()];
+  let activeCategory = 'All';
+
+  function escapeHtml(s) {
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderFilters() {
+    const row = document.getElementById('filterRow');
+    row.innerHTML = CATEGORIES.map(c =>
+      `<div class="filter-chip${c === activeCategory ? ' active' : ''}" onclick="setCategory('${c}')">${escapeHtml(c)}</div>`
+    ).join('');
+  }
+
+  function setCategory(c) {
+    activeCategory = c;
+    renderFilters();
+    render();
+  }
+
+  function cardHtml(a) {
+    const isPremium = a.tier === 'premium';
+    const cls = isPremium ? 'card-premium' : 'card-standard';
+    const phoneBtn = a.phone ? `<a class="action-btn primary" href="tel:${a.phone}">Call</a>` : '';
+    const webBtn = a.website ? `<a class="action-btn outline" href="${a.website}" target="_blank" rel="noopener">Website</a>` : '';
+    return `
+      <div class="${cls}">
+        <div class="name">${escapeHtml(a.name)}</div>
+        <div class="cat">${escapeHtml(a.category)}</div>
+        ${isPremium && a.tagline ? `<div class="tagline">${escapeHtml(a.tagline)}</div>` : ''}
+        <div class="desc">${escapeHtml(a.description)}</div>
+        ${isPremium && a.discount ? `<div class="offer"><strong>★ OFFER</strong> ${escapeHtml(a.discount)}</div>` : ''}
+        <div class="action-row">${phoneBtn}${webBtn}</div>
+      </div>`;
+  }
+
+  function render() {
+    const q = document.getElementById('search').value.trim().toLowerCase();
+    const matches = a => {
+      const matchCat = activeCategory === 'All' || a.category === activeCategory;
+      const matchSearch = !q || a.name.toLowerCase().includes(q) || a.category.toLowerCase().includes(q) || a.description.toLowerCase().includes(q);
+      return matchCat && matchSearch;
+    };
+    const premium = ADVERTISERS.filter(a => a.tier === 'premium' && matches(a));
+    const standard = ADVERTISERS.filter(a => a.tier === 'standard' && matches(a));
+    const wrap = document.getElementById('listingsWrap');
+
+    if (premium.length === 0 && standard.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">No advertisers match your search.</div>';
+      return;
+    }
+
+    let html = '';
+    if (premium.length) {
+      html += '<div class="tier-label">Premium Advertisers</div><div class="grid">' + premium.map(cardHtml).join('') + '</div>';
+    }
+    if (standard.length) {
+      html += '<div class="tier-label">Standard Advertisers</div><div class="grid">' + standard.map(cardHtml).join('') + '</div>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  renderFilters();
+  render();
+</script>
+</body>
+</html>
