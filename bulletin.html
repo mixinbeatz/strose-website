@@ -371,17 +371,143 @@ nav {
   padding: 16px 0;
 }
 
+/* ── PRINT-ONLY TAKE-HOME LAYOUT ── */
+.print-only { display: none; }
+.print-page {
+  width: 8.5in;
+  min-height: 10.5in;
+  margin: 0 auto;
+  padding: 0.4in;
+  background: white;
+}
+.print-masthead {
+  text-align: center;
+  border-bottom: 2px solid var(--burgundy);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+.print-masthead-name {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--burgundy);
+}
+.print-masthead-date {
+  font-size: 11px;
+  color: var(--dusty-rose);
+  margin-top: 2px;
+}
+.print-cols {
+  display: grid;
+  grid-template-columns: 1.1fr 1.6fr;
+  gap: 18px;
+}
+.print-sidebar-block { margin-bottom: 10px; }
+.print-sidebar-title {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  border-bottom: 1px solid var(--linen);
+  padding-bottom: 2px;
+  margin-bottom: 3px;
+}
+.print-sidebar-line {
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--soil);
+}
+.print-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--burgundy);
+  border-bottom: 1px solid var(--linen);
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+}
+.print-main .intention-day, .print-main .event-day-group { margin-bottom: 8px; }
+.print-main .intention-day-label, .print-main .event-day-label { font-size: 8.5px; margin-bottom: 3px; padding-bottom: 2px; }
+.print-main .intention-row, .print-main .event-item-title { font-size: 9.5px; line-height: 1.4; }
+.print-main .intention-time, .print-main .event-item-time { font-size: 8.5px; width: 46px; }
+
+.print-qr-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--linen);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.print-qr-text {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--burgundy);
+  font-weight: 600;
+}
+.print-qr-codes { display: flex; gap: 12px; }
+.print-qr-box {
+  width: 0.8in;
+  height: 0.8in;
+  border: 1px dashed var(--dusty-rose);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--dusty-rose);
+  text-align: center;
+}
+.print-page-back .notices-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.print-page-back .notice-card { padding: 8px 10px; }
+.print-page-back .notice-title { font-size: 9.5px; margin-bottom: 3px; }
+.print-page-back .notice-body { font-size: 8.5px; line-height: 1.4; }
+.print-staff-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px 20px;
+  margin-bottom: 14px;
+}
+.print-staff-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 9px;
+  line-height: 1.6;
+  border-bottom: 1px solid var(--linen);
+  padding-bottom: 1px;
+}
+.print-staff-name { color: var(--soil); font-weight: 600; }
+.print-staff-role { color: var(--dusty-rose); text-align: right; }
+.print-advertisers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.print-advertiser-card {
+  border: 1px solid var(--linen);
+  border-radius: 3px;
+  padding: 6px 8px;
+}
+.print-advertiser-name {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--soil);
+}
+.print-advertiser-tagline { font-size: 8px; color: var(--dusty-rose); margin-top: 1px; }
+.print-advertiser-phone { font-size: 8.5px; color: var(--burgundy); font-weight: 600; margin-top: 2px; }
+
 /* ── PRINT ── */
 @media print {
-  @page { size: 14in 8.5in landscape; margin: 0.25in; }
-  nav { display: none !important; }
-  .btn-print { display: none !important; }
-  .masthead { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .section-full, .col-panel, .notice-card, .sponsor-card, .pastoral-strip {
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
+  @page { size: letter portrait; margin: 0; }
+  nav, .btn-print, .masthead, .bulletin-wrap { display: none !important; }
+  .print-only { display: block; }
+  .print-page { page-break-after: always; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .print-page-back { page-break-after: avoid; }
   body { background: white; }
-  .bulletin-wrap { padding: 0 16px 0; }
 }
 
 /* ── MOBILE ── */
@@ -504,6 +630,117 @@ nav {
 
 </div><!-- /bulletin-wrap -->
 
+<div class="print-only" id="print-only">
+  <div class="print-page print-page-front">
+    <div class="print-masthead">
+      <div class="print-masthead-name">Saint Rose Philippine Duchesne</div>
+      <div class="print-masthead-date" id="print-date"></div>
+    </div>
+    <div class="print-cols">
+      <div class="print-sidebar">
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Daily Mass</div>
+          <div class="print-sidebar-line">Mon, Tue, Wed, Fri — 7:30am</div>
+          <div class="print-sidebar-line">Mon, Tue, Fri — 12:15pm</div>
+          <div class="print-sidebar-line">Wed evening — 6:00pm</div>
+        </div>
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Weekend Mass</div>
+          <div class="print-sidebar-line">Sat — 4:00pm</div>
+          <div class="print-sidebar-line">Sun — 8:00am, 11:00am</div>
+          <div class="print-sidebar-line">Last Sat/mo — Spanish 7:30am</div>
+        </div>
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Reconciliation</div>
+          <div class="print-sidebar-line">Mon–Fri — 7:00–7:25am</div>
+          <div class="print-sidebar-line">Wed — 5:15–5:45pm</div>
+          <div class="print-sidebar-line">Sat — 2:30–3:30pm</div>
+        </div>
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Rosary</div>
+          <div class="print-sidebar-line">Mon–Sat — 6:55am, 3:25pm</div>
+          <div class="print-sidebar-line">Sun — 7:25am, 10:25am</div>
+        </div>
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Good Shepherd Mission</div>
+          <div class="print-sidebar-line">Sun Mass — 9:00am</div>
+          <div class="print-sidebar-line">Rosary Sun — 8:30am</div>
+          <div class="print-sidebar-line">Adoration Thu — 7:00am</div>
+        </div>
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Office Hours</div>
+          <div class="print-sidebar-line">Mon–Thu — 8:00am–4:00pm</div>
+          <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
+          <div class="print-sidebar-line">Closed Wed 1–3pm</div>
+        </div>
+      </div>
+      <div class="print-main">
+        <div class="print-section-title">Mass Intentions</div>
+        <div id="print-intentions-body"></div>
+        <div class="print-section-title" style="margin-top:14px;">This Week</div>
+        <div id="print-events-body"></div>
+      </div>
+    </div>
+    <div class="print-qr-footer">
+      <div class="print-qr-text">Get the SaintRose app</div>
+      <div class="print-qr-codes">
+        <div class="print-qr-box">iOS QR</div>
+        <div class="print-qr-box">Android QR</div>
+      </div>
+    </div>
+  </div>
+  <div class="print-page print-page-back">
+    <div class="print-section-title">Around the Parish</div>
+    <div class="notices-grid" id="print-notices-body"></div>
+    <div class="print-section-title" style="margin-top:14px;">Parish Staff</div>
+    <div class="print-staff-grid">
+      <div class="print-staff-row"><span class="print-staff-name">Fr. Bing Colasito</span><span class="print-staff-role">Pastor</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Fr. Charles Ouemenga</span><span class="print-staff-role">Parochial Vicar</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Dr. Tom Henrich</span><span class="print-staff-role">Office Administrator</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Dcn. John Mezydlo</span><span class="print-staff-role">Deacon</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Cheyanne Bosn</span><span class="print-staff-role">Executive Assistant</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Matt Ficarra</span><span class="print-staff-role">Music &amp; Media</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Maria Gonzalez</span><span class="print-staff-role">Accounting</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Chris Bosn</span><span class="print-staff-role">Youth &amp; Young Adult</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker</span><span class="print-staff-role">Religious Ed</span></div>
+      <div class="print-staff-row"><span class="print-staff-name">Ray Lopez</span><span class="print-staff-role">Maintenance</span></div>
+    </div>
+    <div class="print-section-title">Our Premium Advertisers</div>
+    <div class="print-advertisers-grid">
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">North Valley Eye Care</div>
+        <div class="print-advertiser-tagline">Your family eye care professionals since 2007.</div>
+        <div class="print-advertiser-phone">623-582-3937</div>
+      </div>
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">Gavilan Peak Dental Care</div>
+        <div class="print-advertiser-tagline">Comprehensive, comfortable dental care for the whole family.</div>
+        <div class="print-advertiser-phone">623-303-4110</div>
+      </div>
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">RE/MAX Summit Properties</div>
+        <div class="print-advertiser-tagline">Your Anthem neighbors in real estate.</div>
+        <div class="print-advertiser-phone">602-677-4653</div>
+      </div>
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">Anthem Law</div>
+        <div class="print-advertiser-tagline">Where your attorney is your neighbor.</div>
+        <div class="print-advertiser-phone">623-551-9366</div>
+      </div>
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">Hansen Desert Hills Mortuary &amp; Cemetery</div>
+        <div class="print-advertiser-tagline">Serving families with dignity since 1949.</div>
+        <div class="print-advertiser-phone">480-991-5800</div>
+      </div>
+      <div class="print-advertiser-card">
+        <div class="print-advertiser-name">Safeguard Estate &amp; Financial</div>
+        <div class="print-advertiser-tagline">Protecting what matters most.</div>
+        <div class="print-advertiser-phone">602-675-9000</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
 const PROJECT_ID = 'saint-rose-anthem';
@@ -599,6 +836,8 @@ async function loadIntentions() {
 
     if (items.length === 0) {
       container.innerHTML = '<p class="empty-state">No intentions posted for this week.</p>';
+      const printElEmpty = document.getElementById('print-intentions-body');
+      if (printElEmpty) printElEmpty.innerHTML = container.innerHTML;
       return;
     }
 
@@ -623,6 +862,8 @@ async function loadIntentions() {
         `).join('')}
       </div>
     `).join('');
+    const printEl = document.getElementById('print-intentions-body');
+    if (printEl) printEl.innerHTML = container.innerHTML;
   } catch (e) {
     container.innerHTML = '<p class="empty-state">Unable to load intentions.</p>';
   }
@@ -662,6 +903,8 @@ async function loadEvents() {
 
     if (events.length === 0) {
       container.innerHTML = '<p class="empty-state">No events this week. Check the office for details.</p>';
+      const printElEmpty = document.getElementById('print-events-body');
+      if (printElEmpty) printElEmpty.innerHTML = container.innerHTML;
       return;
     }
 
@@ -683,6 +926,8 @@ async function loadEvents() {
         `).join('')}
       </div>
     `).join('');
+    const printEl = document.getElementById('print-events-body');
+    if (printEl) printEl.innerHTML = container.innerHTML;
   } catch(e) {
     container.innerHTML = '<p class="empty-state">Unable to load events.</p>';
   }
@@ -702,6 +947,8 @@ async function loadNotices() {
 
     if (docs.length === 0) {
       grid.innerHTML = '<p class="empty-state">No announcements this week.</p>';
+      const printGridEmpty = document.getElementById('print-notices-body');
+      if (printGridEmpty) printGridEmpty.innerHTML = grid.innerHTML;
       return;
     }
 
@@ -711,6 +958,8 @@ async function loadNotices() {
         <div class="notice-body">${escHtml(gf(doc, 'body'))}</div>
       </div>
     `).join('');
+    const printGrid = document.getElementById('print-notices-body');
+    if (printGrid) printGrid.innerHTML = grid.innerHTML;
   } catch(e) {
     grid.innerHTML = '<p class="empty-state">Unable to load parish announcements.</p>';
   }
@@ -722,6 +971,17 @@ function escHtml(s) {
 }
 
 // Init
+function setPrintDate() {
+  const el = document.getElementById('print-date');
+  if (!el) return;
+  const now = new Date();
+  const day = now.getDay();
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - day);
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  el.textContent = 'Week of ' + fmt(weekStart) + ' – ' + fmt(weekEnd) + ', ' + weekEnd.getFullYear();
+}
+setPrintDate();
 loadReflection();
 loadIntentions();
 loadEvents();
