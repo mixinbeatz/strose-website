@@ -636,7 +636,12 @@ async function loadEvents() {
     const data = await res.json();
     const docs = data.documents || [];
     const now = new Date();
-    const cutoff = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
+    // Sun-Sat calendar week, matching Mass Intentions -- this bulletin is prepared
+    // ahead of time and distributed at the Sat vigil / Sun Masses, so "This Week"
+    // means the current calendar week, not a rolling N-days-from-now window.
+    const day = now.getDay();
+    const weekStart = new Date(now); weekStart.setDate(now.getDate() - day); weekStart.setHours(0,0,0,0);
+    const weekEnd   = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6); weekEnd.setHours(23,59,59,999);
 
     const events = docs.map(doc => {
       const f = doc.fields || {};
@@ -652,7 +657,7 @@ async function loadEvents() {
     }).filter(e => {
       if (!e.date || isNaN(e.date)) return false;
       if (e.expiresAt && new Date(e.expiresAt) < now) return false;
-      return e.date >= now && e.date <= cutoff;
+      return e.date >= weekStart && e.date <= weekEnd;
     }).sort((a,b) => a.date - b.date);
 
     if (events.length === 0) {
