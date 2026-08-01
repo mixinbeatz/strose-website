@@ -482,17 +482,6 @@ nav {
     </div>
   </div>
 
-  <!-- OUR SPONSORS -->
-  <div class="section-full" style="margin-top:24px;" id="sponsors-section">
-    <div class="section-head">
-      <div class="section-eyebrow">Community Partners</div>
-      <div class="section-title">Our Sponsors</div>
-      <div class="section-rule"></div>
-    </div>
-    <div class="sponsors-grid" id="sponsors-grid">
-      <p class="loading-state">Loading sponsors...</p>
-    </div>
-  </div>
 
   <!-- PASTORAL STAFF -->
   <div class="pastoral-strip">
@@ -544,7 +533,7 @@ setMastheadDate();
 // Load weekly reflection
 async function loadReflection() {
   try {
-    const res = await fetch(`${BASE}/weeklyReflection?key=${API_KEY}&pageSize=5`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/weeklyReflection?key=${API_KEY}&pageSize=5`);
     const data = await res.json();
     const docs = (data.documents || []).sort((a, b) => {
       return (gf(b, 'updatedAt') || '').localeCompare(gf(a, 'updatedAt') || '');
@@ -590,7 +579,7 @@ async function loadReflection() {
 async function loadIntentions() {
   const container = document.getElementById('intentions-body');
   try {
-    const res = await fetch(`${BASE}/massIntentions?key=${API_KEY}&pageSize=100`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/massIntentions?key=${API_KEY}&pageSize=100`);
     const data = await res.json();
     const docs = data.documents || [];
     const now = new Date();
@@ -643,7 +632,7 @@ async function loadIntentions() {
 async function loadEvents() {
   const container = document.getElementById('events-body');
   try {
-    const res = await fetch(`${BASE}/events?key=${API_KEY}&pageSize=40`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&pageSize=40`);
     const data = await res.json();
     const docs = data.documents || [];
     const now = new Date();
@@ -698,7 +687,7 @@ async function loadEvents() {
 async function loadNotices() {
   const grid = document.getElementById('notices-grid');
   try {
-    const res = await fetch(`${BASE}/announcements?key=${API_KEY}&pageSize=20`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/announcements?key=${API_KEY}&pageSize=20`);
     const data = await res.json();
     const now = new Date();
     const docs = (data.documents || []).filter(doc => {
@@ -722,38 +711,6 @@ async function loadNotices() {
   }
 }
 
-// Load approved parish partners
-async function loadSponsors() {
-  const grid = document.getElementById('sponsors-grid');
-  try {
-    const res = await fetch(`${BASE}/partnerRequests?key=${API_KEY}&pageSize=50`);
-    const data = await res.json();
-    const docs = (data.documents || []).filter(doc => gf(doc, 'parishApproved') === true);
-
-    if (docs.length === 0) {
-      document.getElementById('sponsors-section').style.display = 'none';
-      return;
-    }
-
-    grid.innerHTML = docs.map(doc => {
-      const name  = gf(doc, 'businessName');
-      const desc  = gf(doc, 'description');
-      const phone = gf(doc, 'phone');
-      const web   = gf(doc, 'website');
-      return `
-        <div class="sponsor-card">
-          <div class="sponsor-name">${escHtml(name)}</div>
-          ${desc ? `<div class="sponsor-tagline">${escHtml(desc.substring(0,80))}</div>` : ''}
-          ${phone ? `<div class="sponsor-phone">${escHtml(phone)}</div>` : ''}
-          ${web ? `<div style="font-size:10px;color:var(--dusty-rose);margin-top:2px;">${escHtml(web.replace(/^https?:\/\//,''))}</div>` : ''}
-        </div>
-      `;
-    }).join('');
-  } catch(e) {
-    document.getElementById('sponsors-section').style.display = 'none';
-  }
-}
-
 function escHtml(s) {
   return String(s || '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -764,7 +721,6 @@ loadReflection();
 loadIntentions();
 loadEvents();
 loadNotices();
-loadSponsors();
 </script>
 </body>
 </html>
