@@ -889,7 +889,7 @@ async function loadIntentions() {
 async function loadEvents() {
   const container = document.getElementById('events-body');
   try {
-    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&pageSize=40`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&orderBy=startAt&pageSize=300`);
     const data = await res.json();
     const docs = data.documents || [];
     const now = new Date();
