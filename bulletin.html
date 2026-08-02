@@ -428,6 +428,37 @@ nav {
   padding-bottom: 3px;
   margin-bottom: 8px;
 }
+.print-reflection-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin-bottom: 2px;
+}
+.print-reflection-meta {
+  font-size: 9px;
+  color: var(--dusty-rose);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+.print-reflection-body {
+  column-count: 2;
+  column-gap: 20px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--soil);
+  text-align: justify;
+}
+.print-reflection-body p { margin-bottom: 6px; }
+.print-reflection-closing {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--linen);
+  font-style: italic;
+  font-size: 9px;
+  color: var(--burgundy);
+  text-align: center;
+}
 .print-main .intention-day, .print-main .event-day-group { margin-bottom: 8px; }
 .print-main .intention-day-label, .print-main .event-day-label { font-size: 8.5px; margin-bottom: 3px; padding-bottom: 2px; }
 .print-main .intention-row, .print-main .event-item-title { font-size: 9.5px; line-height: 1.4; }
@@ -675,16 +706,16 @@ nav {
         </div>
         <div class="print-sidebar-block">
           <div class="print-sidebar-title">Parish Staff</div>
-          <div class="print-sidebar-line">Fr. Bing Colasito — 623-465-9740</div>
-          <div class="print-sidebar-line">Fr. Charles Ouemenga — 623-307-8273</div>
-          <div class="print-sidebar-line">Dr. Tom Henrich — 623-607-8265</div>
-          <div class="print-sidebar-line">Dcn. John Mezydlo — 623-465-9740</div>
-          <div class="print-sidebar-line">Cheyanne Bosn — 623-307-8264</div>
-          <div class="print-sidebar-line">Matt Ficarra — 623-307-8266</div>
-          <div class="print-sidebar-line">Maria Gonzalez — 623-607-8270</div>
-          <div class="print-sidebar-line">Chris Bosn — 623-307-8269</div>
-          <div class="print-sidebar-line">Renee Hunsaker — 623-307-8268</div>
-          <div class="print-sidebar-line">Ray Lopez — 623-465-9740</div>
+          <div class="print-sidebar-line">Fr. Bing Colasito, Pastor — 623-465-9740</div>
+          <div class="print-sidebar-line">Fr. Charles Ouemenga, Parochial Vicar — 623-307-8273</div>
+          <div class="print-sidebar-line">Dr. Tom Henrich, Office Administrator — 623-607-8265</div>
+          <div class="print-sidebar-line">Dcn. John Mezydlo, Deacon — 623-465-9740</div>
+          <div class="print-sidebar-line">Cheyanne Bosn, Executive Assistant — 623-307-8264</div>
+          <div class="print-sidebar-line">Matt Ficarra, Music &amp; Media — 623-307-8266</div>
+          <div class="print-sidebar-line">Maria Gonzalez, Accounting — 623-607-8270</div>
+          <div class="print-sidebar-line">Chris Bosn, Youth &amp; Young Adult — 623-307-8269</div>
+          <div class="print-sidebar-line">Renee Hunsaker, Religious Ed — 623-307-8268</div>
+          <div class="print-sidebar-line">Ray Lopez, Maintenance — 623-465-9740</div>
         </div>
       </div>
       <div class="print-main">
@@ -703,7 +734,12 @@ nav {
     </div>
   </div>
   <div class="print-page print-page-back">
-    <div class="print-section-title">Around the Parish</div>
+    <div class="print-section-title">Weekly Reflection</div>
+    <div class="print-reflection-title" id="print-reflection-title"></div>
+    <div class="print-reflection-meta" id="print-reflection-meta"></div>
+    <div class="print-reflection-body" id="print-reflection-body"></div>
+    <div class="print-reflection-closing" id="print-reflection-closing" style="display:none;"></div>
+    <div class="print-section-title" style="margin-top:14px;">Around the Parish</div>
     <div class="notices-grid" id="print-notices-body"></div>
     <div class="print-section-title" style="margin-top:14px;">Our Premium Advertisers</div>
     <div class="print-advertisers-grid">
@@ -795,7 +831,12 @@ async function loadReflection() {
       return (gf(b, 'updatedAt') || '').localeCompare(gf(a, 'updatedAt') || '');
     });
     const r = docs[0];
-    if (!r) { document.getElementById('reflection-title').textContent = 'No reflection posted yet.'; return; }
+    if (!r) {
+      document.getElementById('reflection-title').textContent = 'No reflection posted yet.';
+      const printTitleEmpty = document.getElementById('print-reflection-title');
+      if (printTitleEmpty) printTitleEmpty.textContent = 'No reflection posted yet.';
+      return;
+    }
 
     const heading = gf(r, 'heading') || gf(r, 'subtitle') || gf(r, 'fullTitle') || '';
     const author  = gf(r, 'author') || 'Fr. Bing Colasito';
@@ -806,6 +847,11 @@ async function loadReflection() {
     document.getElementById('sunday-name').textContent = liturgical || heading;
     document.getElementById('reflection-meta').textContent =
       `${author}${liturgical ? ' · ' + liturgical : ''}`;
+
+    const printTitle = document.getElementById('print-reflection-title');
+    const printMeta = document.getElementById('print-reflection-meta');
+    if (printTitle) printTitle.textContent = heading;
+    if (printMeta) printMeta.textContent = `${author}${liturgical ? ' · ' + liturgical : ''}`;
 
     // Parse body into paragraphs, extract closing line if it starts with "May we"
     const paras = body.split(/\n+/).filter(p => p.trim());
@@ -822,12 +868,22 @@ async function loadReflection() {
     document.getElementById('reflection-body').innerHTML =
       bodyParas.map(p => `<p>${escHtml(p)}</p>`).join('');
 
+    const printBody = document.getElementById('print-reflection-body');
+    if (printBody) printBody.innerHTML = document.getElementById('reflection-body').innerHTML;
+
     if (closingLine) {
       document.getElementById('reflection-closing').textContent = closingLine;
       document.getElementById('reflection-closing').style.display = '';
+      const printClosing = document.getElementById('print-reflection-closing');
+      if (printClosing) {
+        printClosing.textContent = closingLine;
+        printClosing.style.display = '';
+      }
     }
   } catch (e) {
     document.getElementById('reflection-body').innerHTML = '<p class="loading-state">Unable to load this week\'s reflection.</p>';
+    const printBodyErr = document.getElementById('print-reflection-body');
+    if (printBodyErr) printBodyErr.innerHTML = '<p class="loading-state">Unable to load this week\'s reflection.</p>';
   }
 }
 
