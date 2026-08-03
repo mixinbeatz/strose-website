@@ -775,24 +775,24 @@
     <p class="section-body">Dedicated on May 13, 2026, our new church building is the culmination of years of prayer, sacrifice, and generosity. Bishop Dolan blessed this sacred space as our permanent home — a place where generations will come to worship, celebrate the sacraments, and encounter the living God.</p>
   </div>
   <div class="church-gallery">
-    <div class="gallery-item" onclick="openLightbox('images/hero-exterior.jpeg')" style="cursor:pointer">
-      <img src="images/hero-exterior.jpeg" alt="Saint Rose Church Exterior" />
+    <div class="gallery-item" id="gallery-wrap-1" onclick="openLightbox(document.getElementById('gallery-img-1').src)" style="cursor:pointer">
+      <img id="gallery-img-1" src="images/hero-exterior.jpeg" alt="Saint Rose Church Exterior" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('images/retablo-full.jpeg')" style="cursor:pointer">
-      <img src="images/retablo-full.jpeg" alt="Church Retablo" />
+    <div class="gallery-item" id="gallery-wrap-2" onclick="openLightbox(document.getElementById('gallery-img-2').src)" style="cursor:pointer">
+      <img id="gallery-img-2" src="images/retablo-full.jpeg" alt="Church Retablo" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('images/crucifix-detail.jpeg')" style="cursor:pointer">
-      <img src="images/crucifix-detail.jpeg" alt="Church Crucifix" />
+    <div class="gallery-item" id="gallery-wrap-3" onclick="openLightbox(document.getElementById('gallery-img-3').src)" style="cursor:pointer">
+      <img id="gallery-img-3" src="images/crucifix-detail.jpeg" alt="Church Crucifix" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('images/crucifix.jpg')" style="cursor:pointer">
-      <img src="images/crucifix.jpg" alt="Church Crucifix" style="width:100%;height:100%;object-fit:cover;" />
+    <div class="gallery-item" id="gallery-wrap-4" onclick="openLightbox(document.getElementById('gallery-img-4').src)" style="cursor:pointer">
+      <img id="gallery-img-4" src="images/crucifix.jpg" alt="Church Crucifix" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('images/Roseicon.jpg')" style="cursor:pointer">
-      <img src="images/Roseicon.jpg" alt="Church Retablo Detail" style="width:100%;height:100%;object-fit:cover;" />
+    <div class="gallery-item" id="gallery-wrap-5" onclick="openLightbox(document.getElementById('gallery-img-5').src)" style="cursor:pointer">
+      <img id="gallery-img-5" src="images/Roseicon.jpg" alt="Church Retablo Detail" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
   </div>
@@ -1057,6 +1057,26 @@
   }
 
   loadEvents();
+
+  // Homepage gallery — portal-managed photo overrides. Slots left empty in
+  // Firestore keep using the default photo already in the HTML above.
+  async function loadGalleryOverrides() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/gallery?key=${API_KEY}`);
+      const data = await res.json();
+      if (!data.fields) return;
+      for (let i = 1; i <= 5; i++) {
+        const url = data.fields['slot' + i + 'Url']?.stringValue;
+        const alt = data.fields['slot' + i + 'Alt']?.stringValue;
+        if (url) {
+          const img = document.getElementById('gallery-img-' + i);
+          if (img) img.src = url;
+          if (alt && img) img.alt = alt;
+        }
+      }
+    } catch(e) { /* keep default photos */ }
+  }
+  loadGalleryOverrides();
 
   // Week navigation state
   var intentionWeekOffset = 0;
