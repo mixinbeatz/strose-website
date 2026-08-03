@@ -770,9 +770,9 @@
 <!-- NEW CHURCH -->
 <section class="new-church" id="new-church">
   <div class="reveal">
-    <span class="section-eyebrow" style="color:var(--dusty-rose);">OUR PERMANENT HOME</span>
-    <h2 class="section-title">The New Church of<br>Saint Rose Philippine Duchesne</h2>
-    <p class="section-body">Dedicated on May 13, 2026, our new church building is the culmination of years of prayer, sacrifice, and generosity. Bishop Dolan blessed this sacred space as our permanent home — a place where generations will come to worship, celebrate the sacraments, and encounter the living God.</p>
+    <span class="section-eyebrow" id="gallery-text-eyebrow" style="color:var(--dusty-rose);">OUR PERMANENT HOME</span>
+    <h2 class="section-title" id="gallery-text-title">The New Church of<br>Saint Rose Philippine Duchesne</h2>
+    <p class="section-body" id="gallery-text-body">Dedicated on May 13, 2026, our new church building is the culmination of years of prayer, sacrifice, and generosity. Bishop Dolan blessed this sacred space as our permanent home — a place where generations will come to worship, celebrate the sacraments, and encounter the living God.</p>
   </div>
   <div class="church-gallery">
     <div class="gallery-item" id="gallery-wrap-1" onclick="openLightbox(document.getElementById('gallery-img-1').src)" style="cursor:pointer">
@@ -1074,7 +1074,13 @@
           if (alt && img) img.alt = alt;
         }
       }
-    } catch(e) { /* keep default photos */ }
+      const eyebrow = data.fields.textEyebrow?.stringValue;
+      const title = data.fields.textTitle?.stringValue;
+      const body = data.fields.textBody?.stringValue;
+      if (eyebrow) document.getElementById('gallery-text-eyebrow').textContent = eyebrow;
+      if (title) document.getElementById('gallery-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (body) document.getElementById('gallery-text-body').textContent = body;
+    } catch(e) { /* keep default photos and text */ }
   }
   loadGalleryOverrides();
 
