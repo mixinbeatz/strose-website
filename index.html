@@ -1113,6 +1113,31 @@
     } catch(e) { /* keep default photos and text */ }
   }
   loadGalleryOverrides();
+  // Around the Parish — same override pattern as the gallery above, separate
+  // Firestore doc, own set of element IDs.
+  async function loadAroundParishOverrides() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/aroundParish?key=${API_KEY}`);
+      const data = await res.json();
+      if (!data.fields) return;
+      for (let i = 1; i <= 5; i++) {
+        const url = data.fields['slot' + i + 'Url']?.stringValue;
+        const alt = data.fields['slot' + i + 'Alt']?.stringValue;
+        if (url) {
+          const img = document.getElementById('around-parish-img-' + i);
+          if (img) img.src = url;
+          if (alt && img) img.alt = alt;
+        }
+      }
+      const eyebrow = data.fields.textEyebrow?.stringValue;
+      const title = data.fields.textTitle?.stringValue;
+      const body = data.fields.textBody?.stringValue;
+      if (eyebrow) document.getElementById('around-parish-text-eyebrow').textContent = eyebrow;
+      if (title) document.getElementById('around-parish-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (body) document.getElementById('around-parish-text-body').textContent = body;
+    } catch(e) { /* keep default photos and text */ }
+  }
+  loadAroundParishOverrides();
 
   // Week navigation state
   var intentionWeekOffset = 0;
