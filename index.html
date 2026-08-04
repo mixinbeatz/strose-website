@@ -911,7 +911,7 @@
   </div>
 </section>
 <!-- PARISH DEVELOPMENT -->
-<section class="dedication" id="parish-development">
+<section class="dedication" id="parish-development" style="display:none;">
   <div class="reveal">
     <span class="section-eyebrow" id="parish-dev-text-eyebrow">GIVING OPPORTUNITIES</span>
     <h2 class="section-title" id="parish-dev-text-title">Parish Development</h2>
@@ -1233,6 +1233,7 @@
       if (body) document.getElementById('parish-dev-text-body').textContent = body;
 
       if (status === 'funded') {
+        if (section) section.style.display = '';
         document.getElementById('parish-dev-active-content').style.display = 'none';
         document.getElementById('parish-dev-funded-content').style.display = 'block';
         const fTitle = data.fields.fundedTitle?.stringValue;
@@ -1245,6 +1246,7 @@
       let photos = [];
       try { photos = JSON.parse(data.fields.photosJson?.stringValue || '[]'); } catch(e) { photos = []; }
       if (photos.length === 0) { if (section) section.style.display = 'none'; return; }
+      if (section) section.style.display = '';
 
       const mainImg = document.getElementById('parish-dev-main-img');
       mainImg.src = photos[0].url;
