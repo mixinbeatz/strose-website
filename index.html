@@ -754,8 +754,8 @@
   <div class="hero-bg" id="heroBg"></div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <h1 class="hero-title">A Welcoming and<br><em>Joyful Community</em></h1>
-    <p class="hero-tagline">Rooted in faith, growing in love, and bearing fruit for generations to come.</p>
+    <h1 class="hero-title" id="hero-text-title">A Welcoming and<br><em>Joyful Community</em></h1>
+    <p class="hero-tagline" id="hero-text-tagline">Rooted in faith, growing in love, and bearing fruit for generations to come.</p>
     <div class="hero-actions">
       <a href="#mass-times" class="btn-primary">Mass Times</a>
       <a href="#new-church" class="btn-outline">Our New Church</a>
@@ -766,13 +766,15 @@
 <!-- WELCOME -->
 <div class="welcome">
   <div class="welcome-content reveal">
-    <span class="section-eyebrow">WELCOME</span>
-    <h2 class="section-title">A Home for<br>Every Soul</h2>
-    <p class="section-body">Saint Rose Philippine Duchesne Parish is a vibrant Catholic community in Anthem, Arizona. Named after the first American to be canonized west of the Mississippi, our parish carries forward her legacy of faith, perseverance, and devotion to the Sacred Heart.</p>
-    <p class="section-body" style="margin-top:16px;">Whether you are a lifelong Catholic, exploring the faith, or returning home — you are welcome here.</p>
+    <span class="section-eyebrow" id="welcome-text-eyebrow">WELCOME</span>
+    <h2 class="section-title" id="welcome-text-title">A Home for<br>Every Soul</h2>
+    <div id="welcome-text-body">
+      <p class="section-body">Saint Rose Philippine Duchesne Parish is a vibrant Catholic community in Anthem, Arizona. Named after the first American to be canonized west of the Mississippi, our parish carries forward her legacy of faith, perseverance, and devotion to the Sacred Heart.</p>
+      <p class="section-body" style="margin-top:16px;">Whether you are a lifelong Catholic, exploring the faith, or returning home — you are welcome here.</p>
+    </div>
   </div>
   <div class="welcome-img">
-    <img src="images/retablo-full.jpeg" alt="Saint Rose Parish Retablo" />
+    <img id="welcome-img-photo" src="images/retablo-full.jpeg" alt="Saint Rose Parish Retablo" />
     <div class="welcome-img-overlay"></div>
   </div>
 </div>
@@ -1264,6 +1266,49 @@
     } catch(e) { if (section) section.style.display = 'none'; }
   }
   loadParishDevOverrides();
+  // Hero section overrides
+  async function loadHeroOverrides() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/hero?key=${API_KEY}`);
+      const data = await res.json();
+      if (!data.fields) return;
+      const title = data.fields.title?.stringValue;
+      const tagline = data.fields.tagline?.stringValue;
+      const imageUrl = data.fields.imageUrl?.stringValue;
+      if (title) document.getElementById('hero-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (tagline) document.getElementById('hero-text-tagline').textContent = tagline;
+      if (imageUrl) {
+        const heroBgEl = document.getElementById('heroBg');
+        if (heroBgEl) {
+          heroBgEl.style.backgroundImage = "url('" + imageUrl + "')";
+          heroBgEl.classList.add('loaded');
+        }
+      }
+    } catch(e) { /* keep default hero */ }
+  }
+  loadHeroOverrides();
+  // Welcome section overrides
+  async function loadWelcomeSectionOverrides() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/homeWelcome?key=${API_KEY}`);
+      const data = await res.json();
+      if (!data.fields) return;
+      const eyebrow = data.fields.textEyebrow?.stringValue;
+      const title = data.fields.textTitle?.stringValue;
+      const body = data.fields.textBody?.stringValue;
+      const imageUrl = data.fields.imageUrl?.stringValue;
+      if (eyebrow) document.getElementById('welcome-text-eyebrow').textContent = eyebrow;
+      if (title) document.getElementById('welcome-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (body) {
+        const paras = body.split(/\n\n+/).filter(p => p.trim());
+        document.getElementById('welcome-text-body').innerHTML = paras.map((p, i) =>
+          `<p class="section-body"${i > 0 ? ' style="margin-top:16px;"' : ''}>${p.replace(/</g,'&lt;')}</p>`
+        ).join('');
+      }
+      if (imageUrl) document.getElementById('welcome-img-photo').src = imageUrl;
+    } catch(e) { /* keep default welcome */ }
+  }
+  loadWelcomeSectionOverrides();
 
   // Week navigation state
   var intentionWeekOffset = 0;
