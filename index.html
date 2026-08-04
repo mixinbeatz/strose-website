@@ -407,6 +407,56 @@
   }
   .dedication-gallery .gallery-item:first-child { grid-row: span 2; }
   .dedication-gallery .gallery-item { border-radius: 4px; cursor: pointer; }
+  /* ── PARISH DEVELOPMENT (fluid photo count, full-frame) ── */
+  .parish-dev-main {
+    width: 100%;
+    max-height: 480px;
+    aspect-ratio: 16/10;
+    background: var(--linen);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-top: 40px;
+    cursor: pointer;
+  }
+  .parish-dev-main img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .parish-dev-thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .parish-dev-thumb {
+    width: 84px;
+    height: 84px;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--linen);
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .parish-dev-thumb.active { border-color: var(--gold); }
+  .parish-dev-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .parish-dev-funded {
+    background: var(--white);
+    border: 1px solid var(--linen);
+    border-radius: 8px;
+    padding: 36px;
+    margin-top: 40px;
+    text-align: center;
+  }
+  .parish-dev-funded-title { font-family: 'Cinzel', serif; font-size: 20px; color: var(--burgundy); margin-bottom: 10px; }
+  .parish-dev-funded-body { font-size: 15px; color: var(--soil); opacity: 0.85; line-height: 1.7; }
   #lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; cursor:pointer; }
   #lightbox.active { display:flex; }
   #lightbox img { max-width:90%; max-height:90vh; border-radius:8px; object-fit:contain; }
@@ -860,6 +910,24 @@
     </div>
   </div>
 </section>
+<!-- PARISH DEVELOPMENT -->
+<section class="dedication" id="parish-development">
+  <div class="reveal">
+    <span class="section-eyebrow" id="parish-dev-text-eyebrow">GIVING OPPORTUNITIES</span>
+    <h2 class="section-title" id="parish-dev-text-title">Parish Development</h2>
+    <p class="section-body" id="parish-dev-text-body">Help us grow our parish community — every gift makes a lasting difference.</p>
+  </div>
+  <div id="parish-dev-active-content">
+    <div class="parish-dev-main" id="parish-dev-main-wrap" onclick="openLightbox(document.getElementById('parish-dev-main-img').src)">
+      <img id="parish-dev-main-img" src="" alt="" />
+    </div>
+    <div class="parish-dev-thumbs" id="parish-dev-thumbs"></div>
+  </div>
+  <div id="parish-dev-funded-content" class="parish-dev-funded" style="display:none;">
+    <div class="parish-dev-funded-title" id="parish-dev-funded-title">Funded! Thank You.</div>
+    <div class="parish-dev-funded-body" id="parish-dev-funded-body">This project has been fully funded thanks to the generosity of our parish family. Contact Paul Novak for future giving opportunities.</div>
+  </div>
+</section>
 <!-- QUICK LINKS -->
 <div class="quick-links">
   <a href="https://parishesonline.com/publication-page/st-rose-philippine-duchesne-roman-catholic-parish" class="quick-link-item">
@@ -1138,6 +1206,62 @@
     } catch(e) { /* keep default photos and text */ }
   }
   loadAroundParishOverrides();
+  // Parish Development — fluid photo count (array, not fixed slots), plus a
+  // status field: active (normal gallery), funded (thank-you message instead
+  // of the gallery), or hidden (section doesn't render at all).
+  function selectParishDevPhoto(url, alt) {
+    const img = document.getElementById('parish-dev-main-img');
+    if (img) { img.src = url; img.alt = alt || ''; }
+    document.querySelectorAll('.parish-dev-thumb').forEach(t => t.classList.remove('active'));
+    const match = document.querySelector('.parish-dev-thumb[data-url="' + CSS.escape(url) + '"]');
+    if (match) match.classList.add('active');
+  }
+  async function loadParishDevOverrides() {
+    const section = document.getElementById('parish-development');
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/parishDevelopment?key=${API_KEY}`);
+      const data = await res.json();
+      if (!data.fields) { if (section) section.style.display = 'none'; return; }
+      const status = data.fields.status?.stringValue || 'active';
+      if (status === 'hidden') { if (section) section.style.display = 'none'; return; }
+
+      const eyebrow = data.fields.textEyebrow?.stringValue;
+      const title = data.fields.textTitle?.stringValue;
+      const body = data.fields.textBody?.stringValue;
+      if (eyebrow) document.getElementById('parish-dev-text-eyebrow').textContent = eyebrow;
+      if (title) document.getElementById('parish-dev-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (body) document.getElementById('parish-dev-text-body').textContent = body;
+
+      if (status === 'funded') {
+        document.getElementById('parish-dev-active-content').style.display = 'none';
+        document.getElementById('parish-dev-funded-content').style.display = 'block';
+        const fTitle = data.fields.fundedTitle?.stringValue;
+        const fBody = data.fields.fundedBody?.stringValue;
+        if (fTitle) document.getElementById('parish-dev-funded-title').textContent = fTitle;
+        if (fBody) document.getElementById('parish-dev-funded-body').textContent = fBody;
+        return;
+      }
+
+      let photos = [];
+      try { photos = JSON.parse(data.fields.photosJson?.stringValue || '[]'); } catch(e) { photos = []; }
+      if (photos.length === 0) { if (section) section.style.display = 'none'; return; }
+
+      const mainImg = document.getElementById('parish-dev-main-img');
+      mainImg.src = photos[0].url;
+      mainImg.alt = photos[0].alt || '';
+      const thumbsEl = document.getElementById('parish-dev-thumbs');
+      if (photos.length > 1) {
+        thumbsEl.innerHTML = photos.map((p, i) => `
+          <div class="parish-dev-thumb${i===0?' active':''}" data-url="${p.url}" onclick="selectParishDevPhoto('${p.url}', '${(p.alt||'').replace(/'/g,"\\'")}')">
+            <img src="${p.url}" alt="" />
+          </div>
+        `).join('');
+      } else {
+        thumbsEl.innerHTML = '';
+      }
+    } catch(e) { if (section) section.style.display = 'none'; }
+  }
+  loadParishDevOverrides();
 
   // Week navigation state
   var intentionWeekOffset = 0;
