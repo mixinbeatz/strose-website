@@ -67,7 +67,7 @@
     position: relative;
     height: 100vh;
     min-height: 700px;
-    display: flex; align-items: flex-end;
+    display: flex; align-items: flex-start;
     overflow: hidden;
   }
   .hero-bg {
@@ -91,7 +91,7 @@
   }
   .hero-content {
     position: relative; z-index: 2;
-    padding: 60px 60px 60px;
+    padding: 28px 32px;
     max-width: 900px;
   }
   .hero-eyebrow {
@@ -107,7 +107,7 @@
   .hero-title {
     font-family: 'Cinzel', serif;
     color: var(--linen);
-    font-size: clamp(36px, 5vw, 64px);
+    font-size: clamp(27px, 3.75vw, 48px);
     line-height: 1.15;
     font-weight: 400;
     margin-bottom: 8px;
@@ -127,10 +127,10 @@
   }
   .hero-tagline {
     color: rgba(232,221,208,0.85);
-    font-size: 18px;
-    line-height: 1.7;
+    font-size: 14px;
+    line-height: 1.6;
     max-width: 540px;
-    margin-bottom: 40px;
+    margin-bottom: 0;
     font-weight: 300;
     opacity: 0;
     animation: fadeUp 0.8s ease 0.9s forwards;
@@ -756,10 +756,6 @@
   <div class="hero-content">
     <h1 class="hero-title" id="hero-text-title">A Welcoming and<br><em>Joyful Community</em></h1>
     <p class="hero-tagline" id="hero-text-tagline">Rooted in faith, growing in love, and bearing fruit for generations to come.</p>
-    <div class="hero-actions">
-      <a href="#mass-times" class="btn-primary">Mass Times</a>
-      <a href="#new-church" class="btn-outline">Our New Church</a>
-    </div>
   </div>
 </section>
 
