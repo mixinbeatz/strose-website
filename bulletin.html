@@ -896,6 +896,17 @@ async function loadIntentions() {
     const docs = data.documents || [];
     const { weekStart, weekEnd } = getBulletinWeekWindow();
 
+    function timeToMinutes(t) {
+      const m = (t || '').match(/(\d{1,2}):(\d{2})\s*([AP]M)/i);
+      if (!m) return 0;
+      let h = parseInt(m[1], 10);
+      const min = parseInt(m[2], 10);
+      const ap = m[3].toUpperCase();
+      if (ap === 'PM' && h !== 12) h += 12;
+      if (ap === 'AM' && h === 12) h = 0;
+      return h * 60 + min;
+    }
+
     const items = docs.map(doc => ({
       date:      gf(doc, 'date'),
       mass:      gf(doc, 'mass') || gf(doc, 'massTime') || '',
@@ -904,7 +915,7 @@ async function loadIntentions() {
       if (!i.date) return false;
       const d = new Date(i.date + 'T12:00:00');
       return d >= weekStart && d <= weekEnd;
-    }).sort((a,b) => a.date.localeCompare(b.date));
+    }).sort((a,b) => a.date.localeCompare(b.date) || timeToMinutes(a.mass) - timeToMinutes(b.mass));
 
     if (items.length === 0) {
       container.innerHTML = '<p class="empty-state">No intentions posted for this week.</p>';
