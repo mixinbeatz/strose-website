@@ -1345,7 +1345,19 @@
           const d = new Date(i.date + 'T12:00:00');
           return d >= start && d <= end;
         })
-        .sort((a,b) => a.date.localeCompare(b.date));
+        .sort((a,b) => {
+          const timeToMinutes = (t) => {
+            const m = (t || '').match(/(\d{1,2}):(\d{2})\s*([AP]M)/i);
+            if (!m) return 0;
+            let h = parseInt(m[1], 10);
+            const min = parseInt(m[2], 10);
+            const ap = m[3].toUpperCase();
+            if (ap === 'PM' && h !== 12) h += 12;
+            if (ap === 'AM' && h === 12) h = 0;
+            return h * 60 + min;
+          };
+          return a.date.localeCompare(b.date) || timeToMinutes(a.mass) - timeToMinutes(b.mass);
+        });
 
       const weekLabel = intentionWeekOffset === 0 ? 'This Week' : intentionWeekOffset === 1 ? 'Next Week' : intentionWeekOffset === -1 ? 'Last Week' : '';
       const nav = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">' +
