@@ -230,6 +230,19 @@
   }
 
   /* ── WELCOME ── */
+  .hero-welcome-divider {
+    background: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    gap: 18px;
+    padding: 22px 24px;
+  }
+  .hero-welcome-divider .divider-line {
+    height: 1px; width: 100px; max-width: 20vw;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .hero-welcome-divider .divider-ornament {
+    color: var(--gold); font-size: 13px; line-height: 1;
+  }
   .welcome {
     background: var(--white);
     display: grid;
@@ -765,6 +778,12 @@
     <p class="hero-tagline" id="hero-text-tagline">Rooted in faith, growing in love, and bearing fruit for generations to come.</p>
   </div>
 </section>
+
+<div class="hero-welcome-divider">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
 
 <!-- WELCOME -->
 <div class="welcome">
