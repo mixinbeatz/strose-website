@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parish Calendar | Saint Rose Philippine Duchesne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
+
+  /* ── NAV (matches index.html) ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(92, 26, 46, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .nav-brand { font-family: 'Cinzel', serif; color: var(--gold); font-size: 13px; letter-spacing: 2px; }
+  .nav-brand span { display: block; font-family: 'Faustina', serif; color: var(--linen); font-size: 10px; letter-spacing: 1.5px; opacity: 0.6; margin-top: 2px; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a { color: var(--linen); text-decoration: none; font-size: 13px; letter-spacing: 0.5px; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a.active { color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+    padding: 128px 24px 44px;
+    text-align: center;
+  }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--linen); line-height: 1.2; }
+  .hero-back { position: absolute; top: 24px; left: 24px; color: var(--linen); opacity: 0.7; text-decoration: none; font-size: 13px; }
+
+  /* ── MONTH NAV ── */
+  .month-nav {
+    max-width: 1000px; margin: -24px auto 0; padding: 0 24px;
+    position: relative; z-index: 5;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--white); border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(92,26,46,0.15);
+    padding: 18px 28px;
+  }
+  .month-nav button {
+    background: none; border: none; color: var(--burgundy);
+    font-size: 20px; cursor: pointer; padding: 4px 12px; border-radius: 8px;
+  }
+  .month-nav button:hover { background: var(--sand); }
+  .month-nav-label { font-family: 'Cinzel', serif; font-size: 18px; color: var(--burgundy); letter-spacing: 1px; }
+
+  /* ── CALENDAR GRID ── */
+  .calendar-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 24px 80px; }
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 6px; margin-top: 20px;
+  }
+  .cal-weekday {
+    text-align: center; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--dusty-rose); padding-bottom: 8px; font-weight: 600;
+  }
+  .cal-day {
+    background: var(--white); border-radius: 10px; min-height: 110px;
+    padding: 8px; border: 1px solid var(--linen);
+  }
+  .cal-day.empty { background: transparent; border: none; }
+  .cal-day.today { border: 2px solid var(--gold); }
+  .cal-day-num { font-family: 'Cinzel', serif; font-size: 13px; color: var(--soil); opacity: 0.7; margin-bottom: 4px; }
+  .cal-day.today .cal-day-num { color: var(--burgundy); font-weight: 700; opacity: 1; }
+  .cal-event {
+    font-size: 11px; line-height: 1.35; color: var(--burgundy);
+    background: rgba(201,168,76,0.15); border-left: 2px solid var(--gold);
+    padding: 2px 5px; border-radius: 3px; margin-bottom: 3px;
+  }
+  .cal-event-time { color: var(--dusty-rose); font-weight: 600; margin-right: 3px; }
+  .cal-empty-state { text-align: center; padding: 40px; color: var(--soil); opacity: 0.5; font-style: italic; }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 20px 32px; }
+    .cal-day { min-height: 72px; font-size: 10px; }
+    .cal-weekday { font-size: 9px; }
+    .calendar-grid { gap: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    SAINT ROSE PHILIPPINE DUCHESNE
+    <span>ANTHEM · ARIZONA</span>
+  </div>
+  <div class="nav-links">
+    <a href="index.html#mass-times">Mass Times</a>
+    <a href="calendar.html" class="active">Calendar</a>
+    <a href="index.html#location">Visit</a>
+    <a href="bulletin.html">Bulletin</a>
+    <a href="advertisers.html">Directory</a>
+    <a href="index.html#app" class="nav-cta">Get the App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" style="position:relative;">
+  <a href="index.html" class="hero-back">← Back to Home</a>
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Parish Calendar</h1>
+</div>
+
+<!-- MONTH NAV -->
+<div class="month-nav">
+  <button onclick="changeMonth(-1)" aria-label="Previous month">&#8592;</button>
+  <div class="month-nav-label" id="month-label">Loading...</div>
+  <button onclick="changeMonth(1)" aria-label="Next month">&#8594;</button>
+</div>
+
+<div class="calendar-wrap">
+  <div class="calendar-grid" id="calendar-grid">
+    <div class="cal-empty-state">Loading calendar...</div>
+  </div>
+</div>
+
+<script>
+const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+const PROJECT_ID = 'saint-rose-anthem';
+const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+
+function gf(doc, key) {
+  const f = doc.fields?.[key];
+  if (!f) return '';
+  if (f.booleanValue !== undefined) return f.booleanValue;
+  return f.stringValue ?? f.integerValue ?? '';
+}
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function dateKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+let viewDate = new Date();
+viewDate.setDate(1);
+let allEvents = [];
+
+function changeMonth(delta) {
+  viewDate.setMonth(viewDate.getMonth() + delta);
+  renderCalendar();
+}
+
+async function loadAllEvents() {
+  try {
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&orderBy=startAt&pageSize=300`);
+    const data = await res.json();
+    const docs = data.documents || [];
+    const now = new Date();
+    allEvents = docs.map(doc => {
+      const f = doc.fields || {};
+      const startAt = f.startAt?.stringValue || '';
+      const dateStr = f.date?.stringValue || '';
+      const expiresAt = f.expiresAt?.stringValue || '';
+      let date = startAt ? new Date(startAt) : null;
+      if (!date || isNaN(date)) {
+        const parsed = new Date(dateStr + ' ' + new Date().getFullYear());
+        if (!isNaN(parsed)) date = parsed;
+      }
+      return { title: gf(doc,'title'), time: gf(doc,'time'), date, expiresAt };
+    }).filter(e => {
+      if (!e.date || isNaN(e.date)) return false;
+      if (e.expiresAt && new Date(e.expiresAt) < now) return false;
+      return true;
+    });
+  } catch(e) {
+    allEvents = [];
+  }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('calendar-grid');
+  const label = document.getElementById('month-label');
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+
+  label.textContent = viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  const firstDay = new Date(year, month, 1);
+  const startOffset = firstDay.getDay(); // 0=Sun
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayKey = dateKey(new Date());
+
+  const eventsByDay = {};
+  allEvents.forEach(e => {
+    if (e.date.getFullYear() === year && e.date.getMonth() === month) {
+      const key = dateKey(e.date);
+      if (!eventsByDay[key]) eventsByDay[key] = [];
+      eventsByDay[key].push(e);
+    }
+  });
+  Object.values(eventsByDay).forEach(list => list.sort((a,b) => a.date - b.date));
+
+  const weekdayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d =>
+    `<div class="cal-weekday">${d}</div>`
+  ).join('');
+
+  let cells = '';
+  for (let i = 0; i < startOffset; i++) {
+    cells += '<div class="cal-day empty"></div>';
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    const isToday = key === todayKey;
+    const dayEvents = eventsByDay[key] || [];
+    const eventsHtml = dayEvents.map(e => `
+      <div class="cal-event">${e.time ? '<span class="cal-event-time">'+escHtml(e.time)+'</span>' : ''}${escHtml(e.title)}</div>
+    `).join('');
+    cells += `<div class="cal-day${isToday ? ' today' : ''}"><div class="cal-day-num">${day}</div>${eventsHtml}</div>`;
+  }
+
+  grid.innerHTML = weekdayLabels + cells;
+}
+
+loadAllEvents();
+</script>
+
+</body>
+</html>
