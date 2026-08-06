@@ -20,7 +20,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
 
   /* ── NAV ── */
@@ -231,7 +231,7 @@
 
   /* ── WELCOME ── */
   .hero-welcome-divider {
-    background: var(--sand);
+    background: var(--linen);
     display: flex; align-items: center; justify-content: center;
     gap: 18px;
     padding: 22px 24px;
@@ -244,7 +244,7 @@
     color: var(--gold); font-size: 13px; line-height: 1;
   }
   .welcome {
-    background: var(--sand);
+    background: var(--linen);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
@@ -561,6 +561,15 @@
     transition: all 0.2s;
   }
   .app-store-btn:hover { background: var(--white); transform: translateY(-2px); }
+  .app-qr-row { display: flex; gap: 20px; margin-top: 4px; }
+  .app-qr-box { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .app-qr-placeholder {
+    width: 110px; height: 110px;
+    border: 1.5px dashed rgba(232,221,208,0.35);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+  }
+  .app-qr-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(232,221,208,0.5); }
 
   /* ── LOCATION ── */
   .location {
@@ -967,6 +976,16 @@
       🍎 &nbsp; Download on the App Store
     </a>
     <p style="color:rgba(232,221,208,0.4);font-size:13px;">iOS · Free · No account required</p>
+    <div class="app-qr-row">
+      <div class="app-qr-box">
+        <div class="app-qr-placeholder" id="app-qr-ios"><!-- replace with <img src="..."> when QR is ready --></div>
+        <span class="app-qr-label">iOS</span>
+      </div>
+      <div class="app-qr-box">
+        <div class="app-qr-placeholder" id="app-qr-android"><!-- replace with <img src="..."> when QR is ready --></div>
+        <span class="app-qr-label">Android</span>
+      </div>
+    </div>
   </div>
 </section>
 
