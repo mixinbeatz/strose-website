@@ -268,6 +268,12 @@
     align-items: start;
     margin-top: 48px;
   }
+  .mass-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 48px;
+    margin-top: 48px;
+  }
   .schedule-static { }
   .schedule-block { margin-bottom: 32px; }
   .schedule-day {
@@ -682,6 +688,7 @@
     .welcome { grid-template-columns: 1fr; }
     .welcome-img { min-height: 300px; }
     .this-week-grid { grid-template-columns: 1fr; gap: 40px; }
+    .mass-schedule-grid { grid-template-columns: 1fr; gap: 28px; }
     .church-gallery { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
     .church-gallery .gallery-item:first-child { grid-row: span 1; grid-column: span 2; height: 260px; }
     .church-stats { grid-template-columns: 1fr; gap: 24px; }
@@ -776,43 +783,15 @@
 </div>
 
 <!-- THIS WEEK -->
-<section class="this-week" id="this-week">
+<section class="this-week" id="mass-times">
   <div class="reveal">
-    <span class="section-eyebrow">PARISH LIFE</span>
-    <h2 class="section-title">The Week Ahead</h2>
+    <span class="section-eyebrow">WORSHIP</span>
+    <h2 class="section-title">Mass Times &amp; Parish Info</h2>
   </div>
-  <div class="this-week-grid">
-    <div class="events-live reveal">
-      <div class="events-live-header">
-        <div class="events-live-title"><span class="live-dot"></span>Upcoming Events</div>
-      </div>
-      <div id="events-container"><div class="events-empty">Loading events...</div></div>
-    </div>
-    <div class="schedule-static reveal">
-      <div class="schedule-day" style="margin-bottom:16px;">MASS INTENTIONS</div>
-      <div id="intentions-container"><div class="events-empty">Loading...</div></div>
-    </div>
-    <div class="schedule-static reveal">
-      <div class="schedule-block">
-        <div class="schedule-day">SATURDAY</div>
-        <div class="schedule-row"><span>Reconciliation</span><span class="schedule-time">2:30–3:30 PM</span></div>
-        <div class="schedule-row"><span>Vigil Mass</span><span class="schedule-time">4:00 PM</span></div>
-      </div>
-      <div class="schedule-block">
-        <div class="schedule-day">SUNDAY</div>
-        <div class="schedule-row"><span>Morning Mass</span><span class="schedule-time">8:00 AM</span></div>
-        <div class="schedule-row"><span>Late Mass</span><span class="schedule-time">11:00 AM</span></div>
-      </div>
-      <div class="schedule-block">
-        <div class="schedule-day">DAILY</div>
-        <div class="schedule-row"><span>Morning Mass</span><span class="schedule-time">7:30 AM</span></div>
-        <div class="schedule-row"><span>Noon Mass</span><span class="schedule-time">12:15 PM</span></div>
-        <div class="schedule-row"><span>Wed Evening</span><span class="schedule-time">6:00 PM</span></div>
-        <div class="schedule-row"><span>First Friday</span><span class="schedule-time">6:00 PM</span></div>
-      </div>
-      <a href="bulletin.html" class="btn-primary" style="display:inline-block;margin-top:8px;font-size:12px;padding:12px 20px;">View This Week's Bulletin</a>
-    </div>
+  <div class="mass-schedule-grid" id="mass-schedule-grid">
+    <div class="events-empty">Loading...</div>
   </div>
+  <a href="bulletin.html" class="btn-primary" style="display:inline-block;margin-top:32px;font-size:12px;padding:12px 20px;">View This Week's Bulletin</a>
 </section>
 
 <!-- NEW CHURCH -->
@@ -1085,6 +1064,84 @@
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
 
+  const MASS_SCHEDULE_DEFAULTS = {
+    dailyRow1Days: 'Mon, Tues, Wed, Thurs, Fri', dailyRow1Time: '7:30 AM',
+    dailyRow2Days: 'Mon, Tues, Thurs, Fri', dailyRow2Time: '12:15 PM',
+    dailyRow3Label: 'Wednesday Evenings', dailyRow3Time: '6:00 PM',
+    satTime: '4:00 PM', sunTime: '8:00 AM, 11:00 AM',
+    spanishTime: 'Last Saturday of the month, 7:30 AM',
+    reconRow1Days: 'Monday - Friday', reconRow1Time: '7:00 - 7:25 AM',
+    reconRow2Days: 'Wednesday', reconRow2Time: '5:15 - 5:45 PM',
+    reconRow3Days: 'Saturday', reconRow3Time: '2:30 - 3:30 PM',
+    rosaryRow1Days: 'Monday - Saturday', rosaryRow1Time: '6:55 AM, 3:25 PM',
+    rosaryRow2Days: 'Sunday', rosaryRow2Time: '7:25 AM, 10:25 AM',
+    rosaryRow3Days: 'Last Saturday of the Month', rosaryRow3Time: '7:00 - 7:25 AM',
+    officeRow1Days: 'Monday - Thursday', officeRow1Time: '8:00 AM - 4:00 PM',
+    officeRow2Days: 'Friday', officeRow2Time: '8:00 AM - 12:00 PM',
+    officeNote: 'Closed every Wednesday, 1-3 PM for Staff Meetings',
+    gsSundayMass: '9:00 AM', gsRosary: '8:30 AM', gsAdoration: 'Thursdays 7:00 AM',
+  };
+  function renderMassScheduleGrid(f) {
+    const el = document.getElementById('mass-schedule-grid');
+    if (!el) return;
+    el.innerHTML = `
+      <div class="schedule-static">
+        <div class="schedule-block">
+          <div class="schedule-day">DAILY MASS</div>
+          <div class="schedule-row"><span>${f.dailyRow1Days}</span><span class="schedule-time">${f.dailyRow1Time}</span></div>
+          <div class="schedule-row"><span>${f.dailyRow2Days}</span><span class="schedule-time">${f.dailyRow2Time}</span></div>
+          <div class="schedule-row"><span>${f.dailyRow3Label}</span><span class="schedule-time">${f.dailyRow3Time}</span></div>
+        </div>
+        <div class="schedule-block">
+          <div class="schedule-day">WEEKEND MASS</div>
+          <div class="schedule-row"><span>Saturday</span><span class="schedule-time">${f.satTime}</span></div>
+          <div class="schedule-row"><span>Sunday</span><span class="schedule-time">${f.sunTime}</span></div>
+          <div class="schedule-row"><span>Spanish (Last Sat.)</span><span class="schedule-time">${f.spanishTime}</span></div>
+        </div>
+      </div>
+      <div class="schedule-static">
+        <div class="schedule-block">
+          <div class="schedule-day">RECONCILIATION</div>
+          <div class="schedule-row"><span>${f.reconRow1Days}</span><span class="schedule-time">${f.reconRow1Time}</span></div>
+          <div class="schedule-row"><span>${f.reconRow2Days}</span><span class="schedule-time">${f.reconRow2Time}</span></div>
+          <div class="schedule-row"><span>${f.reconRow3Days}</span><span class="schedule-time">${f.reconRow3Time}</span></div>
+        </div>
+        <div class="schedule-block">
+          <div class="schedule-day">ROSARY</div>
+          <div class="schedule-row"><span>${f.rosaryRow1Days}</span><span class="schedule-time">${f.rosaryRow1Time}</span></div>
+          <div class="schedule-row"><span>${f.rosaryRow2Days}</span><span class="schedule-time">${f.rosaryRow2Time}</span></div>
+          <div class="schedule-row"><span>${f.rosaryRow3Days}</span><span class="schedule-time">${f.rosaryRow3Time}</span></div>
+        </div>
+      </div>
+      <div class="schedule-static">
+        <div class="schedule-block">
+          <div class="schedule-day">PARISH OFFICE HOURS</div>
+          <div class="schedule-row"><span>${f.officeRow1Days}</span><span class="schedule-time">${f.officeRow1Time}</span></div>
+          <div class="schedule-row"><span>${f.officeRow2Days}</span><span class="schedule-time">${f.officeRow2Time}</span></div>
+          <div style="font-size:12px;color:var(--dusty-rose);margin-top:6px;">${f.officeNote}</div>
+        </div>
+        <div class="schedule-block">
+          <div class="schedule-day">GOOD SHEPHERD MISSION</div>
+          <div class="schedule-row"><span>Sunday Mass</span><span class="schedule-time">${f.gsSundayMass}</span></div>
+          <div class="schedule-row"><span>Rosary (Sunday)</span><span class="schedule-time">${f.gsRosary}</span></div>
+          <div class="schedule-row"><span>Adoration</span><span class="schedule-time">${f.gsAdoration}</span></div>
+        </div>
+      </div>
+    `;
+  }
+  async function loadMassScheduleWidget() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/massSchedule?key=${API_KEY}`);
+      const data = await res.json();
+      const fields = {};
+      Object.keys(MASS_SCHEDULE_DEFAULTS).forEach(key => {
+        fields[key] = data.fields?.[key]?.stringValue || MASS_SCHEDULE_DEFAULTS[key];
+      });
+      renderMassScheduleGrid(fields);
+    } catch(e) {
+      renderMassScheduleGrid(MASS_SCHEDULE_DEFAULTS);
+    }
+  }
   async function loadEvents() {
     const container = document.getElementById('events-container');
     try {
@@ -1152,7 +1209,7 @@
     }
   }
 
-  loadEvents();
+  loadMassScheduleWidget();
 
   // Homepage gallery — portal-managed photo overrides. Slots left empty in
   // Firestore keep using the default photo already in the HTML above.
@@ -1383,7 +1440,7 @@
       container.innerHTML = '<div class="events-empty">Could not load intentions.</div>';
     }
   }
-  loadIntentions(0);
+  // loadIntentions removed from homepage — Mass Intentions now shown only on bulletin.html
 </script>
 <div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="" /></div>
 </body>
