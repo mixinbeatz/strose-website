@@ -95,7 +95,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Main Contact Phone <span class="required">*</span></label>
-            <input type="tel" class="form-input" id="f-mainphone" placeholder="(623) 555-1234" />
+            <input type="tel" class="form-input" id="f-mainphone" placeholder="(623) 555-1234" oninput="formatPhoneInput(this)" />
           </div>
           <div class="form-group">
             <label class="form-label">Would you like offertory envelopes mailed to you?</label>
@@ -295,6 +295,18 @@
     }, 300);
   }
 
+  function formatPhoneInput(el) {
+    let digits = el.value.replace(/\D/g, '').slice(0, 10);
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6,10);
+    } else if (digits.length > 3) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6);
+    } else if (digits.length > 0) {
+      formatted = '(' + digits;
+    }
+    el.value = formatted;
+  }
   let phoneCount = 0;
   function addPhoneRow() {
     phoneCount++;
@@ -311,7 +323,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Phone Number</label>
-          <input type="tel" class="form-input phone-number" placeholder="(623) 555-1234" />
+          <input type="tel" class="form-input phone-number" placeholder="(623) 555-1234" oninput="formatPhoneInput(this)" />
         </div>
       </div>
     `;
