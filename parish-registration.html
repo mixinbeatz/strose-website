@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Registration — Saint Rose Philippine Duchesne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+    --success: #4A7C59;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
+
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: '✝'; position: absolute; font-size: 320px; color: rgba(255,255,255,0.03); top: -60px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 48px); color: var(--linen); line-height: 1.2; margin-bottom: 16px; }
+  .hero-sub { font-size: 17px; color: rgba(232,221,208,0.85); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .gold-divider { height: 3px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .form-wrapper { background: var(--white); padding: 56px 24px; }
+  .form-section { max-width: 780px; margin: 0 auto; }
+  .form-sub { font-size: 15px; color: var(--dusty-rose); margin-bottom: 40px; line-height: 1.6; }
+  .form-block { margin-bottom: 40px; }
+  .form-block-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linen); letter-spacing: 0.5px; }
+  .form-block-sub { font-size: 13px; color: var(--dusty-rose); margin-top: -10px; margin-bottom: 18px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width:640px){.form-grid,.form-grid-3{grid-template-columns:1fr;}}
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--dusty-rose); }
+  .form-label span { color: var(--danger, #8B2635); }
+  .form-input, .form-select, .form-textarea { padding: 13px 16px; border: 1.5px solid var(--linen); border-radius: 10px; font-family: 'Faustina', serif; font-size: 16px; color: var(--soil); background: var(--sand); outline: none; transition: border-color 0.2s, background 0.2s; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--burgundy); background: var(--white); }
+  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .child-card { background: var(--sand); border: 1.5px solid var(--linen); border-radius: 14px; padding: 20px; margin-bottom: 16px; position: relative; }
+  .child-card-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--burgundy); letter-spacing: 0.5px; margin-bottom: 14px; }
+  .child-remove-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--dusty-rose); font-size: 13px; cursor: pointer; text-decoration: underline; }
+  .add-child-btn { width: 100%; padding: 14px; background: transparent; border: 1.5px dashed var(--linen); border-radius: 10px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--burgundy); cursor: pointer; transition: all 0.2s; }
+  .add-child-btn:hover { border-color: var(--burgundy); background: var(--sand); }
+
+  .submit-btn { width: 100%; padding: 20px; background: var(--burgundy); color: var(--linen); border: none; border-radius: 12px; font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .submit-btn:hover { background: var(--burgundy-light); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .success-screen { display: none; text-align: center; padding: 60px 32px; }
+  .success-icon { width: 80px; height: 80px; background: #EDF7F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; }
+  .success-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--burgundy); margin-bottom: 12px; }
+  .success-sub { font-size: 16px; color: var(--soil); opacity: 0.75; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+  .footer { background: var(--burgundy-dark); padding: 40px; text-align: center; }
+  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .footer-sub { font-size: 13px; color: rgba(232,221,208,0.4); }
+
+  .required { color: #8B2635; }
+  .error-msg { color: #8B2635; font-size: 13px; margin-top: 4px; display: none; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Family Registration</h1>
+  <p class="hero-sub">Welcome to Saint Rose! Complete the form below to register your family with the parish. Our staff will follow up to finish setting up your record.</p>
+</div>
+
+<div class="gold-divider"></div>
+
+<div class="form-wrapper">
+  <div class="form-section">
+    <div id="form-content">
+
+      <p class="form-sub">Fields marked <span class="required">*</span> are required. Everything else is optional but helps us serve your family better.</p>
+
+      <!-- FAMILY INFO -->
+      <div class="form-block">
+        <div class="form-block-title">Family Information</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Family Last Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="f-lastname" placeholder="e.g. Smith" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Main Contact Phone <span class="required">*</span></label>
+            <input type="tel" class="form-input" id="f-mainphone" placeholder="(623) 555-1234" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Would you like offertory envelopes mailed to you?</label>
+            <select class="form-select" id="f-envelopes"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Home Address</label>
+            <input type="text" class="form-input" id="f-address" placeholder="Street address" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zip</label>
+            <input type="text" class="form-input" id="f-zip" placeholder="85086" inputmode="numeric" maxlength="5" oninput="lookupZip(this.value)" />
+          </div>
+          <div class="form-group"></div>
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" class="form-input" id="f-city" placeholder="Fills in automatically" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input type="text" class="form-input" id="f-state" placeholder="Fills in automatically" />
+          </div>
+        </div>
+      </div>
+
+      <!-- OTHER PHONES -->
+      <div class="form-block">
+        <div class="form-block-title">Other Phone Numbers</div>
+        <div class="form-block-sub">Optional — add any additional numbers we should have on file.</div>
+        <div id="other-phones-list"></div>
+        <button type="button" class="add-child-btn" onclick="addPhoneRow()">+ Add a Phone Number</button>
+      </div>
+
+      <!-- HEAD OF HOUSE -->
+      <div class="form-block">
+        <div class="form-block-title">Head of House</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <select class="form-select" id="f-head-title">
+              <option value="">—</option>
+              <option>Mr.</option><option>Mrs.</option><option>Miss</option><option>Ms.</option><option>Dr.</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="f-head-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Birthdate</label>
+            <input type="date" class="form-input" id="f-head-birthdate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Marital Status</label>
+            <select class="form-select" id="f-marital-status">
+              <option value="">—</option>
+              <option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Marriage</label>
+            <input type="date" class="form-input" id="f-marriage-date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Married by a Priest?</label>
+            <select class="form-select" id="f-married-by-priest">
+              <option value="">—</option><option>Yes</option><option>No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Occupation</label>
+            <input type="text" class="form-input" id="f-head-occupation" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="f-head-email" />
+          </div>
+        </div>
+        <div class="form-grid-3" style="margin-top:20px;">
+          <div class="form-group">
+            <label class="form-label">Baptized?</label>
+            <select class="form-select" id="f-head-baptized"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Eucharist?</label>
+            <select class="form-select" id="f-head-eucharist"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmed?</label>
+            <select class="form-select" id="f-head-confirmed"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPOUSE / OTHER ADULT -->
+      <div class="form-block">
+        <div class="form-block-title">Spouse / Other Adult</div>
+        <div class="form-block-sub">Leave blank if not applicable.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <select class="form-select" id="f-spouse-title">
+              <option value="">—</option>
+              <option>Mr.</option><option>Mrs.</option><option>Miss</option><option>Ms.</option><option>Dr.</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" id="f-spouse-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Birthdate</label>
+            <input type="date" class="form-input" id="f-spouse-birthdate" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Occupation</label>
+            <input type="text" class="form-input" id="f-spouse-occupation" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="f-spouse-email" />
+          </div>
+        </div>
+        <div class="form-grid-3" style="margin-top:20px;">
+          <div class="form-group">
+            <label class="form-label">Baptized?</label>
+            <select class="form-select" id="f-spouse-baptized"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Eucharist?</label>
+            <select class="form-select" id="f-spouse-eucharist"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmed?</label>
+            <select class="form-select" id="f-spouse-confirmed"><option value="">—</option><option>Yes</option><option>No</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHILDREN -->
+      <div class="form-block">
+        <div class="form-block-title">Children (living at home)</div>
+        <div id="children-list"></div>
+        <button type="button" class="add-child-btn" onclick="addChildRow()">+ Add a Child</button>
+      </div>
+
+      <!-- COMMENTS -->
+      <div class="form-block">
+        <div class="form-block-title">Additional Information</div>
+        <div class="form-group">
+          <label class="form-label">Anything else we should know?</label>
+          <textarea class="form-textarea" id="f-comments" placeholder="Optional"></textarea>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+      <button class="submit-btn" id="submit-btn" onclick="submitRegistration()">Submit Registration →</button>
+      <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Saint Rose Parish staff will review your registration and follow up if anything's missing.</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Welcome to Saint Rose!</div>
+      <p class="success-sub">Thank you for registering your family. Our parish staff will review your registration and be in touch if we need anything further.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-logo">Sacred Apps</div>
+  <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
+
+  let zipLookupTimer = null;
+  function lookupZip(zip) {
+    zip = (zip || '').trim();
+    clearTimeout(zipLookupTimer);
+    if (!/^\d{5}$/.test(zip)) return;
+    zipLookupTimer = setTimeout(function() {
+      fetch('https://api.zippopotam.us/us/' + zip)
+        .then(function(r) { if (!r.ok) throw new Error('not found'); return r.json(); })
+        .then(function(data) {
+          const place = data.places && data.places[0];
+          if (place) {
+            document.getElementById('f-city').value = place['place name'];
+            document.getElementById('f-state').value = place['state abbreviation'];
+          }
+        })
+        .catch(function() { /* zip not found — let them type city/state manually */ });
+    }, 300);
+  }
+
+  let phoneCount = 0;
+  function addPhoneRow() {
+    phoneCount++;
+    const id = phoneCount;
+    const div = document.createElement('div');
+    div.className = 'child-card';
+    div.id = 'phone-' + id;
+    div.innerHTML = `
+      <button type="button" class="child-remove-btn" onclick="removePhoneRow(${id})">Remove</button>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Whose Number / Type</label>
+          <input type="text" class="form-input phone-label" placeholder="e.g. Mom's cell, Work" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input phone-number" placeholder="(623) 555-1234" />
+        </div>
+      </div>
+    `;
+    document.getElementById('other-phones-list').appendChild(div);
+  }
+
+  function removePhoneRow(id) {
+    const el = document.getElementById('phone-' + id);
+    if (el) el.remove();
+  }
+
+  function collectOtherPhones() {
+    const cards = document.querySelectorAll('#other-phones-list .child-card');
+    const phones = [];
+    cards.forEach(function(card) {
+      const label = card.querySelector('.phone-label').value.trim();
+      const number = card.querySelector('.phone-number').value.trim();
+      if (!number) return;
+      phones.push({ label: label, number: number });
+    });
+    return phones;
+  }
+
+  let childCount = 0;
+
+  function addChildRow() {
+    childCount++;
+    const id = childCount;
+    const div = document.createElement('div');
+    div.className = 'child-card';
+    div.id = 'child-' + id;
+    div.innerHTML = `
+      <button type="button" class="child-remove-btn" onclick="removeChildRow(${id})">Remove</button>
+      <div class="child-card-title">Child ${id}</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input child-firstname" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input child-lastname" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select class="form-select child-gender"><option value="">—</option><option>M</option><option>F</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Birthdate</label>
+          <input type="date" class="form-input child-birthdate" />
+        </div>
+      </div>
+      <div class="form-grid-3" style="margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">Baptized?</label>
+          <select class="form-select child-baptized"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">First Reconciliation?</label>
+          <select class="form-select child-reconciliation"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">First Eucharist?</label>
+          <select class="form-select child-eucharist"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+      <div class="form-grid" style="margin-top:16px;">
+        <div class="form-group">
+          <label class="form-label">Confirmed?</label>
+          <select class="form-select child-confirmed"><option value="">—</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+    `;
+    document.getElementById('children-list').appendChild(div);
+  }
+
+  function removeChildRow(id) {
+    const el = document.getElementById('child-' + id);
+    if (el) el.remove();
+  }
+
+  function collectChildren() {
+    const cards = document.querySelectorAll('.child-card');
+    const children = [];
+    cards.forEach(function(card) {
+      const firstName = card.querySelector('.child-firstname').value.trim();
+      const lastName = card.querySelector('.child-lastname').value.trim();
+      if (!firstName && !lastName) return;
+      children.push({
+        firstName: firstName,
+        lastName: lastName,
+        gender: card.querySelector('.child-gender').value,
+        birthdate: card.querySelector('.child-birthdate').value,
+        baptized: card.querySelector('.child-baptized').value,
+        firstReconciliation: card.querySelector('.child-reconciliation').value,
+        firstEucharist: card.querySelector('.child-eucharist').value,
+        confirmed: card.querySelector('.child-confirmed').value
+      });
+    });
+    return children;
+  }
+
+  async function submitRegistration() {
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+    const lastName = document.getElementById('f-lastname').value.trim();
+    const headName = document.getElementById('f-head-name').value.trim();
+    if (!lastName || !headName) {
+      errorEl.textContent = 'Please fill in the Family Last Name and Head of House Full Name.';
+      errorEl.style.display = 'block';
+      window.scrollTo({ top: document.getElementById('f-lastname').getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+      return;
+    }
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const children = collectChildren();
+    const childrenValues = children.map(function(c) {
+      return { mapValue: { fields: {
+        firstName: { stringValue: c.firstName },
+        lastName: { stringValue: c.lastName },
+        gender: { stringValue: c.gender },
+        birthdate: { stringValue: c.birthdate },
+        baptized: { stringValue: c.baptized },
+        firstReconciliation: { stringValue: c.firstReconciliation },
+        firstEucharist: { stringValue: c.firstEucharist },
+        confirmed: { stringValue: c.confirmed }
+      } } };
+    });
+
+    const otherPhones = collectOtherPhones();
+    const otherPhonesValues = otherPhones.map(function(p) {
+      return { mapValue: { fields: {
+        label: { stringValue: p.label },
+        number: { stringValue: p.number }
+      } } };
+    });
+
+    const fields = {
+      familyLastName: { stringValue: lastName },
+      mainPhone: { stringValue: document.getElementById('f-mainphone').value.trim() },
+      envelopes: { stringValue: document.getElementById('f-envelopes').value },
+      otherPhones: { arrayValue: { values: otherPhonesValues } },
+      homeAddress: { stringValue: document.getElementById('f-address').value.trim() },
+      city: { stringValue: document.getElementById('f-city').value.trim() },
+      state: { stringValue: document.getElementById('f-state').value.trim() },
+      zip: { stringValue: document.getElementById('f-zip').value.trim() },
+
+      headTitle: { stringValue: document.getElementById('f-head-title').value },
+      headName: { stringValue: headName },
+      headBirthdate: { stringValue: document.getElementById('f-head-birthdate').value },
+      maritalStatus: { stringValue: document.getElementById('f-marital-status').value },
+      marriageDate: { stringValue: document.getElementById('f-marriage-date').value },
+      marriedByPriest: { stringValue: document.getElementById('f-married-by-priest').value },
+      headOccupation: { stringValue: document.getElementById('f-head-occupation').value.trim() },
+      headEmail: { stringValue: document.getElementById('f-head-email').value.trim() },
+      headBaptized: { stringValue: document.getElementById('f-head-baptized').value },
+      headEucharist: { stringValue: document.getElementById('f-head-eucharist').value },
+      headConfirmed: { stringValue: document.getElementById('f-head-confirmed').value },
+
+      spouseTitle: { stringValue: document.getElementById('f-spouse-title').value },
+      spouseName: { stringValue: document.getElementById('f-spouse-name').value.trim() },
+      spouseBirthdate: { stringValue: document.getElementById('f-spouse-birthdate').value },
+      spouseOccupation: { stringValue: document.getElementById('f-spouse-occupation').value.trim() },
+      spouseEmail: { stringValue: document.getElementById('f-spouse-email').value.trim() },
+      spouseBaptized: { stringValue: document.getElementById('f-spouse-baptized').value },
+      spouseEucharist: { stringValue: document.getElementById('f-spouse-eucharist').value },
+      spouseConfirmed: { stringValue: document.getElementById('f-spouse-confirmed').value },
+
+      children: { arrayValue: { values: childrenValues } },
+      comments: { stringValue: document.getElementById('f-comments').value.trim() },
+
+      status: { stringValue: 'pending' },
+      submittedAt: { stringValue: new Date().toISOString() }
+    };
+
+    try {
+      const res = await fetch(`${BASE}/familyRegistrations?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: fields })
+      });
+      if (!res.ok) throw new Error('Submission failed');
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      errorEl.textContent = 'Something went wrong submitting your registration. Please try again, or call the parish office.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit Registration →';
+    }
+  }
+
+  addChildRow();
+</script>
+
+</body>
+</html>
