@@ -23,8 +23,8 @@
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
 
   /* HERO */
-  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 80px 40px; text-align: center; position: relative; overflow: hidden; }
-  .hero::before { content: '✝'; position: absolute; font-size: 400px; color: rgba(255,255,255,0.03); top: -80px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; }
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 80px 40px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
   .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
   .hero-title { font-family: 'Cinzel', serif; font-size: clamp(32px, 5vw, 54px); color: var(--linen); line-height: 1.2; margin-bottom: 20px; }
   .hero-title span { color: var(--gold); }
@@ -183,6 +183,7 @@
 
 <!-- HERO -->
 <div class="hero">
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
   <h1 class="hero-title">Put Your Business in Front of<br><span>Your Parish Community</span></h1>
   <p class="hero-sub">The Saint Rose Advertiser directory is an interactive mobile listing inside the official Saint Rose app — seen by your neighbors every week, on every phone.</p>
