@@ -77,10 +77,11 @@
     background-image: url('images/hero-exterior.jpeg');
     background-size: cover;
     background-position: center 30%;
+    opacity: 0;
     transform: scale(1.05);
-    transition: transform 8s ease-out;
+    transition: opacity 0.6s ease, transform 8s ease-out;
   }
-  .hero-bg.loaded { transform: scale(1); }
+  .hero-bg.loaded { opacity: 1; transform: scale(1); }
   .hero-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(
@@ -1079,12 +1080,10 @@
     }
   });
 
-  // Hero image load
+  // Hero image is loaded/revealed by loadHeroOverrides() below, once we know
+  // whether to use the default photo or a portal-set override — this avoids
+  // showing the default and then hard-cutting to the override a moment later.
   const heroBg = document.getElementById('heroBg');
-  const img = new Image();
-  img.onload = () => heroBg.classList.add('loaded');
-  img.src = 'images/hero-exterior.jpeg';
-  heroBg.style.backgroundImage = "url('images/hero-exterior.jpeg')";
 
   // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
@@ -1377,23 +1376,32 @@
   loadParishDevOverrides();
   // Hero section overrides
   async function loadHeroOverrides() {
+    const DEFAULT_HERO_IMG = 'images/hero-exterior.jpeg';
+    let finalImageUrl = DEFAULT_HERO_IMG;
     try {
       const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/hero?key=${API_KEY}`);
       const data = await res.json();
-      if (!data.fields) return;
-      const title = data.fields.title?.stringValue;
-      const tagline = data.fields.tagline?.stringValue;
-      const imageUrl = data.fields.imageUrl?.stringValue;
-      if (title) document.getElementById('hero-text-title').innerHTML = title.replace(/\n/g, '<br>');
-      if (tagline) document.getElementById('hero-text-tagline').textContent = tagline;
-      if (imageUrl) {
-        const heroBgEl = document.getElementById('heroBg');
-        if (heroBgEl) {
-          heroBgEl.style.backgroundImage = "url('" + imageUrl + "')";
-          heroBgEl.classList.add('loaded');
-        }
+      if (data.fields) {
+        const title = data.fields.title?.stringValue;
+        const tagline = data.fields.tagline?.stringValue;
+        const imageUrl = data.fields.imageUrl?.stringValue;
+        if (title) document.getElementById('hero-text-title').innerHTML = title.replace(/\n/g, '<br>');
+        if (tagline) document.getElementById('hero-text-tagline').textContent = tagline;
+        if (imageUrl) finalImageUrl = imageUrl;
       }
-    } catch(e) { /* keep default hero */ }
+    } catch(e) { /* fall through with default hero image */ }
+    // Preload whichever image we're actually going to show, then reveal —
+    // this way the hero never shows the default first if an override exists.
+    const preload = new Image();
+    preload.onload = () => {
+      heroBg.style.backgroundImage = "url('" + finalImageUrl + "')";
+      heroBg.classList.add('loaded');
+    };
+    preload.onerror = () => {
+      heroBg.style.backgroundImage = "url('" + DEFAULT_HERO_IMG + "')";
+      heroBg.classList.add('loaded');
+    };
+    preload.src = finalImageUrl;
   }
   loadHeroOverrides();
   // Welcome section overrides
