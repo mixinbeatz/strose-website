@@ -376,10 +376,13 @@ nav {
 .print-only { display: none; }
 .print-page {
   width: 8.5in;
-  min-height: 10.5in;
+  height: 11in;
+  box-sizing: border-box;
   margin: 0 auto;
   padding: 0.4in;
   background: white;
+  display: flex;
+  flex-direction: column;
 }
 .print-masthead {
   text-align: center;
@@ -466,7 +469,7 @@ nav {
 .print-main .intention-time, .print-main .event-item-time { font-size: 8.5px; width: 46px; }
 
 .print-qr-footer {
-  margin-top: 16px;
+  margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--linen);
   display: flex;
