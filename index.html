@@ -20,6 +20,8 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  .img-fade { opacity: 0; transition: opacity 0.3s ease; }
+  .img-fade.is-loaded { opacity: 1; }
   html { scroll-behavior: smooth; scroll-padding-top: 84px; }
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
 
@@ -807,7 +809,7 @@
     </div>
   </div>
   <div class="welcome-img">
-    <img id="welcome-img-photo" src="images/retablo-full.jpeg" alt="Saint Rose Parish Retablo" />
+    <img id="welcome-img-photo" class="img-fade" src="images/retablo-full.jpeg" alt="Saint Rose Parish Retablo" />
     <div class="welcome-img-overlay"></div>
   </div>
 </div>
@@ -833,23 +835,23 @@
   </div>
   <div class="church-gallery">
     <div class="gallery-item" id="gallery-wrap-1" onclick="openLightbox(document.getElementById('gallery-img-1').src)" style="cursor:pointer">
-      <img id="gallery-img-1" src="images/hero-exterior.jpeg" alt="Saint Rose Church Exterior" />
+      <img id="gallery-img-1" class="img-fade" src="images/hero-exterior.jpeg" alt="Saint Rose Church Exterior" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="gallery-wrap-2" onclick="openLightbox(document.getElementById('gallery-img-2').src)" style="cursor:pointer">
-      <img id="gallery-img-2" src="images/retablo-full.jpeg" alt="Church Retablo" />
+      <img id="gallery-img-2" class="img-fade" src="images/retablo-full.jpeg" alt="Church Retablo" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="gallery-wrap-3" onclick="openLightbox(document.getElementById('gallery-img-3').src)" style="cursor:pointer">
-      <img id="gallery-img-3" src="images/crucifix-detail.jpeg" alt="Church Crucifix" />
+      <img id="gallery-img-3" class="img-fade" src="images/crucifix-detail.jpeg" alt="Church Crucifix" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="gallery-wrap-4" onclick="openLightbox(document.getElementById('gallery-img-4').src)" style="cursor:pointer">
-      <img id="gallery-img-4" src="images/crucifix.jpg" alt="Church Crucifix" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="gallery-img-4" class="img-fade" src="images/crucifix.jpg" alt="Church Crucifix" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="gallery-wrap-5" onclick="openLightbox(document.getElementById('gallery-img-5').src)" style="cursor:pointer">
-      <img id="gallery-img-5" src="images/Roseicon.jpg" alt="Church Retablo Detail" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="gallery-img-5" class="img-fade" src="images/Roseicon.jpg" alt="Church Retablo Detail" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
   </div>
@@ -896,23 +898,23 @@
   </div>
   <div class="dedication-gallery reveal">
     <div class="gallery-item" id="around-parish-wrap-1" onclick="openLightbox(document.getElementById('around-parish-img-1').src)">
-      <img id="around-parish-img-1" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="around-parish-img-1" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="around-parish-wrap-2" onclick="openLightbox(document.getElementById('around-parish-img-2').src)">
-      <img id="around-parish-img-2" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="around-parish-img-2" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="around-parish-wrap-3" onclick="openLightbox(document.getElementById('around-parish-img-3').src)">
-      <img id="around-parish-img-3" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="around-parish-img-3" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="around-parish-wrap-4" onclick="openLightbox(document.getElementById('around-parish-img-4').src)">
-      <img id="around-parish-img-4" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="around-parish-img-4" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
     <div class="gallery-item" id="around-parish-wrap-5" onclick="openLightbox(document.getElementById('around-parish-img-5').src)">
-      <img id="around-parish-img-5" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
+      <img id="around-parish-img-5" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
   </div>
@@ -1256,6 +1258,15 @@
 
   // Homepage gallery — portal-managed photo overrides. Slots left empty in
   // Firestore keep using the default photo already in the HTML above.
+  // Images start hidden (see .img-fade CSS) and fade in only once we know
+  // the final src (default or override) — this avoids a flash of the
+  // default photo before the real one swaps in.
+  function revealFadeImgs(ids) {
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('is-loaded');
+    });
+  }
   async function loadGalleryOverrides() {
     try {
       const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/gallery?key=${API_KEY}`);
@@ -1277,6 +1288,7 @@
       if (title) document.getElementById('gallery-text-title').innerHTML = title.replace(/\n/g, '<br>');
       if (body) document.getElementById('gallery-text-body').textContent = body;
     } catch(e) { /* keep default photos and text */ }
+    finally { revealFadeImgs(['gallery-img-1','gallery-img-2','gallery-img-3','gallery-img-4','gallery-img-5']); }
   }
   loadGalleryOverrides();
   // Around the Parish — same override pattern as the gallery above, separate
@@ -1302,6 +1314,7 @@
       if (title) document.getElementById('around-parish-text-title').innerHTML = title.replace(/\n/g, '<br>');
       if (body) document.getElementById('around-parish-text-body').textContent = body;
     } catch(e) { /* keep default photos and text */ }
+    finally { revealFadeImgs(['around-parish-img-1','around-parish-img-2','around-parish-img-3','around-parish-img-4','around-parish-img-5']); }
   }
   loadAroundParishOverrides();
   // Parish Development — fluid photo count (array, not fixed slots), plus a
@@ -1403,6 +1416,7 @@
       }
       if (imageUrl) document.getElementById('welcome-img-photo').src = imageUrl;
     } catch(e) { /* keep default welcome */ }
+    finally { revealFadeImgs(['welcome-img-photo']); }
   }
   loadWelcomeSectionOverrides();
 
