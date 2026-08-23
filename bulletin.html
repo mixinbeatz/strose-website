@@ -994,23 +994,24 @@ async function loadEvents() {
     const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&orderBy=startAt&pageSize=300`);
     const data = await res.json();
     const docs = data.documents || [];
-    const now = new Date();
     const { weekStart, weekEnd } = getBulletinWeekWindow();
 
+    // Note: unlike the homepage's "upcoming" events widget, this is a fixed
+    // weekly recap (matching Mass Intentions above) — an event that already
+    // happened earlier in the Sun-Sat week should still be listed, so we
+    // don't filter on expiresAt here, only on the week's date range.
     const events = docs.map(doc => {
       const f = doc.fields || {};
       const startAt  = f.startAt?.stringValue || '';
       const dateStr  = f.date?.stringValue || '';
-      const expiresAt = f.expiresAt?.stringValue || '';
       let date = startAt ? new Date(startAt) : null;
       if (!date || isNaN(date)) {
         const parsed = new Date(dateStr + ' 2026');
         if (!isNaN(parsed)) date = parsed;
       }
-      return { title: gf(doc,'title'), time: gf(doc,'time'), date, expiresAt };
+      return { title: gf(doc,'title'), time: gf(doc,'time'), date };
     }).filter(e => {
       if (!e.date || isNaN(e.date)) return false;
-      if (e.expiresAt && new Date(e.expiresAt) < now) return false;
       return e.date >= weekStart && e.date <= weekEnd;
     }).sort((a,b) => a.date - b.date);
 
