@@ -387,9 +387,15 @@ nav {
 .print-masthead {
   text-align: center;
   border-bottom: 2px solid var(--burgundy);
-  padding-bottom: 10px;
-  margin-bottom: 14px;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
+.print-masthead-crest { height: 62px; width: auto; }
+.print-masthead-text { text-align: left; }
 .print-masthead-name {
   font-family: 'Cinzel', serif;
   font-size: 20px;
@@ -403,7 +409,7 @@ nav {
 }
 .print-cols {
   display: grid;
-  grid-template-columns: 1.1fr 1.6fr;
+  grid-template-columns: 0.85fr 1.85fr;
   gap: 18px;
 }
 .print-sidebar-block { margin-bottom: 10px; }
@@ -468,6 +474,24 @@ nav {
 .print-main .intention-row, .print-main .event-item-title { font-size: 9.5px; line-height: 1.4; }
 .print-main .intention-time, .print-main .event-item-time { font-size: 8.5px; width: 46px; }
 
+.print-staff-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 8px 0 6px;
+  border-top: 1px solid var(--linen);
+  margin-top: 8px;
+}
+.print-staff-item {
+  font-size: 7.5px;
+  color: var(--soil);
+  white-space: nowrap;
+  margin: 2px 10px;
+}
+.print-staff-item strong {
+  color: var(--burgundy);
+  font-weight: 700;
+}
 .print-qr-footer {
   margin-top: auto;
   padding-top: 12px;
@@ -668,8 +692,11 @@ nav {
 <div class="print-only" id="print-only">
   <div class="print-page print-page-front">
     <div class="print-masthead">
-      <div class="print-masthead-name">Saint Rose Philippine Duchesne</div>
-      <div class="print-masthead-date" id="print-date"></div>
+      <img src="images/bulletin-crest.png" alt="" class="print-masthead-crest" />
+      <div class="print-masthead-text">
+        <div class="print-masthead-name">Saint Rose Philippine Duchesne</div>
+        <div class="print-masthead-date" id="print-date"></div>
+      </div>
     </div>
     <div class="print-cols">
       <div class="print-sidebar">
@@ -708,19 +735,6 @@ nav {
           <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
           <div class="print-sidebar-line">Closed Wed 1–3pm</div>
         </div>
-        <div class="print-sidebar-block">
-          <div class="print-sidebar-title">Parish Staff</div>
-          <div class="print-sidebar-line">Fr. Bing Colasito, Pastor — 623-465-9740</div>
-          <div class="print-sidebar-line">Fr. Charles Ouemenga, Parochial Vicar — 623-307-8273</div>
-          <div class="print-sidebar-line">Dr. Tom Henrich, Office Administrator — 623-607-8265</div>
-          <div class="print-sidebar-line">Dcn. John Mezydlo, Deacon — 623-465-9740</div>
-          <div class="print-sidebar-line">Cheyanne Bosn, Executive Assistant — 623-307-8264</div>
-          <div class="print-sidebar-line">Matt Ficarra, Music &amp; Media — 623-307-8266</div>
-          <div class="print-sidebar-line">Maria Gonzalez, Accounting — 623-607-8270</div>
-          <div class="print-sidebar-line">Chris Bosn, Youth &amp; Young Adult — 623-307-8269</div>
-          <div class="print-sidebar-line">Renee Hunsaker, Religious Ed — 623-307-8268</div>
-          <div class="print-sidebar-line">Ray Lopez, Maintenance — 623-465-9740</div>
-        </div>
       </div>
       <div class="print-main">
         <div class="print-section-title">Mass Intentions</div>
@@ -728,6 +742,18 @@ nav {
         <div class="print-section-title" style="margin-top:14px;">This Week</div>
         <div id="print-events-body"></div>
       </div>
+    </div>
+    <div class="print-staff-strip">
+      <span class="print-staff-item"><strong>Fr. Bing Colasito</strong>, Pastor — 623-465-9740</span>
+      <span class="print-staff-item"><strong>Fr. Charles Ouemenga</strong>, Parochial Vicar — 623-307-8273</span>
+      <span class="print-staff-item"><strong>Dr. Tom Henrich</strong>, Office Administrator — 623-607-8265</span>
+      <span class="print-staff-item"><strong>Dcn. John Mezydlo</strong>, Deacon — 623-465-9740</span>
+      <span class="print-staff-item"><strong>Cheyanne Bosn</strong>, Executive Assistant — 623-307-8264</span>
+      <span class="print-staff-item"><strong>Matt Ficarra</strong>, Music &amp; Media — 623-307-8266</span>
+      <span class="print-staff-item"><strong>Maria Gonzalez</strong>, Accounting — 623-607-8270</span>
+      <span class="print-staff-item"><strong>Chris Bosn</strong>, Youth &amp; Young Adult — 623-307-8269</span>
+      <span class="print-staff-item"><strong>Renee Hunsaker</strong>, Religious Ed — 623-307-8268</span>
+      <span class="print-staff-item"><strong>Ray Lopez</strong>, Maintenance — 623-465-9740</span>
     </div>
     <div class="print-qr-footer">
       <div class="print-qr-text">Get the SaintRose app</div>
