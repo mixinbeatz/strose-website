@@ -373,59 +373,94 @@ nav {
 }
 
 /* ── PRINT-ONLY TAKE-HOME LAYOUT ── */
-.print-only { display: none; }
+/* Kept in normal layout (not display:none) so its real rendered height is
+   measurable by fitFrontPageToPage() at any time — including right after
+   the Firestore data loads, well before print is ever triggered — instead
+   of only inside a beforeprint handler. Pushed off-screen and hidden on
+   screen; @media print below restores it to a normal, visible, in-flow
+   block for the actual print output. */
+.print-only { display: block; position: absolute; left: -10000px; top: 0; visibility: hidden; }
 .print-page {
   width: 8.5in;
   height: 11in;
   box-sizing: border-box;
   margin: 0 auto;
   padding: 0.4in;
-  background: white;
+  background: var(--sand);
   display: flex;
   flex-direction: column;
 }
+/* Front-page fit-to-page scale. Read by the calc()-based font-size/padding
+   rules below (sidebar, Mass Intentions, This Week, Staff Directory only —
+   NOT the masthead or QR footer, which stay a fixed size). Defaults to 1;
+   fitFrontPageToPage() in the script below dials it down when a heavy
+   week's content would otherwise overflow the page. */
+.print-page-front { --bulletin-scale: 1; }
 .print-masthead {
   text-align: center;
   border-bottom: 2px solid var(--burgundy);
-  padding-bottom: 8px;
-  margin-bottom: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
 }
-.print-masthead-crest { height: 62px; width: auto; }
+.print-masthead-crest { height: 100px; width: 100px; object-fit: contain; flex-shrink: 0; }
 .print-masthead-text { text-align: left; }
-.print-masthead-name {
+.print-masthead-line1 {
   font-family: 'Cinzel', serif;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   color: var(--burgundy);
+  line-height: 1.1;
+}
+.print-masthead-line2 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.print-masthead-line3 {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+  opacity: 0.7;
+  margin-top: 3px;
 }
 .print-masthead-date {
   font-size: 11px;
   color: var(--dusty-rose);
-  margin-top: 2px;
+  margin-top: 6px;
 }
 .print-cols {
   display: grid;
-  grid-template-columns: 0.85fr 1.85fr;
-  gap: 18px;
+  grid-template-columns: 0.82fr 1.42fr 0.95fr;
+  gap: calc(16px * var(--bulletin-scale, 1));
 }
-.print-sidebar-block { margin-bottom: 10px; }
+.print-sidebar-block { margin-bottom: calc(10px * var(--bulletin-scale, 1)); }
 .print-sidebar-title {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: calc(9px * var(--bulletin-scale, 1));
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--burgundy);
-  border-bottom: 1px solid var(--linen);
-  padding-bottom: 2px;
-  margin-bottom: 3px;
+  border-bottom: 1px solid var(--gold);
+  padding-bottom: calc(2px * var(--bulletin-scale, 1));
+  margin-bottom: calc(3px * var(--bulletin-scale, 1));
 }
 .print-sidebar-line {
-  font-size: 9.5px;
+  font-size: calc(9.5px * var(--bulletin-scale, 1));
   line-height: 1.5;
   color: var(--soil);
 }
@@ -434,9 +469,19 @@ nav {
   font-size: 11px;
   font-weight: 700;
   color: var(--burgundy);
-  border-bottom: 1px solid var(--linen);
+  border-bottom: 1px solid var(--gold);
   padding-bottom: 3px;
   margin-bottom: 8px;
+}
+/* Front-page-only override (higher specificity) — the back page's section
+   titles (Weekly Reflection / Around the Parish / Advertisers) are outside
+   .print-main and keep the fixed base size above; only Mass Intentions and
+   This Week's headers, inside .print-main, shrink with the rest of the
+   front page's dynamic content. */
+.print-main .print-section-title {
+  font-size: calc(11px * var(--bulletin-scale, 1));
+  padding-bottom: calc(3px * var(--bulletin-scale, 1));
+  margin-bottom: calc(8px * var(--bulletin-scale, 1));
 }
 .print-reflection-title {
   font-family: 'Cinzel', serif;
@@ -469,29 +514,11 @@ nav {
   color: var(--burgundy);
   text-align: center;
 }
-.print-main .intention-day, .print-main .event-day-group { margin-bottom: 8px; }
-.print-main .intention-day-label, .print-main .event-day-label { font-size: 8.5px; margin-bottom: 3px; padding-bottom: 2px; }
-.print-main .intention-row, .print-main .event-item-title { font-size: 9.5px; line-height: 1.4; }
-.print-main .intention-time, .print-main .event-item-time { font-size: 8.5px; width: 46px; }
+.print-main .intention-day, .print-main .event-day-group { margin-bottom: calc(8px * var(--bulletin-scale, 1)); }
+.print-main .intention-day-label, .print-main .event-day-label { font-size: calc(8.5px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
+.print-main .intention-row, .print-main .event-item-title { font-size: calc(9.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
+.print-main .intention-time, .print-main .event-item-time { font-size: calc(8.5px * var(--bulletin-scale, 1)); width: 46px; }
 
-.print-staff-strip {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 8px 0 6px;
-  border-top: 1px solid var(--linen);
-  margin-top: 8px;
-}
-.print-staff-item {
-  font-size: 7.5px;
-  color: var(--soil);
-  white-space: nowrap;
-  margin: 2px 10px;
-}
-.print-staff-item strong {
-  color: var(--burgundy);
-  font-weight: 700;
-}
 .print-qr-footer {
   margin-top: auto;
   padding-top: 12px;
@@ -519,27 +546,41 @@ nav {
   color: var(--dusty-rose);
   text-align: center;
 }
+.print-footer-address {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 7.5px;
+  letter-spacing: 0.02em;
+  color: var(--dusty-rose);
+}
 .print-page-back .notices-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .print-page-back .notice-card { padding: 8px 10px; }
 .print-page-back .notice-title { font-size: 9.5px; margin-bottom: 3px; }
 .print-page-back .notice-body { font-size: 8.5px; line-height: 1.4; }
-.print-staff-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px 20px;
-  margin-bottom: 14px;
-}
+/* Compact staff-directory list — front page's right column. Vertical,
+   one row per person (name + role on the left, phone on the right), sized
+   off --bulletin-scale like the rest of the front page's dynamic content. */
+.print-staff-list { margin-bottom: calc(4px * var(--bulletin-scale, 1)); }
 .print-staff-row {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: 6px;
-  font-size: 9px;
-  line-height: 1.6;
+  font-size: calc(8.5px * var(--bulletin-scale, 1));
+  line-height: 1.55;
   border-bottom: 1px solid var(--linen);
-  padding-bottom: 1px;
+  padding-bottom: calc(1.5px * var(--bulletin-scale, 1));
+  margin-bottom: calc(1.5px * var(--bulletin-scale, 1));
 }
-.print-staff-name { color: var(--soil); font-weight: 600; }
-.print-staff-role { color: var(--dusty-rose); text-align: right; }
+.print-staff-name { color: var(--soil); font-weight: 700; }
+.print-staff-role { color: var(--dusty-rose); font-weight: 400; }
+.print-staff-phone { color: var(--burgundy); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
+.print-staff-note {
+  font-size: calc(7px * var(--bulletin-scale, 1));
+  color: var(--dusty-rose);
+  font-style: italic;
+  margin-top: calc(3px * var(--bulletin-scale, 1));
+}
 .print-advertisers-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -563,7 +604,7 @@ nav {
 @media print {
   @page { size: letter portrait; margin: 0; }
   nav, .btn-print, .masthead, .bulletin-wrap { display: none !important; }
-  .print-only { display: block; }
+  .print-only { position: static; left: auto; visibility: visible; }
   .print-page { page-break-after: always; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .print-page-back { page-break-after: avoid; }
   body { background: white; }
@@ -692,14 +733,16 @@ nav {
 <div class="print-only" id="print-only">
   <div class="print-page print-page-front">
     <div class="print-masthead">
-      <img src="images/bulletin-crest.png" alt="" class="print-masthead-crest" />
+      <img src="images/logo-round.png" alt="" class="print-masthead-crest" />
       <div class="print-masthead-text">
-        <div class="print-masthead-name">Saint Rose Philippine Duchesne</div>
+        <div class="print-masthead-line1">Saint Rose</div>
+        <div class="print-masthead-line2">Philippine Duchesne</div>
+        <div class="print-masthead-line3">Catholic Church · Anthem, Arizona</div>
         <div class="print-masthead-date" id="print-date"></div>
       </div>
     </div>
     <div class="print-cols">
-      <div class="print-sidebar">
+      <div class="print-col-left">
         <div class="print-sidebar-block">
           <div class="print-sidebar-title">Daily Mass</div>
           <div class="print-sidebar-line">Mon, Tue, Wed, Fri — 7:30am</div>
@@ -729,12 +772,6 @@ nav {
           <div class="print-sidebar-line">Rosary Sun — 8:30am</div>
           <div class="print-sidebar-line">Adoration Thu — 7:00am</div>
         </div>
-        <div class="print-sidebar-block">
-          <div class="print-sidebar-title">Office Hours</div>
-          <div class="print-sidebar-line">Mon–Thu — 8:00am–4:00pm</div>
-          <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
-          <div class="print-sidebar-line">Closed Wed 1–3pm</div>
-        </div>
       </div>
       <div class="print-main">
         <div class="print-section-title">Mass Intentions</div>
@@ -742,18 +779,28 @@ nav {
         <div class="print-section-title" style="margin-top:14px;">This Week</div>
         <div id="print-events-body"></div>
       </div>
-    </div>
-    <div class="print-staff-strip">
-      <span class="print-staff-item"><strong>Fr. Bing Colasito</strong>, Pastor — 623-465-9740</span>
-      <span class="print-staff-item"><strong>Fr. Charles Ouemenga</strong>, Parochial Vicar — 623-307-8273</span>
-      <span class="print-staff-item"><strong>Dr. Tom Henrich</strong>, Office Administrator — 623-607-8265</span>
-      <span class="print-staff-item"><strong>Dcn. John Mezydlo</strong>, Deacon — 623-465-9740</span>
-      <span class="print-staff-item"><strong>Cheyanne Bosn</strong>, Executive Assistant — 623-307-8264</span>
-      <span class="print-staff-item"><strong>Matt Ficarra</strong>, Music &amp; Media — 623-307-8266</span>
-      <span class="print-staff-item"><strong>Maria Gonzalez</strong>, Accounting — 623-607-8270</span>
-      <span class="print-staff-item"><strong>Chris Bosn</strong>, Youth &amp; Young Adult — 623-307-8269</span>
-      <span class="print-staff-item"><strong>Renee Hunsaker</strong>, Religious Ed — 623-307-8268</span>
-      <span class="print-staff-item"><strong>Ray Lopez</strong>, Maintenance — 623-465-9740</span>
+      <div class="print-col-right">
+        <div class="print-sidebar-block">
+          <div class="print-sidebar-title">Parish Office</div>
+          <div class="print-sidebar-line">Mon–Thu — 8:00am–4:00pm</div>
+          <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
+          <div class="print-sidebar-line">Closed Wed 1–3pm</div>
+        </div>
+        <div class="print-section-title" style="margin-top:14px;">Staff Directory</div>
+        <div class="print-staff-list">
+          <div class="print-staff-row"><span class="print-staff-name">Fr. Bing Colasito<span class="print-staff-role">, Pastor</span></span><span class="print-staff-phone">465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Fr. Charles Ouemenga<span class="print-staff-role">, Parochial Vicar</span></span><span class="print-staff-phone">307-8273</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Dr. Tom Henrich<span class="print-staff-role">, Office Administrator</span></span><span class="print-staff-phone">607-8265</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Dcn. John Mezydlo<span class="print-staff-role">, Deacon</span></span><span class="print-staff-phone">465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Cheyanne Bosn<span class="print-staff-role">, Executive Assistant</span></span><span class="print-staff-phone">307-8264</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Matt Ficarra<span class="print-staff-role">, Music &amp; Media</span></span><span class="print-staff-phone">307-8266</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Maria Gonzalez<span class="print-staff-role">, Accounting</span></span><span class="print-staff-phone">607-8270</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult</span></span><span class="print-staff-phone">307-8269</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed</span></span><span class="print-staff-phone">307-8268</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Ray Lopez<span class="print-staff-role">, Maintenance</span></span><span class="print-staff-phone">465-9740</span></div>
+        </div>
+        <div class="print-staff-note">All numbers area code 623</div>
+      </div>
     </div>
     <div class="print-qr-footer">
       <div class="print-qr-text">Get the SaintRose app</div>
@@ -767,6 +814,7 @@ nav {
         <div class="print-qr-box">Worship Aid QR</div>
       </div>
     </div>
+    <div class="print-footer-address">2825 W Rose Canyon Circle, Anthem, AZ 85086 · (623) 465-9740 · saintroseanthem.com</div>
   </div>
   <div class="print-page print-page-back">
     <div class="print-section-title">Weekly Reflection</div>
@@ -1084,6 +1132,45 @@ function escHtml(s) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ── Front-page fit-to-page pass ─────────────────────────────────────────
+// Page 2 is reserved for the Weekly Reflection / Around the Parish /
+// Advertisers and must never receive front-page overflow. But Mass
+// Intentions and This Week's events are both pulled live from Firestore,
+// so their combined length varies week to week and can't just be capped
+// without silently dropping real content.
+//
+// Instead, once that data has loaded and the front page has rendered, we
+// measure its actual content height against its fixed 11in box (.print-page
+// already has height:11in + box-sizing:border-box, so clientHeight is the
+// true available space) and, if it overflows, shrink the DYNAMIC content —
+// the Mass Times sidebar, Mass Intentions, This Week, and Staff Directory —
+// in small steps via the --bulletin-scale custom property until it fits or
+// we hit a readable-size floor (~8px for the main body text). The masthead
+// branding and the QR footer are deliberately left alone: the QR boxes are
+// a real physical scan target and shouldn't shrink, and the header should
+// stay a consistent size regardless of how busy the week is.
+//
+// This runs once, right after the front page's data settles — not on a
+// resize/interval loop — so it doesn't thrash. If a truly enormous week
+// still overflows at the size floor, we let it be: this is a best-effort
+// fit, not a hard guarantee.
+function fitFrontPageToPage() {
+  const page = document.querySelector('.print-page-front');
+  if (!page) return;
+  const MIN_SCALE = 0.84; // keeps ~9.5px body text from dropping below ~8px
+  const STEP = 0.02;
+
+  page.style.setProperty('--bulletin-scale', 1);
+  let scale = 1;
+  // Reading scrollHeight/clientHeight right after each mutation forces the
+  // browser to flush layout synchronously, so this loop sees each step's
+  // real rendered size rather than a stale measurement.
+  while (page.scrollHeight > page.clientHeight + 1 && scale > MIN_SCALE) {
+    scale = Math.max(MIN_SCALE, scale - STEP);
+    page.style.setProperty('--bulletin-scale', scale);
+  }
+}
+
 // Init
 function setPrintDate() {
   const el = document.getElementById('print-date');
@@ -1094,9 +1181,14 @@ function setPrintDate() {
 }
 setPrintDate();
 loadReflection();
-loadIntentions();
-loadEvents();
 loadNotices();
+// Fit-to-page only depends on the front page's own data (Mass Intentions +
+// This Week) — reflection/notices feed page 2 and don't affect its height.
+// Also wait on web fonts so the first measurement uses real font metrics
+// instead of a fallback face's (slightly different) dimensions.
+const fontsReady = (typeof document.fonts !== 'undefined' && document.fonts && document.fonts.ready)
+  ? document.fonts.ready : Promise.resolve();
+Promise.all([loadIntentions(), loadEvents(), fontsReady]).then(fitFrontPageToPage);
 </script>
 </body>
 </html>
