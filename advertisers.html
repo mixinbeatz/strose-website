@@ -23,8 +23,8 @@
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
   a { color: inherit; }
 
-  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden; }
-  .hero::before { content: '✝'; position: absolute; font-size: 300px; color: rgba(255,255,255,0.03); top: -60px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; }
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
   .hero-back { display: inline-block; font-size: 12px; letter-spacing: 1px; color: var(--dusty-rose); text-decoration: none; margin-bottom: 20px; position: relative; }
   .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; position: relative; }
   .hero-title { font-family: 'Cinzel', serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--linen); line-height: 1.2; margin-bottom: 12px; position: relative; }
@@ -80,6 +80,7 @@
 <body>
 
 <div class="hero">
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
   <a href="index.html" class="hero-back">← Back to Home</a>
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
   <h1 class="hero-title">Advertiser Directory</h1>

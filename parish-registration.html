@@ -21,8 +21,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
 
-  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; }
-  .hero::before { content: '✝'; position: absolute; font-size: 320px; color: rgba(255,255,255,0.03); top: -60px; left: 50%; transform: translateX(-50%); font-family: 'Cinzel', serif; }
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
   .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
   .hero-title { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 48px); color: var(--linen); line-height: 1.2; margin-bottom: 16px; }
   .hero-sub { font-size: 17px; color: rgba(232,221,208,0.85); max-width: 620px; margin: 0 auto; line-height: 1.7; }
@@ -72,6 +72,7 @@
 <body>
 
 <div class="hero">
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
   <h1 class="hero-title">Family Registration</h1>
   <p class="hero-sub">Welcome to Saint Rose! Complete the form below to register your family with the parish. Our staff will follow up to finish setting up your record.</p>
