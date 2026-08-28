@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funeral Planning Form — Saint Rose Philippine Duchesne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+    --success: #4A7C59;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
+
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 48px); color: var(--linen); line-height: 1.2; margin-bottom: 16px; }
+  .hero-sub { font-size: 17px; color: rgba(232,221,208,0.85); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .gold-divider { height: 3px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .form-wrapper { background: var(--white); padding: 56px 24px; }
+  .form-section { max-width: 780px; margin: 0 auto; }
+  .form-sub { font-size: 15px; color: var(--dusty-rose); margin-bottom: 40px; line-height: 1.6; }
+  .form-block { margin-bottom: 40px; }
+  .form-block-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linen); letter-spacing: 0.5px; }
+  .form-block-sub { font-size: 13px; color: var(--dusty-rose); margin-top: -10px; margin-bottom: 18px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width:640px){
+    .form-grid,.form-grid-3{grid-template-columns:1fr;}
+    .hero{padding:56px 24px;}
+  }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--dusty-rose); }
+  .form-label span { color: var(--danger, #8B2635); }
+  .form-input, .form-select, .form-textarea { padding: 13px 16px; border: 1.5px solid var(--linen); border-radius: 10px; font-family: 'Faustina', serif; font-size: 16px; color: var(--soil); background: var(--sand); outline: none; transition: border-color 0.2s, background 0.2s; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--burgundy); background: var(--white); }
+  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+  .radio-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .radio-item, .checkbox-item { display: flex; align-items: center; gap: 9px; font-size: 15px; color: var(--soil); cursor: pointer; }
+  .radio-item input, .checkbox-item input { width: 18px; height: 18px; accent-color: var(--burgundy); cursor: pointer; }
+  .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+  @media(max-width:640px){.checkbox-grid{grid-template-columns:1fr;}}
+
+  .submit-btn { width: 100%; padding: 20px; background: var(--burgundy); color: var(--linen); border: none; border-radius: 12px; font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .submit-btn:hover { background: var(--burgundy-light); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .success-screen { display: none; text-align: center; padding: 60px 32px; }
+  .success-icon { width: 80px; height: 80px; background: #EDF7F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; }
+  .success-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--burgundy); margin-bottom: 12px; }
+  .success-sub { font-size: 16px; color: var(--soil); opacity: 0.75; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+  .success-actions { margin-top: 28px; }
+  .success-link { display: inline-block; padding: 14px 28px; border: 1.5px solid var(--burgundy); border-radius: 10px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--burgundy); text-decoration: none; cursor: pointer; }
+  .success-link:hover { background: var(--sand); }
+
+  .footer { background: var(--burgundy-dark); padding: 40px; text-align: center; }
+  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .footer-sub { font-size: 13px; color: rgba(232,221,208,0.4); }
+
+  .required { color: #8B2635; }
+  .error-msg { color: #8B2635; font-size: 13px; margin-top: 4px; display: none; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Funeral Planning Form</h1>
+  <p class="hero-sub">We are here to walk with you. Fill out as much as you can — anything left blank can be settled when we meet. When you submit, this opens a pre-filled email to our Funeral Ministry so nothing is lost.</p>
+</div>
+
+<div class="gold-divider"></div>
+
+<div class="form-wrapper">
+  <div class="form-section">
+    <div id="form-content">
+
+      <p class="form-sub">Only the name of the deceased is required. For the readings and music, refer to the options listed in the Funeral Guide.</p>
+
+      <!-- DECEASED & FAMILY -->
+      <div class="form-block">
+        <div class="form-block-title">Deceased &amp; Family</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Funeral of <span class="required">*</span></label>
+            <input type="text" class="form-input" id="d-name" placeholder="Full name of the deceased" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" class="form-input" id="d-dob" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Death</label>
+            <input type="date" class="form-input" id="d-dod" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Age</label>
+            <input type="text" class="form-input" id="d-age" inputmode="numeric" placeholder="e.g. 82" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Catholic / Non-Catholic</label>
+            <div class="radio-row" style="padding-top:6px;">
+              <label class="radio-item"><input type="radio" name="d-catholic" value="Catholic" /> Catholic</label>
+              <label class="radio-item"><input type="radio" name="d-catholic" value="Non-Catholic" /> Non-Catholic</label>
+            </div>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Family Contact Person</label>
+            <input type="text" class="form-input" id="d-contact-name" placeholder="Name of the person we should coordinate with" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input type="email" class="form-input" id="d-contact-email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Phone</label>
+            <input type="tel" class="form-input" id="d-contact-phone" oninput="formatPhoneInput(this)" placeholder="(623) 555-1234" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Family Street Address</label>
+            <input type="text" class="form-input" id="d-address" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">City / State</label>
+            <input type="text" class="form-input" id="d-citystate" placeholder="Anthem, AZ" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Spouse / Parents of the Deceased</label>
+            <input type="text" class="form-input" id="d-spouse-parents" placeholder="Surviving spouse, or parents' names" />
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICE DETAILS -->
+      <div class="form-block">
+        <div class="form-block-title">Service Details</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Funeral Home</label>
+            <input type="text" class="form-input" id="s-funeral-home" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cemetery</label>
+            <input type="text" class="form-input" id="s-cemetery" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Service Type <span style="text-transform:none;letter-spacing:0;opacity:0.7;">(select all that apply)</span></label>
+            <div class="checkbox-grid" style="padding-top:6px;">
+              <label class="checkbox-item"><input type="checkbox" class="s-type" value="Casket" /> Casket</label>
+              <label class="checkbox-item"><input type="checkbox" class="s-type" value="Urn" /> Urn</label>
+              <label class="checkbox-item"><input type="checkbox" class="s-type" value="Mass of Burial" /> Mass of Burial</label>
+              <label class="checkbox-item"><input type="checkbox" class="s-type" value="Service at Funeral Home" /> Service at Funeral Home</label>
+              <label class="checkbox-item"><input type="checkbox" class="s-type" value="Graveside Service Only" /> Graveside Service Only</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of Mass / Service</label>
+            <input type="date" class="form-input" id="s-mass-date" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time of Mass / Service</label>
+            <input type="time" class="form-input" id="s-mass-time" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Burial Date / Time</label>
+            <input type="text" class="form-input" id="s-burial-datetime" placeholder="e.g. Fri Sep 12, 2:00 PM" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Place of Burial</label>
+            <input type="text" class="form-input" id="s-place-burial" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Presiding Clergy / Celebrant</label>
+            <input type="text" class="form-input" id="s-clergy" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Altar Server</label>
+            <input type="text" class="form-input" id="s-altar-server" />
+          </div>
+        </div>
+      </div>
+
+      <!-- READINGS & MUSIC -->
+      <div class="form-block">
+        <div class="form-block-title">Readings &amp; Music</div>
+        <div class="form-block-sub">Choose readings and songs by their number from the Funeral Guide. The Gospel is chosen by the priest or deacon.</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">First Reading (Old Testament)</label>
+            <select class="form-select" id="r-first-reading">
+              <option value="">—</option>
+              <option>OT1</option><option>OT2</option><option>OT3</option><option>OT4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">First Reading — Reader</label>
+            <input type="text" class="form-input" id="r-first-reader" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Responsorial Psalm</label>
+            <select class="form-select" id="r-psalm">
+              <option value="">—</option>
+              <option>RS1</option><option>RS2</option><option>RS3</option><option>RS4</option>
+            </select>
+          </div>
+          <div class="form-group"></div>
+          <div class="form-group">
+            <label class="form-label">Second Reading (New Testament)</label>
+            <select class="form-select" id="r-second-reading">
+              <option value="">—</option>
+              <option>NT1</option><option>NT2</option><option>NT3</option><option>NT4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Second Reading — Reader</label>
+            <input type="text" class="form-input" id="r-second-reader" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Gospel Notes</label>
+            <textarea class="form-textarea" id="r-gospel-notes" style="min-height:70px;" placeholder="Any Gospel preference to pass along to the priest or deacon (optional)"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Eulogy — Who is Speaking</label>
+            <input type="text" class="form-input" id="r-eulogy" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gift Bearers (Bread &amp; Wine)</label>
+            <input type="text" class="form-input" id="r-gift-bearers" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Pallbearers</label>
+            <textarea class="form-textarea" id="r-pallbearers" style="min-height:80px;" placeholder="One name per line"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Opening Song</label>
+            <input type="text" class="form-input" id="m-opening" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Preparation Song</label>
+            <input type="text" class="form-input" id="m-preparation" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Communion Song</label>
+            <input type="text" class="form-input" id="m-communion" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Recessional Song</label>
+            <input type="text" class="form-input" id="m-recessional" />
+          </div>
+        </div>
+      </div>
+
+      <!-- SACRAMENTS RECEIVED -->
+      <div class="form-block">
+        <div class="form-block-title">Sacraments Received</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" class="sac" value="Baptism" /> Baptism</label>
+          <label class="checkbox-item"><input type="checkbox" class="sac" value="Communion" /> Communion</label>
+          <label class="checkbox-item"><input type="checkbox" class="sac" value="Confirmation" /> Confirmation</label>
+          <label class="checkbox-item"><input type="checkbox" class="sac" value="Marriage" /> Marriage</label>
+          <label class="checkbox-item"><input type="checkbox" class="sac" value="Anointing" /> Anointing</label>
+        </div>
+      </div>
+
+      <!-- MISCELLANEOUS -->
+      <div class="form-block">
+        <div class="form-block-title">Miscellaneous</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" class="misc" value="Guest Book" /> Guest Book</label>
+          <label class="checkbox-item"><input type="checkbox" class="misc" value="Easel for Picture / Collage" /> Easel for Picture / Collage</label>
+          <label class="checkbox-item"><input type="checkbox" class="misc" value="Table for Pictures / Card Basket" /> Table for Pictures / Card Basket</label>
+          <label class="checkbox-item"><input type="checkbox" class="misc" value="Biography with Picture" /> Biography with Picture</label>
+        </div>
+      </div>
+
+      <!-- OTHER NOTES -->
+      <div class="form-block">
+        <div class="form-block-title">Other Notes</div>
+        <div class="form-group">
+          <label class="form-label">Anything else we should know?</label>
+          <textarea class="form-textarea" id="o-notes" placeholder="Optional"></textarea>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+      <button class="submit-btn" id="submit-btn" onclick="submitFuneralForm()">Submit &amp; Open Email →</button>
+      <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Submitting opens a pre-filled email to the Saint Rose Funeral Ministry. Please press send in your mail app to deliver it.</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✉️</div>
+      <div class="success-title">Almost done</div>
+      <p class="success-sub">Your planning details should now be open in your email app, addressed to the Saint Rose Funeral Ministry. <strong>Please press send</strong> to deliver it. If your email app did not open, use the button below.</p>
+      <div class="success-actions">
+        <a class="success-link" id="retry-mailto" href="#">Open the Email Again</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-logo">Sacred Apps</div>
+  <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
+  const FUNERAL_MINISTRY_EMAIL = 'chrisbosn@stroseanthem.com';
+
+  function formatPhoneInput(el) {
+    let digits = el.value.replace(/\D/g, '').slice(0, 10);
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6,10);
+    } else if (digits.length > 3) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6);
+    } else if (digits.length > 0) {
+      formatted = '(' + digits;
+    }
+    el.value = formatted;
+  }
+
+  function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function radioVal(name) { const el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function checkedVals(cls) { return Array.from(document.querySelectorAll('input.' + cls + ':checked')).map(function(el){ return el.value; }); }
+
+  // Builds the plain-text body used both for the mailto: and the Firestore
+  // backup copy. Only non-empty fields are included, to keep the mailto short.
+  function buildSummary(deceased) {
+    const lines = [];
+    lines.push('FUNERAL PLANNING FORM — Saint Rose Philippine Duchesne');
+    lines.push('Submitted: ' + new Date().toLocaleString('en-US'));
+    lines.push('');
+
+    function section(title, rows) {
+      const filled = rows.filter(function(r){ return r[1] && String(r[1]).trim(); });
+      if (!filled.length) return;
+      lines.push('=== ' + title + ' ===');
+      filled.forEach(function(r){ lines.push(r[0] + ': ' + r[1]); });
+      lines.push('');
+    }
+
+    const firstReading = val('r-first-reading') + (val('r-first-reader') ? '  (Reader: ' + val('r-first-reader') + ')' : '');
+    const secondReading = val('r-second-reading') + (val('r-second-reader') ? '  (Reader: ' + val('r-second-reader') + ')' : '');
+
+    section('DECEASED & FAMILY', [
+      ['Funeral of', deceased],
+      ['Date of Birth', val('d-dob')],
+      ['Date of Death', val('d-dod')],
+      ['Age', val('d-age')],
+      ['Catholic / Non-Catholic', radioVal('d-catholic')],
+      ['Family Contact Person', val('d-contact-name')],
+      ['Contact Email', val('d-contact-email')],
+      ['Contact Phone', val('d-contact-phone')],
+      ['Family Street Address', val('d-address')],
+      ['City / State', val('d-citystate')],
+      ['Spouse / Parents of the Deceased', val('d-spouse-parents')],
+    ]);
+
+    section('SERVICE DETAILS', [
+      ['Funeral Home', val('s-funeral-home')],
+      ['Cemetery', val('s-cemetery')],
+      ['Service Type', checkedVals('s-type').join(', ')],
+      ['Date of Mass / Service', val('s-mass-date')],
+      ['Time of Mass / Service', val('s-mass-time')],
+      ['Burial Date / Time', val('s-burial-datetime')],
+      ['Place of Burial', val('s-place-burial')],
+      ['Presiding Clergy / Celebrant', val('s-clergy')],
+      ['Altar Server', val('s-altar-server')],
+    ]);
+
+    section('READINGS & MUSIC', [
+      ['First Reading', firstReading.trim()],
+      ['Responsorial Psalm', val('r-psalm')],
+      ['Second Reading', secondReading.trim()],
+      ['Gospel Notes', val('r-gospel-notes')],
+      ['Eulogy — Who is Speaking', val('r-eulogy')],
+      ['Gift Bearers (Bread & Wine)', val('r-gift-bearers')],
+      ['Pallbearers', val('r-pallbearers') ? val('r-pallbearers').replace(/\s*\n\s*/g, ', ') : ''],
+      ['Opening Song', val('m-opening')],
+      ['Preparation Song', val('m-preparation')],
+      ['Communion Song', val('m-communion')],
+      ['Recessional Song', val('m-recessional')],
+    ]);
+
+    section('SACRAMENTS RECEIVED', [['Sacraments', checkedVals('sac').join(', ')]]);
+    section('MISCELLANEOUS', [['Requested Items', checkedVals('misc').join(', ')]]);
+    section('OTHER NOTES', [['Notes', val('o-notes')]]);
+
+    return lines.join('\n').trim();
+  }
+
+  let lastMailto = '';
+
+  async function submitFuneralForm() {
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+    const deceased = val('d-name');
+    if (!deceased) {
+      errorEl.textContent = 'Please enter the name of the deceased.';
+      errorEl.style.display = 'block';
+      window.scrollTo({ top: document.getElementById('d-name').getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Preparing...';
+
+    const summary = buildSummary(deceased);
+    const subject = 'Funeral Planning — ' + deceased;
+    lastMailto = 'mailto:' + FUNERAL_MINISTRY_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(summary);
+
+    // Backup audit-trail copy to Firestore. Best-effort only: the mailto is
+    // what actually delivers to the Funeral Ministry, so a failed write here
+    // must never block the visitor. Public unauthenticated create is allowed
+    // by an isPublicSubmission rule scoped to this exact collection (same tier
+    // as contactRequests / councilInquiries / familyRegistrations).
+    try {
+      await fetch(`${BASE}/funeralPlanningSubmissions?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: {
+          deceasedName: { stringValue: deceased },
+          contactPerson: { stringValue: val('d-contact-name') },
+          contactEmail: { stringValue: val('d-contact-email') },
+          contactPhone: { stringValue: val('d-contact-phone') },
+          summary: { stringValue: summary },
+          status: { stringValue: 'pending' },
+          createdAt: { stringValue: new Date().toISOString() }
+        } })
+      });
+    } catch (e) { /* mailto is the primary delivery path — ignore */ }
+
+    document.getElementById('retry-mailto').setAttribute('href', lastMailto);
+    document.getElementById('form-content').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    window.location.href = lastMailto;
+  }
+
+  document.getElementById('retry-mailto').addEventListener('click', function(e) {
+    if (lastMailto) { e.preventDefault(); window.location.href = lastMailto; }
+  });
+</script>
+
+</body>
+</html>
