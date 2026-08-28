@@ -67,6 +67,30 @@
   .nav-admin { color: rgba(232,221,208,0.3) !important; font-size: 11px !important; letter-spacing: 1px !important; }
   .nav-admin:hover { color: rgba(232,221,208,0.6) !important; }
 
+  /* ── FORMS NAV DROPDOWN (CSS-only, opens on hover/focus) ── */
+  .nav-forms { position: relative; }
+  .nav-forms-menu {
+    display: none;
+    position: absolute; right: 0; top: 100%;
+    min-width: 210px;
+    background: var(--burgundy-dark);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 6px 0;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .nav-forms:hover .nav-forms-menu,
+  .nav-forms:focus-within .nav-forms-menu { display: block; }
+  .nav-forms-menu a {
+    display: block;
+    padding: 10px 18px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+  .nav-forms-menu a:hover { background: rgba(255,255,255,0.06); color: var(--gold); }
+
   /* ── HERO ── */
   .hero {
     position: relative;
@@ -723,6 +747,21 @@
   .mobile-menu a:hover { color: var(--gold); }
   .mobile-menu-divider { height: 1px; background: rgba(201,168,76,0.2); margin: 8px 0; }
   .mobile-menu-admin { color: var(--dusty-rose) !important; font-size: 12px !important; }
+  /* Mobile "Forms" section — native <details>, tap the label to expand */
+  .mobile-menu details > summary {
+    color: rgba(232,221,208,0.8);
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    padding: 14px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    list-style: none;
+  }
+  .mobile-menu details > summary::-webkit-details-marker { display: none; }
+  .mobile-menu details > summary::after { content: ' \25BE'; opacity: 0.55; }
+  .mobile-menu details[open] > summary::after { content: ' \25B4'; }
+  .mobile-menu details > a { display: block; padding-left: 48px; }
 
   @media (max-width: 900px) {
     .hamburger { display: flex; }
@@ -773,7 +812,20 @@
     <a href="#location">Visit</a>
     <a href="bulletin.html">Bulletin</a>
     <a href="advertisers.html">Directory</a>
-    <a href="parish-registration.html">Register</a>
+    <!--
+      FORMS dropdown. To add a form, add ONE <a> line in each of these spots,
+      keeping the list identical everywhere:
+        1. this desktop menu (below)
+        2. the mobile "Forms" <details> further down in this file
+        3. calendar.html's desktop nav (it has no mobile menu)
+    -->
+    <div class="nav-forms">
+      <a href="#" onclick="return false;" aria-haspopup="true">Forms ▾</a>
+      <div class="nav-forms-menu">
+        <a href="parish-registration.html">Parish Registration</a>
+        <a href="funeral-planning-form.html">Funeral Planning Form</a>
+      </div>
+    </div>
     <a href="#app" class="nav-cta">Get the App</a>
     <div style="position:relative;display:inline-block" onmouseenter="this.querySelector('.admin-dropdown').style.display='block'" onmouseleave="this.querySelector('.admin-dropdown').style.display='none'">
       <a href="#" class="nav-admin" onclick="return false;">Admin ▾</a>
@@ -793,7 +845,12 @@
   <a href="#location" onclick="toggleMenu()">Visit</a>
   <a href="bulletin.html" onclick="toggleMenu()">Bulletin</a>
   <a href="advertisers.html" onclick="toggleMenu()">Directory</a>
-  <a href="parish-registration.html" onclick="toggleMenu()">Register</a>
+  <!-- FORMS: keep this list identical to the desktop dropdown above / calendar.html -->
+  <details class="mobile-forms">
+    <summary>Forms</summary>
+    <a href="parish-registration.html" onclick="toggleMenu()">Parish Registration</a>
+    <a href="funeral-planning-form.html" onclick="toggleMenu()">Funeral Planning Form</a>
+  </details>
   <a href="#app" onclick="toggleMenu()">Get the App</a>
   <div class="mobile-menu-divider"></div>
   <a href="https://portal.saintroseanthem.org" target="_blank" class="mobile-menu-admin">Admin Portal</a>

@@ -41,6 +41,24 @@
   .nav-links a:hover { color: var(--gold); }
   .nav-links a.active { color: var(--gold); }
 
+  /* ── FORMS NAV DROPDOWN (CSS-only, opens on hover/focus) — matches index.html ── */
+  .nav-forms { position: relative; }
+  .nav-forms-menu {
+    display: none;
+    position: absolute; right: 0; top: 100%;
+    min-width: 210px;
+    background: var(--burgundy-dark);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 6px 0;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .nav-forms:hover .nav-forms-menu,
+  .nav-forms:focus-within .nav-forms-menu { display: block; }
+  .nav-forms-menu a { display: block; padding: 10px 18px; white-space: nowrap; }
+  .nav-forms-menu a:hover { background: rgba(255,255,255,0.06); color: var(--gold); }
+
   /* ── HERO ── */
   .hero {
     background: linear-gradient(160deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
@@ -117,6 +135,14 @@
     <a href="index.html#location">Visit</a>
     <a href="bulletin.html">Bulletin</a>
     <a href="advertisers.html">Directory</a>
+    <!-- FORMS dropdown — keep this list identical to index.html (desktop + mobile). Add a form as one <a> line. -->
+    <div class="nav-forms">
+      <a href="#" onclick="return false;" aria-haspopup="true">Forms ▾</a>
+      <div class="nav-forms-menu">
+        <a href="parish-registration.html">Parish Registration</a>
+        <a href="funeral-planning-form.html">Funeral Planning Form</a>
+      </div>
+    </div>
     <a href="index.html#app" class="nav-cta">Get the App</a>
   </div>
 </nav>
