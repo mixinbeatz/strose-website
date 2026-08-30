@@ -549,10 +549,42 @@ nav {
 .print-main .intention-row, .print-main .event-item-title { font-size: calc(9.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
 .print-main .intention-time, .print-main .event-item-time { font-size: calc(8.5px * var(--bulletin-scale, 1)); width: 46px; }
 
-.print-qr-footer {
+/* Weekly calendar strip — 7 day cells, Sunday → Saturday, for the bulletin's
+   week window. Pinned directly above the QR footer: it now carries the
+   margin-top:auto that pushes the page's tail block to the bottom. Dates use
+   the same weekStart as setPrintDate() and the same
+   toLocaleDateString('en-US', …) formatting scheme as the masthead / date
+   band. Fixed size, like the masthead and QR footer — not scaled by
+   --bulletin-scale. */
+.print-week-strip {
   margin-top: auto;
   padding-top: 12px;
+  padding-bottom: 12px;
   border-top: 1px solid var(--linen);
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.print-week-strip-cell {
+  border: 1px solid var(--gold);
+  padding: 4px 2px;
+  text-align: center;
+}
+.print-week-strip-day {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--burgundy);
+}
+.print-week-strip-date {
+  font-size: 8.5px;
+  color: var(--soil);
+  margin-top: 2px;
+}
+
+.print-qr-footer {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -871,6 +903,7 @@ nav {
         </div>
       </div>
     </div>
+    <div class="print-week-strip" id="print-week-strip"></div>
     <div class="print-qr-footer">
       <div class="print-qr-text">Get the SaintRose app</div>
       <div class="print-qr-codes">
@@ -1295,6 +1328,29 @@ function setPrintDate() {
   }
 }
 setPrintDate();
+
+// Weekly calendar strip above the QR footer — 7 cells, Sunday → Saturday, for
+// the same Sun–Sat window the rest of the front page uses (getBulletinWeekWindow
+// always returns a Sunday weekStart). Formatted with the same
+// toLocaleDateString('en-US', …) scheme as setPrintDate() / the masthead.
+function setWeekStrip() {
+  const el = document.getElementById('print-week-strip');
+  if (!el) return;
+  const { weekStart } = getBulletinWeekWindow();
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    const day = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    html += '<div class="print-week-strip-cell">'
+      + '<div class="print-week-strip-day">' + day + '</div>'
+      + '<div class="print-week-strip-date">' + date + '</div>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+}
+setWeekStrip();
 loadReflection();
 loadNotices();
 // Fit-to-page only depends on the front page's own data (Mass Intentions +
