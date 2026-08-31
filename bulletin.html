@@ -567,7 +567,7 @@ nav {
 }
 .print-week-strip-cell {
   border: 1px solid var(--gold);
-  padding: 4px 2px;
+  padding: 4px 3px 5px;
   text-align: center;
 }
 .print-week-strip-day {
@@ -583,6 +583,24 @@ nav {
   color: var(--soil);
   margin-top: 2px;
 }
+/* That day's calendar events (title + optional time), stacked below the
+   date. Faustina body face (inherited) for titles, Cinzel for the time
+   label — same pairing as the strip header and the rest of the bulletin. */
+.print-week-strip-event {
+  margin-top: 3px;
+  font-size: 6.5px;
+  line-height: 1.25;
+  color: var(--soil);
+}
+.print-week-strip-event-time {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 5.75px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--dusty-rose);
+}
+.print-week-strip-event-title { display: block; }
 
 .print-qr-footer {
   display: flex;
@@ -1329,28 +1347,178 @@ function setPrintDate() {
 }
 setPrintDate();
 
-// Weekly calendar strip above the QR footer — 7 cells, Sunday → Saturday, for
-// the same Sun–Sat window the rest of the front page uses (getBulletinWeekWindow
-// always returns a Sunday weekStart). Formatted with the same
-// toLocaleDateString('en-US', …) scheme as setPrintDate() / the masthead.
-function setWeekStrip() {
+// ── Weekly calendar strip (above the QR footer) ────────────────────────────
+// 7 cells, Sunday → Saturday, for the same Sun–Sat window the rest of the
+// front page uses (getBulletinWeekWindow always returns a Sunday weekStart).
+// Day/date use the same toLocaleDateString('en-US', …) scheme as
+// setPrintDate() / the masthead; each cell also lists that day's events
+// (title + time) from the SAME events collection calendar.html reads
+// (parishes/saint-rose-anthem/events, orderBy=startAt) — see queryWeekEvents().
+//
+// Friday-morning lock: a printed bulletin is finalised over its weekend, so
+// once we're at/after Friday 00:00 *Arizona time* (America/Phoenix — AZ has no
+// DST, so it's an unambiguous fixed −07:00) for this window, the first load
+// snapshots that week's events into
+// parishes/saint-rose-anthem/bulletinSnapshots/{weekStartISO} and every later
+// load (including the actual print run over that weekend) renders from the
+// snapshot — so calendar edits made after Friday morning don't change what's
+// already been locked for print. Before Friday 00:00 AZ (shouldn't normally
+// happen given the print cadence) it's a plain live query with no snapshot
+// write. The snapshot doc is immutable once written (firestore.rules), so a
+// lock can't be silently altered.
+
+function isoDate(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
+// Current wall-clock time in America/Phoenix as a lexically-comparable
+// 'YYYY-MM-DDTHH:MM:SS' string — independent of the viewer's own timezone, so
+// every visitor agrees on whether Arizona has reached Friday 00:00.
+function phoenixWallClock() {
+  const p = {};
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Phoenix', hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  }).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+  const hh = p.hour === '24' ? '00' : p.hour; // some engines emit '24' at midnight
+  return `${p.year}-${p.month}-${p.day}T${hh}:${p.minute}:${p.second}`;
+}
+
+// Live query: this week's events, grouped by local date key. Mirrors
+// loadEvents() above — same URL, same startAt/date parsing, same in-week
+// filter (past-but-in-week events are kept, matching the front page's weekly
+// recap; expiresAt is intentionally not applied here).
+async function queryWeekEvents(weekStart, weekEnd) {
+  const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&orderBy=startAt&pageSize=300`);
+  const data = await res.json();
+  const docs = data.documents || [];
+  const byKey = {};
+  docs.map(doc => {
+    const f = doc.fields || {};
+    const startAt = f.startAt?.stringValue || '';
+    const dateStr = f.date?.stringValue || '';
+    let date = startAt ? new Date(startAt) : null;
+    if (!date || isNaN(date)) {
+      const parsed = new Date(dateStr + ' ' + weekStart.getFullYear());
+      if (!isNaN(parsed)) date = parsed;
+    }
+    return { title: gf(doc, 'title'), time: gf(doc, 'time'), date };
+  }).filter(e => e.date && !isNaN(e.date) && e.date >= weekStart && e.date <= weekEnd)
+    .sort((a, b) => a.date - b.date)
+    .forEach(e => {
+      const k = isoDate(e.date);
+      (byKey[k] = byKey[k] || []).push({ title: e.title, time: e.time || '' });
+    });
+  return byKey;
+}
+
+// Read a previously-locked snapshot; returns the same
+// { dateKey: [{title, time}] } shape as queryWeekEvents(), or null if none.
+async function readSnapshot(weekStartISO) {
+  try {
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const arr = data.fields?.events?.arrayValue?.values || [];
+    const byKey = {};
+    arr.forEach(v => {
+      const m = v.mapValue?.fields || {};
+      const k = m.dateKey?.stringValue || '';
+      if (!k) return;
+      (byKey[k] = byKey[k] || []).push({
+        title: m.title?.stringValue || '',
+        time: m.time?.stringValue || ''
+      });
+    });
+    return byKey;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Write the lock. PATCH creates the doc if absent; if it already exists
+// (another client locked it first, or a reload races) the rules reject the
+// update and we just fall back to what's already stored.
+async function writeSnapshot(weekStartISO, weekEndISO, byKey) {
+  const values = [];
+  Object.keys(byKey).forEach(k => byKey[k].forEach(e => values.push({
+    mapValue: { fields: {
+      dateKey: { stringValue: k },
+      title: { stringValue: e.title || '' },
+      time: { stringValue: e.time || '' }
+    } }
+  })));
+  const body = { fields: {
+    weekStart: { stringValue: weekStartISO },
+    weekEnd: { stringValue: weekEndISO },
+    lockedAt: { stringValue: phoenixWallClock() + ' America/Phoenix' },
+    events: { arrayValue: { values } }
+  } };
+  try {
+    await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+  } catch (e) { /* best effort — the live query result is already rendered */ }
+}
+
+function renderWeekStrip(el, days, byKey) {
+  el.innerHTML = days.map(d => {
+    const evs = byKey[isoDate(d)] || [];
+    const evHtml = evs.map(e =>
+      '<div class="print-week-strip-event">' +
+        (e.time ? '<span class="print-week-strip-event-time">' + escHtml(e.time) + '</span>' : '') +
+        '<span class="print-week-strip-event-title">' + escHtml(e.title) + '</span>' +
+      '</div>'
+    ).join('');
+    return '<div class="print-week-strip-cell">' +
+      '<div class="print-week-strip-day">' + d.toLocaleDateString('en-US', { weekday: 'short' }) + '</div>' +
+      '<div class="print-week-strip-date">' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</div>' +
+      evHtml +
+    '</div>';
+  }).join('');
+}
+
+async function setWeekStrip() {
   const el = document.getElementById('print-week-strip');
   if (!el) return;
-  const { weekStart } = getBulletinWeekWindow();
-  let html = '';
+  const { weekStart, weekEnd } = getBulletinWeekWindow();
+  const days = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
-    const day = d.toLocaleDateString('en-US', { weekday: 'short' });
-    const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    html += '<div class="print-week-strip-cell">'
-      + '<div class="print-week-strip-day">' + day + '</div>'
-      + '<div class="print-week-strip-date">' + date + '</div>'
-      + '</div>';
+    days.push(d);
   }
-  el.innerHTML = html;
+  renderWeekStrip(el, days, {}); // day/date skeleton up front — the strip is never blank
+
+  const weekStartISO = isoDate(weekStart);
+  const fridayLock = isoDate(days[5]) + 'T00:00:00'; // Friday 00:00, AZ wall clock
+  const locked = phoenixWallClock() >= fridayLock;
+
+  let byKey;
+  try {
+    if (locked) {
+      byKey = await readSnapshot(weekStartISO);
+      if (!byKey) {
+        byKey = await queryWeekEvents(weekStart, weekEnd);
+        await writeSnapshot(weekStartISO, isoDate(weekEnd), byKey);
+        // Re-read: if a racing client locked a (near-identical) snapshot first,
+        // prefer the stored one so every load agrees.
+        byKey = (await readSnapshot(weekStartISO)) || byKey;
+      }
+    } else {
+      byKey = await queryWeekEvents(weekStart, weekEnd);
+    }
+  } catch (e) {
+    byKey = {};
+  }
+  renderWeekStrip(el, days, byKey || {});
 }
-setWeekStrip();
+
 loadReflection();
 loadNotices();
 // Fit-to-page only depends on the front page's own data (Mass Intentions +
@@ -1359,7 +1527,7 @@ loadNotices();
 // instead of a fallback face's (slightly different) dimensions.
 const fontsReady = (typeof document.fonts !== 'undefined' && document.fonts && document.fonts.ready)
   ? document.fonts.ready : Promise.resolve();
-Promise.all([loadIntentions(), loadEvents(), fontsReady]).then(fitFrontPageToPage);
+Promise.all([loadIntentions(), loadEvents(), setWeekStrip(), fontsReady]).then(fitFrontPageToPage);
 </script>
 </body>
 </html>
