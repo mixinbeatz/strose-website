@@ -1438,12 +1438,29 @@ async function queryWeekEvents(weekStart, weekEnd) {
 
 // Read a previously-locked snapshot; returns the same
 // { dateKey: [{title, time}] } shape as queryWeekEvents(), or null if none.
+// events is stored as a JSON string (see writeSnapshot / firestore.rules);
+// the arrayValue branch is legacy support for any snapshot written before
+// Aug 31 2026.
 async function readSnapshot(weekStartISO) {
   try {
     const res = await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`);
     if (!res.ok) return null;
     const data = await res.json();
-    const arr = data.fields?.events?.arrayValue?.values || [];
+    const ev = data.fields?.events;
+    if (ev && ev.stringValue !== undefined) {
+      let parsed;
+      try { parsed = JSON.parse(ev.stringValue); } catch (e) { return null; }
+      const byKey = {};
+      Object.keys(parsed || {}).forEach(k => {
+        if (!Array.isArray(parsed[k])) return;
+        byKey[k] = parsed[k].map(e => ({
+          title: String(e && e.title || ''),
+          time: String(e && e.time || '')
+        }));
+      });
+      return byKey;
+    }
+    const arr = ev?.arrayValue?.values || [];
     const byKey = {};
     arr.forEach(v => {
       const m = v.mapValue?.fields || {};
@@ -1463,20 +1480,24 @@ async function readSnapshot(weekStartISO) {
 // Write the lock. PATCH creates the doc if absent; if it already exists
 // (another client locked it first, or a reload races) the rules reject the
 // update and we just fall back to what's already stored.
+//
+// events goes in as a JSON string, not a Firestore array: firestore.rules
+// can't bound each entry of a variable-length list, so it hard-caps the
+// serialised string instead. We apply per-field caps (and cap the number of
+// days / events per day) here so the blob stays well under that ceiling.
 async function writeSnapshot(weekStartISO, weekEndISO, byKey) {
-  const values = [];
-  Object.keys(byKey).forEach(k => byKey[k].forEach(e => values.push({
-    mapValue: { fields: {
-      dateKey: { stringValue: k },
-      title: { stringValue: e.title || '' },
-      time: { stringValue: e.time || '' }
-    } }
-  })));
+  const clean = {};
+  Object.keys(byKey).slice(0, 14).forEach(k => {
+    clean[k] = (byKey[k] || []).slice(0, 40).map(e => ({
+      title: String(e.title || '').slice(0, 200),
+      time: String(e.time || '').slice(0, 40)
+    }));
+  });
   const body = { fields: {
     weekStart: { stringValue: weekStartISO },
     weekEnd: { stringValue: weekEndISO },
     lockedAt: { stringValue: phoenixWallClock() + ' America/Phoenix' },
-    events: { arrayValue: { values } }
+    events: { stringValue: JSON.stringify(clean) }
   } };
   try {
     await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`, {
