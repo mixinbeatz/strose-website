@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delete My Account — Saint Rose Philippine Duchesne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+    --success: #4A7C59;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
+
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
+  .hero-back { position: absolute; top: 24px; left: 24px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: rgba(232,221,208,0.8); text-decoration: none; }
+  .hero-back:hover { color: var(--gold); }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 48px); color: var(--linen); line-height: 1.2; margin-bottom: 16px; }
+  .hero-sub { font-size: 17px; color: rgba(232,221,208,0.85); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .gold-divider { height: 3px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .form-wrapper { background: var(--white); padding: 56px 24px; }
+  .form-section { max-width: 680px; margin: 0 auto; }
+  .form-sub { font-size: 15px; color: var(--dusty-rose); margin-bottom: 32px; line-height: 1.6; }
+  .form-block { margin-bottom: 36px; }
+  .form-block-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linen); letter-spacing: 0.5px; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--dusty-rose); }
+  .form-input, .form-textarea { padding: 13px 16px; border: 1.5px solid var(--linen); border-radius: 10px; font-family: 'Faustina', serif; font-size: 16px; color: var(--soil); background: var(--sand); outline: none; transition: border-color 0.2s, background 0.2s; width: 100%; }
+  .form-input:focus, .form-textarea:focus { border-color: var(--burgundy); background: var(--white); }
+  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+  .form-hint { font-size: 12px; color: var(--dusty-rose); opacity: 0.85; margin-top: 4px; }
+
+  .info-list { list-style: none; }
+  .info-list li { position: relative; padding-left: 24px; margin-bottom: 12px; font-size: 15px; line-height: 1.6; }
+  .info-list li:before { content: '—'; position: absolute; left: 0; color: var(--gold); }
+
+  .callout { background: var(--sand); border-left: 3px solid var(--gold); border-radius: 6px; padding: 16px 20px; font-size: 14.5px; line-height: 1.7; color: var(--soil); margin-bottom: 8px; }
+  .callout strong { color: var(--burgundy); }
+
+  .submit-btn { width: 100%; padding: 20px; background: var(--burgundy); color: var(--linen); border: none; border-radius: 12px; font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .submit-btn:hover { background: var(--burgundy-light); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .success-screen { display: none; text-align: center; padding: 60px 32px; }
+  .success-icon { width: 80px; height: 80px; background: #EDF7F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; }
+  .success-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--burgundy); margin-bottom: 12px; }
+  .success-sub { font-size: 16px; color: var(--soil); opacity: 0.75; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+  .footer { background: var(--burgundy-dark); padding: 40px; text-align: center; }
+  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .footer-sub { font-size: 13px; color: rgba(232,221,208,0.4); }
+
+  .required { color: #8B2635; }
+  .error-msg { color: #8B2635; font-size: 13px; margin-top: 4px; display: none; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a href="index.html" class="hero-back">← Back to Home</a>
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Delete My Account</h1>
+  <p class="hero-sub">Request deletion of your Saint Rose app account and the personal information tied to it — no app install required.</p>
+</div>
+
+<div class="gold-divider"></div>
+
+<div class="form-wrapper">
+  <div class="form-section">
+    <div id="form-content">
+
+      <p class="form-sub">This form is for people who want their Saint Rose app account removed but can't (or would rather not) do it from inside the app.</p>
+
+      <!-- WHAT GETS DELETED -->
+      <div class="form-block">
+        <div class="form-block-title">What deleting your account removes</div>
+        <ul class="info-list">
+          <li>Your account sign-in (email/password, or Google or Apple sign-in link).</li>
+          <li>Your Parish Family Directory profile — your name, photo, and any contact details you added.</li>
+          <li>Your notification settings and the device tokens used to send you push notifications.</li>
+        </ul>
+        <p style="font-size:14px; color:var(--dusty-rose); line-height:1.6; margin-top:4px;">Records the parish keeps outside the app — for example a paper or office parish-registration record — are handled separately by the parish office and are not affected by this request.</p>
+      </div>
+
+      <!-- HOW LONG -->
+      <div class="form-block">
+        <div class="form-block-title">How long it takes</div>
+        <p style="font-size:15px; line-height:1.7;">Parish staff review each request and complete the deletion, typically within a few days and no later than 30 days. Once it's done, the account and its personal information are permanently removed and cannot be recovered. We may contact you at the email address below if we need to confirm your identity before deleting.</p>
+      </div>
+
+      <!-- SAME AS IN-APP -->
+      <div class="form-block">
+        <div class="callout">
+          <strong>Still have the app?</strong> You can delete your account yourself right now: open the app, go to the <strong>Me</strong> tab, and tap <strong>Delete My Account</strong>. That does exactly the same thing as this form, and it happens immediately.
+        </div>
+      </div>
+
+      <!-- REQUEST FORM -->
+      <div class="form-block">
+        <div class="form-block-title">Submit your request</div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label class="form-label">Account Email Address <span class="required">*</span></label>
+          <input type="email" class="form-input" id="d-email" placeholder="The email tied to your Saint Rose account" autocomplete="email" />
+          <div class="form-hint">Enter the same email you use to sign in to the app. If you signed in with Google or Apple, use that account's email.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Note (optional)</label>
+          <textarea class="form-textarea" id="d-note" placeholder="Anything you'd like staff to know about your request"></textarea>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+      <button class="submit-btn" id="submit-btn" onclick="submitDeletionRequest()">Request Account Deletion →</button>
+      <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Submitting notifies Saint Rose Parish staff, who will process the deletion.</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Request Received</div>
+      <p class="success-sub">Your account deletion request has been sent to Saint Rose Parish staff. They'll complete the deletion — typically within a few days and no later than 30 days — and may email you first if they need to confirm your identity.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-logo">Sacred Apps</div>
+  <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  // MUST resolve to the nested parishes/saint-rose-anthem path — root-level
+  // writes are denied by the Firestore rules (see CLAUDE.md).
+  const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
+
+  async function submitDeletionRequest() {
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+
+    const email = document.getElementById('d-email').value.trim();
+    const note = document.getElementById('d-note').value.trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorEl.textContent = 'Please enter the email address tied to your account.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+      // accountDeletionRequests is an isPublicSubmission collection — anonymous
+      // create allowed, staff-only read. `status: 'pending'` is required by the
+      // rules' publicSubmissionCreateOk() shape guard.
+      const res = await fetch(`${BASE}/accountDeletionRequests?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: {
+          email: { stringValue: email },
+          note: { stringValue: note },
+          status: { stringValue: 'pending' },
+          source: { stringValue: 'web' },
+          createdAt: { stringValue: new Date().toISOString() }
+        } })
+      });
+      if (!res.ok) throw new Error('write failed: ' + res.status);
+
+      document.getElementById('form-content').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Request Account Deletion →';
+      errorEl.textContent = 'There was an error submitting your request. Please try again, or call the parish office at (623) 465-9740.';
+      errorEl.style.display = 'block';
+    }
+  }
+</script>
+
+</body>
+</html>
