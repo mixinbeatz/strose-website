@@ -104,7 +104,16 @@
 </div>
 
 <script>
-  const ADVERTISERS = [
+  // Advertiser listings are managed in the staff portal (portal.saintroseanthem.org,
+  // "Partner Requests" tab): approving a request publishes a doc into the Firestore
+  // collection parishes/saint-rose-anthem/advertisers, which this page queries below.
+  // The hardcoded list here is the offline fallback (used if the fetch fails or the
+  // collection is empty), same pattern as the other pages' *_DEFAULTS.
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  const ADVERTISERS_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/advertisers?key=${API_KEY}&pageSize=300`;
+
+  const ADVERTISERS_DEFAULTS = [
     { name: 'North Valley Eye Care', category: 'Health', tier: 'premium', description: 'High quality and comprehensive eye care. Dr. Justin Kohls and Dr. Michelle Kohls.', phone: '623-582-3937', website: 'https://www.DrKohls.com', tagline: 'Your family eye care professionals since 2007.', discount: null },
     { name: 'Gavilan Peak Dental Care', category: 'Health', tier: 'premium', description: "Dr. Alice L. Shaw, DMD. Cosmetic dentistry, preventive oral health, and restorative dentistry. Invisalign provider.", phone: '623-303-4110', website: 'https://gavilanpeakdentalcare.com/', tagline: 'Comprehensive, comfortable dental care for the whole family.', discount: null },
     { name: 'RE/MAX Summit Properties', category: 'Real Estate', tier: 'premium', description: 'Nearly two decades of experience in Anthem and the North Valley. Buying, selling, or investing — trust the name your community already does.', phone: '602-677-4653', website: 'https://www.remaxsummitproperties.com', tagline: 'Your Anthem neighbors in real estate.', discount: null },
@@ -120,8 +129,51 @@
     { name: 'Sacred Apps', category: 'Tech', tier: 'standard', description: 'Mobile app development for Catholic parishes. Creator of the SaintRose app.', phone: null, website: 'https://sacredapps.com' },
   ];
 
-  const CATEGORIES = ['All', ...Array.from(new Set(ADVERTISERS.map(a => a.category))).sort()];
+  let ADVERTISERS = ADVERTISERS_DEFAULTS;
+  let CATEGORIES = buildCategories(ADVERTISERS);
   let activeCategory = 'All';
+
+  function buildCategories(list) {
+    return ['All', ...Array.from(new Set(list.map(a => a.category).filter(Boolean))).sort()];
+  }
+
+  // Firestore REST returns { documents: [{ fields: { key: { stringValue|booleanValue: ... } } }] }
+  function fsVal(f) {
+    if (!f) return '';
+    if (f.stringValue !== undefined) return f.stringValue;
+    if (f.booleanValue !== undefined) return f.booleanValue;
+    if (f.integerValue !== undefined) return f.integerValue;
+    return '';
+  }
+
+  async function loadAdvertisers() {
+    try {
+      const res = await fetch(ADVERTISERS_URL);
+      if (!res.ok) throw new Error('fetch failed');
+      const data = await res.json();
+      const docs = data.documents || [];
+      const mapped = docs
+        .map(d => d.fields || {})
+        .filter(f => fsVal(f.active) !== false)   // paused listings hidden
+        .map(f => ({
+          name: fsVal(f.name),
+          category: fsVal(f.category),
+          tier: String(fsVal(f.tier)).toLowerCase() === 'premium' ? 'premium' : 'standard',
+          description: fsVal(f.description),
+          phone: fsVal(f.phone) || null,
+          website: fsVal(f.website) || null,
+          tagline: fsVal(f.tagline) || null,
+          discount: fsVal(f.discount) || null,
+        }))
+        .filter(a => a.name);
+      if (mapped.length) ADVERTISERS = mapped;
+    } catch (e) {
+      // keep ADVERTISERS_DEFAULTS
+    }
+    CATEGORIES = buildCategories(ADVERTISERS);
+    renderFilters();
+    render();
+  }
 
   function escapeHtml(s) {
     return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -184,6 +236,7 @@
 
   renderFilters();
   render();
+  loadAdvertisers();
 </script>
 </body>
 </html>
