@@ -1227,6 +1227,19 @@
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
 
+  // Firestore text is portal-managed (staff-only write), but it still gets
+  // built into innerHTML in a few places below — escape it so a bad value can
+  // never inject markup, and only let http(s)/relative URLs through as srcs.
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function safeImgSrc(raw) {
+    const s = String(raw || '').trim();
+    return (/^https?:\/\//i.test(s) || /^(images|Dedication)\//.test(s) || s.startsWith('/')) ? s : '';
+  }
+
   const MASS_SCHEDULE_DEFAULTS = {
     dailyRow1Days: 'Mon, Tues, Wed, Thurs, Fri', dailyRow1Time: '7:30 AM',
     dailyRow2Days: 'Mon, Tues, Thurs, Fri', dailyRow2Time: '12:15 PM',
@@ -1244,9 +1257,11 @@
     officeNote: 'Closed every Wednesday, 1-3 PM for Staff Meetings',
     gsSundayMass: '9:00 AM', gsRosary: '8:30 AM', gsAdoration: 'Thursdays 7:00 AM',
   };
-  function renderMassScheduleGrid(f) {
+  function renderMassScheduleGrid(rawF) {
     const el = document.getElementById('mass-schedule-grid');
     if (!el) return;
+    const f = {};
+    Object.keys(rawF).forEach(k => { f[k] = esc(rawF[k]); });
     el.innerHTML = `
       <div class="schedule-static">
         <div class="schedule-block">
@@ -1361,8 +1376,8 @@
           <div class="event-day-label">${day.toUpperCase()}</div>
           ${items.map(e => `
             <div class="event-item">
-              <div class="event-time">${e.time || ''}</div>
-              <div class="event-title">${e.title}</div>
+              <div class="event-time">${esc(e.time)}</div>
+              <div class="event-title">${esc(e.title)}</div>
             </div>
           `).join('')}
         </div>
@@ -1409,7 +1424,7 @@
       const title = data.fields.textTitle?.stringValue;
       const body = data.fields.textBody?.stringValue;
       if (eyebrow) document.getElementById('gallery-text-eyebrow').textContent = eyebrow;
-      if (title) document.getElementById('gallery-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (title) document.getElementById('gallery-text-title').innerHTML = esc(title).replace(/\n/g, '<br>');
       if (body) document.getElementById('gallery-text-body').textContent = body;
     } catch(e) { /* keep default photos and text */ }
     finally { revealFadeImgs(['gallery-img-1','gallery-img-2','gallery-img-3','gallery-img-4','gallery-img-5']); }
@@ -1435,7 +1450,7 @@
       const title = data.fields.textTitle?.stringValue;
       const body = data.fields.textBody?.stringValue;
       if (eyebrow) document.getElementById('around-parish-text-eyebrow').textContent = eyebrow;
-      if (title) document.getElementById('around-parish-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (title) document.getElementById('around-parish-text-title').innerHTML = esc(title).replace(/\n/g, '<br>');
       if (body) document.getElementById('around-parish-text-body').textContent = body;
     } catch(e) { /* keep default photos and text */ }
     finally { revealFadeImgs(['around-parish-img-1','around-parish-img-2','around-parish-img-3','around-parish-img-4','around-parish-img-5']); }
@@ -1453,6 +1468,10 @@
     const isFunded = !!(photo && photo.funded);
     const note = document.getElementById('parish-dev-main-note');
     if (note) note.style.display = isFunded ? 'block' : 'none';
+  }
+  function selectParishDevPhotoByIndex(i) {
+    const p = parishDevPhotos[i];
+    if (p) selectParishDevPhoto(p.url, p.alt || '');
   }
   function selectParishDevPhoto(url, alt) {
     const img = document.getElementById('parish-dev-main-img');
@@ -1475,7 +1494,7 @@
       const title = data.fields.textTitle?.stringValue;
       const body = data.fields.textBody?.stringValue;
       if (eyebrow) document.getElementById('parish-dev-text-eyebrow').textContent = eyebrow;
-      if (title) document.getElementById('parish-dev-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (title) document.getElementById('parish-dev-text-title').innerHTML = esc(title).replace(/\n/g, '<br>');
       if (body) document.getElementById('parish-dev-text-body').textContent = body;
 
       if (status === 'funded') {
@@ -1496,14 +1515,14 @@
       parishDevPhotos = photos;
 
       const mainImg = document.getElementById('parish-dev-main-img');
-      mainImg.src = photos[0].url;
+      mainImg.src = safeImgSrc(photos[0].url);
       mainImg.alt = photos[0].alt || '';
       updateParishDevFundedUI(photos[0].url);
       const thumbsEl = document.getElementById('parish-dev-thumbs');
       if (photos.length > 1) {
         thumbsEl.innerHTML = photos.map((p, i) => `
-          <div class="parish-dev-thumb${i===0?' active':''}" data-url="${p.url}" onclick="selectParishDevPhoto('${p.url}', '${(p.alt||'').replace(/'/g,"\\'")}')">
-            <img src="${p.url}" alt="" />
+          <div class="parish-dev-thumb${i===0?' active':''}" data-url="${esc(p.url)}" onclick="selectParishDevPhotoByIndex(${i})">
+            <img src="${esc(safeImgSrc(p.url))}" alt="" />
           </div>
         `).join('');
       } else {
@@ -1522,8 +1541,8 @@
       if (data.fields) {
         const title = data.fields.title?.stringValue;
         const tagline = data.fields.tagline?.stringValue;
-        const imageUrl = data.fields.imageUrl?.stringValue;
-        if (title) document.getElementById('hero-text-title').innerHTML = title.replace(/\n/g, '<br>');
+        const imageUrl = safeImgSrc(data.fields.imageUrl?.stringValue);
+        if (title) document.getElementById('hero-text-title').innerHTML = esc(title).replace(/\n/g, '<br>');
         if (tagline) document.getElementById('hero-text-tagline').textContent = tagline;
         if (imageUrl) finalImageUrl = imageUrl;
       }
@@ -1553,11 +1572,11 @@
       const body = data.fields.textBody?.stringValue;
       const imageUrl = data.fields.imageUrl?.stringValue;
       if (eyebrow) document.getElementById('welcome-text-eyebrow').textContent = eyebrow;
-      if (title) document.getElementById('welcome-text-title').innerHTML = title.replace(/\n/g, '<br>');
+      if (title) document.getElementById('welcome-text-title').innerHTML = esc(title).replace(/\n/g, '<br>');
       if (body) {
         const paras = body.split(/\n\n+/).filter(p => p.trim());
         document.getElementById('welcome-text-body').innerHTML = paras.map((p, i) =>
-          `<p class="section-body"${i > 0 ? ' style="margin-top:16px;"' : ''}>${p.replace(/</g,'&lt;')}</p>`
+          `<p class="section-body"${i > 0 ? ' style="margin-top:16px;"' : ''}>${esc(p)}</p>`
         ).join('');
       }
       if (imageUrl) document.getElementById('welcome-img-photo').src = imageUrl;
@@ -1635,8 +1654,8 @@
         const dt = new Date(i.date + 'T12:00:00');
         const dayName = days[dt.getDay()];
         return '<div class="schedule-block" style="margin-bottom:12px;">' +
-          '<div style="font-size:10px;letter-spacing:1px;color:var(--dusty-rose);margin-bottom:4px;">' + dayName.toUpperCase() + ' · ' + i.mass + '</div>' +
-          '<div style="font-size:14px;color:var(--soil);line-height:1.5;">' + i.intention + '</div>' +
+          '<div style="font-size:10px;letter-spacing:1px;color:var(--dusty-rose);margin-bottom:4px;">' + dayName.toUpperCase() + ' · ' + esc(i.mass) + '</div>' +
+          '<div style="font-size:14px;color:var(--soil);line-height:1.5;">' + esc(i.intention) + '</div>' +
           '</div>';
       }).join('');
     } catch(e) {

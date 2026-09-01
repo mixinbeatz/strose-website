@@ -176,14 +176,32 @@
   }
 
   function escapeHtml(s) {
-    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;');
+  }
+
+  // Only allow safe schemes into an href — a directory listing's website/phone
+  // fields come from Firestore (published from the public partnerRequests form),
+  // so a value like `javascript:...` must never reach the DOM as a link target.
+  function safeUrl(raw) {
+    const s = String(raw || '').trim();
+    if (/^https?:\/\//i.test(s)) return s;
+    return '';
+  }
+  function safeTel(raw) {
+    const digits = String(raw || '').replace(/[^0-9+().\s-]/g, '').trim();
+    return digits ? 'tel:' + digits : '';
   }
 
   function renderFilters() {
     const row = document.getElementById('filterRow');
-    row.innerHTML = CATEGORIES.map(c =>
-      `<div class="filter-chip${c === activeCategory ? ' active' : ''}" onclick="setCategory('${c}')">${escapeHtml(c)}</div>`
+    row.innerHTML = CATEGORIES.map((c, i) =>
+      `<div class="filter-chip${c === activeCategory ? ' active' : ''}" onclick="setCategoryByIndex(${i})">${escapeHtml(c)}</div>`
     ).join('');
+  }
+
+  function setCategoryByIndex(i) {
+    setCategory(CATEGORIES[i]);
   }
 
   function setCategory(c) {
@@ -195,8 +213,10 @@
   function cardHtml(a) {
     const isPremium = a.tier === 'premium';
     const cls = isPremium ? 'card-premium' : 'card-standard';
-    const phoneBtn = a.phone ? `<a class="action-btn primary" href="tel:${a.phone}">Call</a>` : '';
-    const webBtn = a.website ? `<a class="action-btn outline" href="${a.website}" target="_blank" rel="noopener">Website</a>` : '';
+    const tel = safeTel(a.phone);
+    const web = safeUrl(a.website);
+    const phoneBtn = tel ? `<a class="action-btn primary" href="${escapeHtml(tel)}">Call</a>` : '';
+    const webBtn = web ? `<a class="action-btn outline" href="${escapeHtml(web)}" target="_blank" rel="noopener">Website</a>` : '';
     return `
       <div class="${cls}">
         <div class="name">${escapeHtml(a.name)}</div>

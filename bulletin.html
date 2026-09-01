@@ -1201,7 +1201,7 @@ async function loadIntentions() {
         <div class="intention-day-label">${g.label}</div>
         ${g.items.map(i => `
           <div class="intention-row">
-            <span class="intention-time">${i.mass}</span>
+            <span class="intention-time">${escHtml(i.mass)}</span>
             <span class="intention-name">${escHtml(i.intention)}</span>
           </div>
         `).join('')}
@@ -1261,7 +1261,7 @@ async function loadEvents() {
         <div class="event-day-label">${day.toUpperCase()}</div>
         ${items.map(e => `
           <div class="event-item">
-            <span class="event-item-time">${e.time || ''}</span>
+            <span class="event-item-time">${escHtml(e.time)}</span>
             <span class="event-item-title">${escHtml(e.title)}</span>
           </div>
         `).join('')}

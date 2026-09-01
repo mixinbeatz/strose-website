@@ -482,7 +482,8 @@
   const images = { cardimg: '', heroimg: '', iconimg: '', photo: '' };
 
   function escapeHtml(s) {
-    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;');
   }
 
   function renderPreview() {
@@ -607,10 +608,15 @@
 
     try {
       const ts = Date.now();
-      const bizSlug = biz.replace(/\s+/g,'_');
+      // Storage security rules only cover partnerLogos/** and partnerPhotos/**
+      // (public, no-login upload). Keep every upload under one of those two
+      // prefixes — a path with no matching rule silently fails (default deny).
+      // Slug is sanitised to a short alnum token so a crafted business name
+      // can't shape the object path.
+      const bizSlug = (biz.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40)) || 'partner';
       const logoUrl = await uploadImage(images.cardimg, `partnerLogos/${ts}_${bizSlug}_card.jpg`);
-      const modalHeroUrl = await uploadImage(images.heroimg, `partnerModalHero/${ts}_${bizSlug}_hero.jpg`);
-      const modalLogoUrl = await uploadImage(images.iconimg, `partnerModalLogo/${ts}_${bizSlug}_icon.jpg`);
+      const modalHeroUrl = await uploadImage(images.heroimg, `partnerPhotos/${ts}_${bizSlug}_hero.jpg`);
+      const modalLogoUrl = await uploadImage(images.iconimg, `partnerLogos/${ts}_${bizSlug}_icon.jpg`);
       const photoUrl = await uploadImage(images.photo, `partnerPhotos/${ts}_${bizSlug}_photo.jpg`);
 
       btn.textContent = 'Submitting application...';
