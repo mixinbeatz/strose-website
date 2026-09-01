@@ -1155,6 +1155,44 @@
     }
   });
 
+  // In-page anchor links (e.g. "Visit" -> #location, "Get the App" -> #app).
+  // Several sections below the fold get their height from Firestore content that
+  // arrives ~1s after load — the Mass schedule grid, the Parish Development
+  // gallery (starts display:none), portal photo overrides. A plain CSS
+  // smooth-scroll fired before that settles aims at a stale offset and lands
+  // hundreds of px short, which is what made these links look dead. Fix: keep
+  // re-aiming at the target for a couple of seconds until its position holds
+  // still, so a shift mid-scroll gets corrected instead of stranding you.
+  const NAV_OFFSET = 84; // matches html { scroll-padding-top }
+  document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = document.getElementById(link.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      if (history.replaceState) history.replaceState(null, '', link.getAttribute('href'));
+      const deadline = Date.now() + 2500;
+      let lastGoal = null;
+      (function reaim() {
+        const goal = Math.max(0, Math.round(window.scrollY + target.getBoundingClientRect().top - NAV_OFFSET));
+        if (goal !== lastGoal) {
+          window.scrollTo({ top: goal, behavior: 'smooth' });
+          lastGoal = goal;
+        }
+        if (Date.now() < deadline) setTimeout(reaim, 120);
+      })();
+    });
+  });
+
+  // Same problem for a cross-page deep link (calendar.html -> index.html#location):
+  // the native jump happens before the async sections below grow, so re-assert
+  // the hash target once everything has loaded.
+  if (location.hash.length > 1) {
+    window.addEventListener('load', () => {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target) setTimeout(() => target.scrollIntoView(), 300);
+    });
+  }
+
   // Hero image is loaded/revealed by loadHeroOverrides() below, once we know
   // whether to use the default photo or a portal-set override — this avoids
   // showing the default and then hard-cutting to the override a moment later.
@@ -1328,6 +1366,12 @@
     }
   }
 
+  // Paint the schedule from built-in defaults synchronously so the widget is
+  // full height from first render. Otherwise it grows ~300px when the Firestore
+  // copy lands ~1s later, and that shift pushes every section below it down —
+  // which was leaving in-page anchor scrolls (the "Visit" nav link -> #location,
+  // "Get the App" -> #app) stranded partway down if you clicked before it loaded.
+  renderMassScheduleGrid(MASS_SCHEDULE_DEFAULTS);
   loadMassScheduleWidget();
 
   // Homepage gallery — portal-managed photo overrides. Slots left empty in
