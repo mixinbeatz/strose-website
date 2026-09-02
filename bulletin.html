@@ -1566,19 +1566,25 @@ async function writeSnapshot(weekStartISO, weekEndISO, byKey, image, imageIndex)
 // live; with an empty or unreachable pool it falls back to the bundled
 // images/BreadofLife.png already in the markup.
 //
-// NOT built yet — the two layers that will sit ABOVE this sequential step,
-// and where they plug in:
-//   • Recurring-date / liturgical override (e.g. always the Nativity window
-//     the week containing Dec 25). Resolves FIRST, before the pointer advance
-//     below: a date match returns that image and it is what gets frozen into
-//     the snapshot. Whether the sequential pointer also advances on an
-//     override week is a product call.
-//   • Manual per-week override — a pinned image for a specific weekStartISO
-//     (a field on this config doc keyed by week, or a small per-week doc).
-//     Checked right after the recurring-date layer, same short-circuit.
-// Both belong in a resolveWeekImage(weekStart, rotation) helper that
-// setWeekStrip() would call instead of the inline "(base + 1) % length" step;
-// that step becomes the fallthrough when neither override matches.
+// Two override layers sit ABOVE this sequential step. They live on a
+// separate, staff-only doc (bulletinConfig/imageOverrides; kept off
+// imageRotation so that doc's narrow anonymous currentIndex-bump rule stays
+// clean):
+//   parishes/saint-rose-anthem/bulletinConfig/imageOverrides
+//     { recurringDates: { "MM-DD": "https://…", … },     // e.g. "08-15" Assumption
+//       manualWeeks:    { "YYYY-MM-DD": "https://…", … } } // keyed by weekStartISO (Sunday)
+// Both maps start empty — this is the mechanism only; staff populate them.
+// resolveWeekImage() applies them at Friday-lock time in this priority order:
+//   1. recurring-date match — any date in the locked week's Sun–Sat window
+//      whose MM-DD is in recurringDates. Earliest matching day wins.
+//   2. manual per-week override — recurringDates missed and weekStartISO is a
+//      key in manualWeeks.
+//   3. sequential rotation — the "(base + 1) % length" pointer advance (the
+//      part-1 logic), used only when neither override matched.
+// An override (1 or 2) is frozen into the snapshot with imageIndex = -1 and
+// does NOT advance / consume a pool slot — the sequential pointer is left
+// exactly where it was, so the next non-override week resumes as if the
+// override week hadn't happened.
 const BULLETIN_IMAGE_FALLBACK = 'images/BreadofLife.png';
 
 // { images: [url…], currentIndex } from the config doc, or null if the pool
@@ -1594,6 +1600,70 @@ async function readImageRotation() {
     if (!Number.isInteger(currentIndex) || currentIndex < 0) currentIndex = 0;
     return images.length ? { images, currentIndex } : null;
   } catch (e) { return null; }
+}
+
+// The override config (see the block above). Returns
+//   { recurringDates: { "MM-DD": url }, manualWeeks: { "YYYY-MM-DD": url } }
+// with both maps always present. A missing doc / failed fetch / empty or
+// unparseable field yields empty maps, i.e. sequential rotation only.
+async function readImageOverrides() {
+  const empty = { recurringDates: {}, manualWeeks: {} };
+  try {
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinConfig/imageOverrides?key=${API_KEY}`);
+    if (!res.ok) return empty;
+    const f = (await res.json()).fields || {};
+    const readMap = key => {
+      const out = {};
+      const entries = f[key]?.mapValue?.fields || {};
+      Object.keys(entries).forEach(k => {
+        const url = (entries[k]?.stringValue || '').trim();
+        if (url) out[k] = url;
+      });
+      return out;
+    };
+    return { recurringDates: readMap('recurringDates'), manualWeeks: readMap('manualWeeks') };
+  } catch (e) { return empty; }
+}
+
+// Pure decision: given the locked week's 7 days, its weekStartISO, last week's
+// locked pool slot (or -1), the rotation pool, and the override config, pick
+// this week's center image. Priority: recurring-date → manual → sequential.
+// Returns { image, imageIndex }; imageIndex is the pool slot for a sequential
+// pick and -1 for an override or an empty pool (so the caller knows NOT to
+// advance the rotation pointer on override weeks).
+function chooseWeekImage(days, weekStartISO, prevImageIndex, rotation, overrides) {
+  const ov = overrides || {};
+  // 1. Recurring liturgical/feast-date override — earliest matching day wins.
+  const recurring = ov.recurringDates || {};
+  for (const d of days) {
+    const mmdd = String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    if (recurring[mmdd]) return { image: recurring[mmdd], imageIndex: -1 };
+  }
+  // 2. Manual per-week override — pinned to this exact weekStartISO.
+  const manual = ov.manualWeeks || {};
+  if (manual[weekStartISO]) return { image: manual[weekStartISO], imageIndex: -1 };
+  // 3. Sequential rotation (part-1 fallthrough).
+  if (rotation && rotation.images.length) {
+    const base = Number.isInteger(prevImageIndex) && prevImageIndex >= 0
+      ? prevImageIndex
+      : rotation.currentIndex;
+    const idx = (base + 1) % rotation.images.length;
+    return { image: rotation.images[idx], imageIndex: idx };
+  }
+  return { image: '', imageIndex: -1 };
+}
+
+// Async wrapper: gathers the override config + last week's locked slot, then
+// defers to chooseWeekImage(). setWeekStrip() calls this instead of the old
+// inline "(base + 1) % length" step.
+async function resolveWeekImage(days, weekStartISO, prevWeekISO, rotation) {
+  const overrides = await readImageOverrides();
+  let prevImageIndex = -1;
+  if (rotation) {
+    const prev = await readSnapshot(prevWeekISO);
+    if (prev && Number.isInteger(prev.imageIndex)) prevImageIndex = prev.imageIndex;
+  }
+  return chooseWeekImage(days, weekStartISO, prevImageIndex, rotation, overrides);
 }
 
 // Best-effort: point the config doc's currentIndex at the slot just locked,
@@ -1683,21 +1753,14 @@ async function setWeekStrip() {
       let snap = await readSnapshot(weekStartISO);
       if (!snap) {
         const events = await queryWeekEvents(weekStart, weekEnd);
-        // Advance the rotation and freeze this week's image with the events.
-        // Base the "+1" on last week's locked slot when we have it, so a
-        // racing double-run still lands on the same next image; otherwise
-        // fall back to the config pointer.
-        let image = '', imageIndex = -1;
-        if (rotation) {
-          const prev = await readSnapshot(prevWeekISO);
-          const base = prev && Number.isInteger(prev.imageIndex) && prev.imageIndex >= 0
-            ? prev.imageIndex
-            : rotation.currentIndex;
-          imageIndex = (base + 1) % rotation.images.length;
-          image = rotation.images[imageIndex];
-        }
+        // Resolve this week's center image and freeze it with the events:
+        // recurring-date override → manual per-week override → sequential
+        // rotation (which bases its "+1" on last week's locked slot, so a
+        // racing double-run still lands on the same next image). An override
+        // returns imageIndex -1 and leaves the rotation pointer untouched.
+        const { image, imageIndex } = await resolveWeekImage(days, weekStartISO, prevWeekISO, rotation);
         await writeSnapshot(weekStartISO, isoDate(weekEnd), events, image, imageIndex);
-        if (image) bumpImageRotationIndex(imageIndex);
+        if (imageIndex >= 0) bumpImageRotationIndex(imageIndex);
         // Re-read: if a racing client locked a (near-identical) snapshot first,
         // prefer the stored one so every load agrees.
         snap = (await readSnapshot(weekStartISO)) || { byKey: events, image, imageIndex };
