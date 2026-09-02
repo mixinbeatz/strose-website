@@ -410,7 +410,7 @@ nav {
 .print-masthead-text { text-align: left; }
 .print-masthead-line1 {
   font-family: 'Cinzel', serif;
-  font-size: 23px;
+  font-size: 27px;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -429,18 +429,13 @@ nav {
 }
 .print-masthead-line3 {
   font-family: 'Cinzel', serif;
-  font-size: 9px;
+  font-size: 7.5px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--burgundy);
   opacity: 0.7;
   margin-top: 3px;
-}
-.print-masthead-date {
-  font-size: 11px;
-  color: var(--dusty-rose);
-  margin-top: 6px;
 }
 /* Liturgical date band — sits between the masthead and the 3-column body.
    Both values are reused from data already fetched elsewhere on this page
@@ -870,7 +865,6 @@ nav {
         <div class="print-masthead-line1">Saint Rose</div>
         <div class="print-masthead-line2">Philippine Duchesne</div>
         <div class="print-masthead-line3">Catholic Church · Anthem, Arizona</div>
-        <div class="print-masthead-date" id="print-date"></div>
       </div>
     </div>
     <div class="print-week-band">
@@ -1352,14 +1346,8 @@ function fitFrontPageToPage() {
 // Init
 function setPrintDate() {
   const { weekStart, weekEnd } = getBulletinWeekWindow();
-  const el = document.getElementById('print-date');
-  if (el) {
-    const fmt = d => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-    el.textContent = 'Week of ' + fmt(weekStart) + ' – ' + fmt(weekEnd) + ', ' + weekEnd.getFullYear();
-  }
-  // Liturgical date band (below the masthead) — left side. Same weekStart/
-  // weekEnd source as print-date above, just formatted shorter/uppercase
-  // for the condensed band.
+  // Liturgical date band (below the masthead) — left side. Formatted
+  // shorter/uppercase for the condensed band.
   const bandWeek = document.getElementById('print-week-band-week');
   if (bandWeek) {
     const fmtShort = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
