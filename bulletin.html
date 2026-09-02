@@ -919,8 +919,10 @@ nav {
         </div>
       </div>
       <div class="print-col-center">
-        <img class="print-art" src="images/BreadofLife.png"
-             alt="Stained-glass window — Christ with the Eucharist and two disciples, banner reading &quot;I am the bread of life&quot;" />
+        <!-- src is the bundled fallback; setWeekStrip() swaps in this week's
+             rotating image (locked into the weekly snapshot). -->
+        <img class="print-art" id="print-art" src="images/BreadofLife.png"
+             alt="Stained-glass window for this week's bulletin" />
         <div class="print-pullquote" id="print-pullquote" style="display:none;">
           <div class="print-pullquote-text" id="print-pullquote-text"></div>
           <div class="print-pullquote-citation" id="print-pullquote-citation"></div>
@@ -1455,16 +1457,22 @@ async function queryWeekEvents(weekStart, weekEnd) {
   return byKey;
 }
 
-// Read a previously-locked snapshot; returns the same
-// { dateKey: [{title, time}] } shape as queryWeekEvents(), or null if none.
+// Read a previously-locked snapshot, or null if none. Returns
+//   { byKey: { dateKey: [{title, time}] },   // same shape as queryWeekEvents()
+//     image: '<url>' | '',                   // that week's frozen center image
+//     imageIndex: <int> | -1 }               // its slot in imageRotation.images
 // events is stored as a JSON string (see writeSnapshot / firestore.rules);
 // the arrayValue branch is legacy support for any snapshot written before
-// Aug 31 2026.
+// Aug 31 2026. image / imageIndex are absent on any snapshot written before
+// Sep 2026 (and on events-only locks) — hence the '' / -1 defaults.
 async function readSnapshot(weekStartISO) {
   try {
     const res = await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`);
     if (!res.ok) return null;
     const data = await res.json();
+    const image = data.fields?.image?.stringValue || '';
+    const rawIdx = data.fields?.imageIndex?.integerValue;
+    const imageIndex = rawIdx !== undefined && rawIdx !== null ? parseInt(rawIdx, 10) : -1;
     const ev = data.fields?.events;
     if (ev && ev.stringValue !== undefined) {
       let parsed;
@@ -1477,7 +1485,7 @@ async function readSnapshot(weekStartISO) {
           time: String(e && e.time || '')
         }));
       });
-      return byKey;
+      return { byKey, image, imageIndex };
     }
     const arr = ev?.arrayValue?.values || [];
     const byKey = {};
@@ -1490,7 +1498,7 @@ async function readSnapshot(weekStartISO) {
         time: m.time?.stringValue || ''
       });
     });
-    return byKey;
+    return { byKey, image, imageIndex };
   } catch (e) {
     return null;
   }
@@ -1504,7 +1512,7 @@ async function readSnapshot(weekStartISO) {
 // can't bound each entry of a variable-length list, so it hard-caps the
 // serialised string instead. We apply per-field caps (and cap the number of
 // days / events per day) here so the blob stays well under that ceiling.
-async function writeSnapshot(weekStartISO, weekEndISO, byKey) {
+async function writeSnapshot(weekStartISO, weekEndISO, byKey, image, imageIndex) {
   const clean = {};
   Object.keys(byKey).slice(0, 14).forEach(k => {
     clean[k] = (byKey[k] || []).slice(0, 40).map(e => ({
@@ -1512,19 +1520,100 @@ async function writeSnapshot(weekStartISO, weekEndISO, byKey) {
       time: String(e.time || '').slice(0, 40)
     }));
   });
-  const body = { fields: {
+  const fields = {
     weekStart: { stringValue: weekStartISO },
     weekEnd: { stringValue: weekEndISO },
     lockedAt: { stringValue: phoenixWallClock() + ' America/Phoenix' },
     events: { stringValue: JSON.stringify(clean) }
-  } };
+  };
+  // Rotating center image, frozen alongside the events. Optional: a pool-less
+  // or offline load still writes a valid events-only lock (firestore.rules
+  // treats image / imageIndex as optional).
+  if (image && typeof image === 'string') {
+    fields.image = { stringValue: image.slice(0, 500) };
+    if (Number.isInteger(imageIndex) && imageIndex >= 0) {
+      fields.imageIndex = { integerValue: String(imageIndex) };
+    }
+  }
+  const put = f => fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields: f })
+  });
   try {
-    await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinSnapshots/${weekStartISO}?key=${API_KEY}`, {
+    const res = await put(fields);
+    // If the write was rejected only because the image fields aren't allowed
+    // yet (rules mid-rollout), still lock the events on their own.
+    if (!res.ok && fields.image) {
+      delete fields.image;
+      delete fields.imageIndex;
+      await put(fields);
+    }
+  } catch (e) { /* best effort — the live query result is already rendered */ }
+}
+
+// ── Rotating center image (weekly, Friday-locked) ─────────────────────────
+// The print bulletin's center-column art rotates through a pool of images
+// uploaded via the portal to Firebase Storage (bulletinImages/). The ordered
+// URL list + a "current" pointer live at
+//   parishes/saint-rose-anthem/bulletinConfig/imageRotation
+//     { images: ["https://…", …], currentIndex: <int> }
+// On the SAME first-load-at/after-Friday-00:00-AZ rollover that freezes the
+// events strip, setWeekStrip() advances the pointer to the next image in
+// sequence (wrapping past the end) and freezes that URL into the week's
+// bulletinSnapshots doc (image / imageIndex) — so a printed week's art never
+// changes once locked. Before the rollover the page shows images[currentIndex]
+// live; with an empty or unreachable pool it falls back to the bundled
+// images/BreadofLife.png already in the markup.
+//
+// NOT built yet — the two layers that will sit ABOVE this sequential step,
+// and where they plug in:
+//   • Recurring-date / liturgical override (e.g. always the Nativity window
+//     the week containing Dec 25). Resolves FIRST, before the pointer advance
+//     below: a date match returns that image and it is what gets frozen into
+//     the snapshot. Whether the sequential pointer also advances on an
+//     override week is a product call.
+//   • Manual per-week override — a pinned image for a specific weekStartISO
+//     (a field on this config doc keyed by week, or a small per-week doc).
+//     Checked right after the recurring-date layer, same short-circuit.
+// Both belong in a resolveWeekImage(weekStart, rotation) helper that
+// setWeekStrip() would call instead of the inline "(base + 1) % length" step;
+// that step becomes the fallthrough when neither override matches.
+const BULLETIN_IMAGE_FALLBACK = 'images/BreadofLife.png';
+
+// { images: [url…], currentIndex } from the config doc, or null if the pool
+// is empty / the doc is missing / the fetch fails.
+async function readImageRotation() {
+  try {
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinConfig/imageRotation?key=${API_KEY}`);
+    if (!res.ok) return null;
+    const f = (await res.json()).fields || {};
+    const images = (f.images?.arrayValue?.values || [])
+      .map(v => (v.stringValue || '').trim()).filter(Boolean);
+    let currentIndex = parseInt(f.currentIndex?.integerValue ?? '0', 10);
+    if (!Number.isInteger(currentIndex) || currentIndex < 0) currentIndex = 0;
+    return images.length ? { images, currentIndex } : null;
+  } catch (e) { return null; }
+}
+
+// Best-effort: point the config doc's currentIndex at the slot just locked,
+// so the next rollover (and the portal UI) resume from the right place. The
+// authoritative record of a week's choice is its immutable snapshot; this
+// PATCH is only a convenience mirror. firestore.rules lets an unauthenticated
+// caller move ONLY this field, ONLY to a valid slot in the existing list.
+async function bumpImageRotationIndex(nextIndex) {
+  try {
+    await fetch(`${BASE}/parishes/saint-rose-anthem/bulletinConfig/imageRotation?key=${API_KEY}&updateMask.fieldPaths=currentIndex`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify({ fields: { currentIndex: { integerValue: String(nextIndex) } } })
     });
-  } catch (e) { /* best effort — the live query result is already rendered */ }
+  } catch (e) { /* the snapshot already holds the locked choice */ }
+}
+
+function applyBulletinImage(url) {
+  const img = document.getElementById('print-art');
+  if (img && url && img.getAttribute('src') !== url) img.src = url;
 }
 
 const WEEK_STRIP_DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
@@ -1578,22 +1667,46 @@ async function setWeekStrip() {
   renderWeekStrip(el, days, {}); // day/date skeleton up front — the strip is never blank
 
   const weekStartISO = isoDate(weekStart);
+  const prevWeekISO = isoDate(new Date(weekStart.getTime() - 7 * 24 * 60 * 60 * 1000));
   const fridayLock = isoDate(days[5]) + 'T00:00:00'; // Friday 00:00, AZ wall clock
   const locked = phoenixWallClock() >= fridayLock;
+
+  // Center image pool + pointer (see the rotating-image block above).
+  const rotation = await readImageRotation();
+  const livePoolImage = rotation
+    ? rotation.images[rotation.currentIndex % rotation.images.length]
+    : '';
 
   let byKey;
   try {
     if (locked) {
-      byKey = await readSnapshot(weekStartISO);
-      if (!byKey) {
-        byKey = await queryWeekEvents(weekStart, weekEnd);
-        await writeSnapshot(weekStartISO, isoDate(weekEnd), byKey);
+      let snap = await readSnapshot(weekStartISO);
+      if (!snap) {
+        const events = await queryWeekEvents(weekStart, weekEnd);
+        // Advance the rotation and freeze this week's image with the events.
+        // Base the "+1" on last week's locked slot when we have it, so a
+        // racing double-run still lands on the same next image; otherwise
+        // fall back to the config pointer.
+        let image = '', imageIndex = -1;
+        if (rotation) {
+          const prev = await readSnapshot(prevWeekISO);
+          const base = prev && Number.isInteger(prev.imageIndex) && prev.imageIndex >= 0
+            ? prev.imageIndex
+            : rotation.currentIndex;
+          imageIndex = (base + 1) % rotation.images.length;
+          image = rotation.images[imageIndex];
+        }
+        await writeSnapshot(weekStartISO, isoDate(weekEnd), events, image, imageIndex);
+        if (image) bumpImageRotationIndex(imageIndex);
         // Re-read: if a racing client locked a (near-identical) snapshot first,
         // prefer the stored one so every load agrees.
-        byKey = (await readSnapshot(weekStartISO)) || byKey;
+        snap = (await readSnapshot(weekStartISO)) || { byKey: events, image, imageIndex };
       }
+      byKey = snap.byKey;
+      applyBulletinImage(snap.image || livePoolImage);
     } else {
       byKey = await queryWeekEvents(weekStart, weekEnd);
+      applyBulletinImage(livePoolImage);
     }
   } catch (e) {
     byKey = {};
