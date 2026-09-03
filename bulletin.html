@@ -585,7 +585,7 @@ nav {
   border-top: 1px solid var(--linen);
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr)); /* equal cells, never content-driven */
-  gap: 5px;
+  gap: 6px;
 }
 .print-week-strip-cell {
   border: 1px solid var(--gold);
@@ -593,25 +593,25 @@ nav {
   min-width: 0;        /* let a nowrap child overflow rather than widen the track */
   overflow: hidden;
 }
-/* Header: a solid burgundy bar with white text, carrying the abbreviated
-   weekday + comma + the short month/day (e.g. "Su, Aug 30"). Burgundy, not
+/* Header: a solid burgundy bar with white text, carrying the 3-letter
+   weekday + comma + the short month/day (e.g. "Wed, Sep 2"). Burgundy, not
    gold — gold is too light to carry white text as a solid fill, burgundy
    reads cleanly. Cinzel for the day, Faustina for the date, both white. */
 .print-week-strip-head {
   white-space: nowrap;
   background: var(--burgundy);
-  padding: 3px 3px;
+  padding: 4px 3px;
   text-align: center;
 }
 .print-week-strip-day {
   font-family: 'Cinzel', serif;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: #fff;
 }
 .print-week-strip-date {
-  font-size: 8px;
+  font-size: 10px;
   color: #fff;
 }
 /* That day's calendar events, left-aligned below the bar. Each event is a
@@ -623,7 +623,7 @@ nav {
    and adds .is-wrapped so the title takes its own full-width line (still
    left-aligned). */
 .print-week-strip-body {
-  padding: 4px 4px 5px;
+  padding: 5px 5px 6px;
   text-align: left;
 }
 .print-week-strip-event {
@@ -633,7 +633,7 @@ nav {
   align-items: baseline;
   justify-content: flex-start;
   column-gap: 3px;
-  font-size: 6.5px;
+  font-size: 8px;
   line-height: 1.3;
   color: var(--soil);
 }
@@ -641,7 +641,7 @@ nav {
 .print-week-strip-event-time {
   flex: 0 0 auto;
   font-family: 'Cinzel', serif;
-  font-size: 5.75px;
+  font-size: 7px;
   font-weight: 600;
   letter-spacing: 0.03em;
   color: var(--dusty-rose);
@@ -1658,7 +1658,7 @@ function applyBulletinImage(url) {
   if (img && url && img.getAttribute('src') !== url) img.src = url;
 }
 
-const WEEK_STRIP_DOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const WEEK_STRIP_DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 function renderWeekStrip(el, days, byKey) {
   el.innerHTML = days.map(d => {
