@@ -396,45 +396,65 @@ nav {
    fitFrontPageToPage() in the script below dials it down when a heavy
    week's content would otherwise overflow the page. */
 .print-page-front { --bulletin-scale: 1; }
+/* Masthead: the circular logo is left-aligned to the page margin and taken
+   out of flow (position:absolute); the 3-line name block is its own group,
+   centered on the page (margin:0 auto on a max-content box) independent of
+   the logo. The three lines are tracked (letter-spacing) so they render to
+   the SAME width — a flush rectangle — rather than each line's natural
+   width. "SAINT ROSE" is the widest at its natural tracking; line 2 needs a
+   hair more, line 3 a bit more (still normal small-caps tracking for 7.5px,
+   not visibly stretched). Re-tune the three letter-spacing values together
+   if a font swap or wording change shifts the widths. */
 .print-masthead {
-  text-align: center;
+  position: relative;
   padding-bottom: 10px;
   margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
 }
-.print-masthead-crest { height: 100px; width: 100px; object-fit: contain; flex-shrink: 0; }
-.print-masthead-text { text-align: left; }
+.print-masthead-crest {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100px;
+  width: 100px;
+  object-fit: contain;
+}
+.print-masthead-text {
+  width: max-content;
+  margin: 0 auto;
+  text-align: left;
+}
 .print-masthead-line1 {
   font-family: 'Cinzel', serif;
   font-size: 27px;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.052em;
   text-transform: uppercase;
   color: var(--burgundy);
   line-height: 1.1;
+  white-space: nowrap;
 }
 .print-masthead-line2 {
   font-family: 'Cinzel', serif;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.058em;
   text-transform: uppercase;
   color: var(--burgundy);
   line-height: 1.2;
   margin-top: 2px;
+  white-space: nowrap;
 }
 .print-masthead-line3 {
   font-family: 'Cinzel', serif;
   font-size: 7.5px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.112em;
   text-transform: uppercase;
   color: var(--burgundy);
   opacity: 0.7;
   margin-top: 3px;
+  white-space: nowrap;
 }
 /* Liturgical date band — sits between the masthead and the 3-column body.
    Both values are reused from data already fetched elsewhere on this page
