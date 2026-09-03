@@ -401,10 +401,12 @@ nav {
    centered on the page (margin:0 auto on a max-content box) independent of
    the logo. The three lines are tracked (letter-spacing) so they render to
    the SAME width — a flush rectangle — rather than each line's natural
-   width. "SAINT ROSE" is the widest at its natural tracking; line 2 needs a
-   hair more, line 3 a bit more (still normal small-caps tracking for 7.5px,
-   not visibly stretched). Re-tune the three letter-spacing values together
-   if a font swap or wording change shifts the widths. */
+   width. "SAINT ROSE" is the widest; lines 2 and 3 are tracked out to meet
+   it (line 3 still reads as normal small-caps tracking for 9px, not
+   stretched). The letter-spacing values are calibrated to THESE font sizes
+   — re-measure and re-tune all three together if the sizes, the font, or
+   the wording change (natural widths: L1 ~203px, L2 ~201px, L3 ~186px;
+   target ~217px). */
 .print-masthead {
   position: relative;
   padding-bottom: 10px;
@@ -426,9 +428,9 @@ nav {
 }
 .print-masthead-line1 {
   font-family: 'Cinzel', serif;
-  font-size: 27px;
+  font-size: 32.4px;
   font-weight: 700;
-  letter-spacing: 0.052em;
+  letter-spacing: 0.044em;
   text-transform: uppercase;
   color: var(--burgundy);
   line-height: 1.1;
@@ -436,9 +438,9 @@ nav {
 }
 .print-masthead-line2 {
   font-family: 'Cinzel', serif;
-  font-size: 14px;
+  font-size: 16.8px;
   font-weight: 600;
-  letter-spacing: 0.058em;
+  letter-spacing: 0.051em;
   text-transform: uppercase;
   color: var(--burgundy);
   line-height: 1.2;
@@ -447,9 +449,9 @@ nav {
 }
 .print-masthead-line3 {
   font-family: 'Cinzel', serif;
-  font-size: 7.5px;
+  font-size: 9px;
   font-weight: 500;
-  letter-spacing: 0.112em;
+  letter-spacing: 0.104em;
   text-transform: uppercase;
   color: var(--burgundy);
   opacity: 0.7;
