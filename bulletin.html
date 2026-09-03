@@ -523,24 +523,27 @@ nav {
   margin-bottom: 8px;
 }
 /* Front-page-only override (higher specificity) — the back page's section
-   titles (Weekly Reflection / Around the Parish / Advertisers) are outside
-   .print-main and keep the fixed base size above; only the Mass Intentions
-   header, inside .print-main, shrinks with the rest of the front page's
-   dynamic content. */
+   titles (Weekly Reflection / Around the Parish) are outside .print-main
+   and keep the fixed base size above; only the Mass Intentions header,
+   inside .print-main, shrinks with the rest of the front page's dynamic
+   content. */
 .print-main .print-section-title {
   font-size: calc(11px * var(--bulletin-scale, 1));
   padding-bottom: calc(3px * var(--bulletin-scale, 1));
   margin-bottom: calc(8px * var(--bulletin-scale, 1));
 }
+/* Page-2 body copy (Weekly Reflection + Announcements) runs ~20% larger
+   than it used to — the small print was hard to read. Fixed sizes (page 2
+   has no --bulletin-scale fit pass). Sep 2026. */
 .print-reflection-title {
   font-family: 'Cinzel', serif;
-  font-size: 12px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--burgundy);
   margin-bottom: 2px;
 }
 .print-reflection-meta {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--dusty-rose);
   font-style: italic;
   margin-bottom: 8px;
@@ -548,18 +551,18 @@ nav {
 .print-reflection-body {
   column-count: 2;
   column-gap: 20px;
-  font-size: 9.5px;
-  line-height: 1.5;
+  font-size: 11.5px;
+  line-height: 1.4;
   color: var(--soil);
   text-align: justify;
 }
-.print-reflection-body p { margin-bottom: 6px; }
+.print-reflection-body p { margin-bottom: 4px; }
 .print-reflection-closing {
-  margin-top: 8px;
-  padding-top: 6px;
+  margin-top: 6px;
+  padding-top: 5px;
   border-top: 1px solid var(--linen);
   font-style: italic;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--burgundy);
   text-align: center;
 }
@@ -683,10 +686,13 @@ nav {
   letter-spacing: 0.02em;
   color: var(--dusty-rose);
 }
-.print-page-back .notices-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-.print-page-back .notice-card { padding: 8px 10px; }
-.print-page-back .notice-title { font-size: 9.5px; margin-bottom: 3px; }
-.print-page-back .notice-body { font-size: 8.5px; line-height: 1.4; }
+/* Print notices: masonry-style columns (not a grid) so short cards don't
+   leave a stretched row gap — lets the ~20%-larger text still fit page 2
+   without an Advertisers block. */
+.print-page-back .notices-grid { display: block; column-count: 2; column-gap: 12px; }
+.print-page-back .notice-card { padding: 6px 9px; margin: 0 0 6px; break-inside: avoid; }
+.print-page-back .notice-title { font-size: 11.5px; margin-bottom: 2px; }
+.print-page-back .notice-body { font-size: 10.5px; line-height: 1.32; }
 /* Compact staff-directory list — front page's right column. Vertical,
    one row per person (name + role on the left, phone on the right), sized
    off --bulletin-scale like the rest of the front page's dynamic content. */
@@ -741,24 +747,6 @@ nav {
   font-weight: 600;
   margin-top: calc(6px * var(--bulletin-scale, 1));
 }
-.print-advertisers-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-}
-.print-advertiser-card {
-  border: 1px solid var(--linen);
-  border-radius: 3px;
-  padding: 6px 8px;
-}
-.print-advertiser-name {
-  font-family: 'Cinzel', serif;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--soil);
-}
-.print-advertiser-tagline { font-size: 8px; color: var(--dusty-rose); margin-top: 1px; }
-.print-advertiser-phone { font-size: 8.5px; color: var(--burgundy); font-weight: 600; margin-top: 2px; }
 
 /* ── PRINT ── */
 @media print {
@@ -999,8 +987,6 @@ nav {
     <div class="print-reflection-closing" id="print-reflection-closing" style="display:none;"></div>
     <div class="print-section-title" style="margin-top:14px;">Around the Parish</div>
     <div class="notices-grid" id="print-notices-body"></div>
-    <div class="print-section-title" style="margin-top:14px;">Advertisers</div>
-    <div class="print-advertisers-grid" id="print-advertisers-grid"></div>
   </div>
 </div>
 
@@ -1283,10 +1269,16 @@ async function loadNotices() {
     const res = await fetch(`${BASE}/parishes/saint-rose-anthem/announcements?key=${API_KEY}&pageSize=20`);
     const data = await res.json();
     const now = new Date();
-    const docs = (data.documents || []).filter(doc => {
-      const exp = gf(doc, 'expiresAt');
-      return !exp || new Date(exp) >= now;
-    });
+    // Non-expired, newest first, capped at 12 — the print bulletin's
+    // "Around the Parish" grid is a one-page block; more than 12 would push
+    // page 2 onto a third sheet.
+    const docs = (data.documents || [])
+      .filter(doc => {
+        const exp = gf(doc, 'expiresAt');
+        return !exp || new Date(exp) >= now;
+      })
+      .sort((a, b) => new Date(gf(b, 'createdAt') || 0) - new Date(gf(a, 'createdAt') || 0))
+      .slice(0, 12);
 
     if (docs.length === 0) {
       grid.innerHTML = '<p class="empty-state">No announcements this week.</p>';
@@ -1308,48 +1300,10 @@ async function loadNotices() {
   }
 }
 
-// ── Advertisers (page 2) ───────────────────────────────────────────────
-// The printed bulletin carries PREMIUM-tier advertisers only. Tier is a
-// Firestore string field on parishes/saint-rose-anthem/advertisers
-// ('premium' | 'standard'), matched case-insensitively — the same rule
-// advertisers.html uses to split its two tier sections. Standard-tier
-// advertisers never appear on the printed bulletin. Falls back to the
-// known premium roster when the collection is empty or unreachable
-// (mirrors ADVERTISERS_DEFAULTS in advertisers.html).
-const PREMIUM_ADVERTISERS_FALLBACK = [
-  { name: 'North Valley Eye Care', tagline: 'Your family eye care professionals since 2007.', phone: '623-582-3937' },
-  { name: 'Gavilan Peak Dental Care', tagline: 'Comprehensive, comfortable dental care for the whole family.', phone: '623-303-4110' },
-  { name: 'RE/MAX Summit Properties', tagline: 'Your Anthem neighbors in real estate.', phone: '602-677-4653' },
-  { name: 'Anthem Law', tagline: 'Where your attorney is your neighbor.', phone: '623-551-9366' },
-  { name: 'Hansen Desert Hills Mortuary & Cemetery', tagline: 'Serving families with dignity since 1949.', phone: '480-991-5800' },
-  { name: 'Safeguard Estate & Financial', tagline: 'Protecting what matters most.', phone: '602-675-9000' },
-];
-
-function renderAdvertisers(list) {
-  const grid = document.getElementById('print-advertisers-grid');
-  if (!grid) return;
-  grid.innerHTML = list.map(a => `
-      <div class="print-advertiser-card">
-        <div class="print-advertiser-name">${escHtml(a.name)}</div>
-        ${a.tagline ? `<div class="print-advertiser-tagline">${escHtml(a.tagline)}</div>` : ''}
-        ${a.phone ? `<div class="print-advertiser-phone">${escHtml(a.phone)}</div>` : ''}
-      </div>`).join('');
-}
-
-async function loadAdvertisers() {
-  renderAdvertisers(PREMIUM_ADVERTISERS_FALLBACK);
-  try {
-    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/advertisers?key=${API_KEY}&pageSize=300`);
-    const data = await res.json();
-    const premium = (data.documents || [])
-      .filter(doc => String(gf(doc, 'tier')).toLowerCase() === 'premium')
-      .map(doc => ({ name: gf(doc, 'name'), tagline: gf(doc, 'tagline'), phone: gf(doc, 'phone') }))
-      .filter(a => a.name);
-    if (premium.length) renderAdvertisers(premium);
-  } catch (e) {
-    // keep the fallback roster
-  }
-}
+// Advertisers were removed from the printed bulletin (Sep 2026): after
+// Weekly Reflection + Announcements text was bumped ~20% for readability,
+// keeping an Advertisers block pushed page 2 onto a third sheet. The public
+// advertiser directory still lives on advertisers.html.
 
 function escHtml(s) {
   return String(s || '')
@@ -1803,7 +1757,6 @@ async function setWeekStrip() {
 
 loadReflection();
 loadNotices();
-loadAdvertisers();
 // Fit-to-page only depends on the front page's own data (Mass Intentions;
 // the week strip is fixed-size) — reflection/notices feed page 2 and the
 // screen "This Week" panel doesn't affect the print page's height.
