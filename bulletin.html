@@ -611,30 +611,29 @@ nav {
 }
 .print-week-strip-cell {
   border: 1px solid var(--gold);
-  padding: 0;          /* the header bar spans the full cell width */
+  padding: 0;
   min-width: 0;        /* let a nowrap child overflow rather than widen the track */
   overflow: hidden;
 }
-/* Header: a solid burgundy bar with white text, carrying the 3-letter
-   weekday + comma + the short month/day (e.g. "Wed, Sep 2"). Burgundy, not
-   gold — gold is too light to carry white text as a solid fill, burgundy
-   reads cleanly. Cinzel for the day, Faustina for the date, both white. */
+/* Header: plain background (matches the rest of the page, no solid fill),
+   carrying the 3-letter weekday + comma + the short month/day (e.g. "Wed,
+   Sep 2"). Sized to run edge-to-edge across the cell rather than sit small
+   and centered. Cinzel for the day, Faustina for the date, both burgundy. */
 .print-week-strip-head {
   white-space: nowrap;
-  background: var(--burgundy);
   padding: 4px 3px;
   text-align: center;
 }
 .print-week-strip-day {
   font-family: 'Cinzel', serif;
-  font-size: 10px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #fff;
+  letter-spacing: 0.01em;
+  color: var(--burgundy);
 }
 .print-week-strip-date {
-  font-size: 10px;
-  color: #fff;
+  font-size: 17px;
+  color: var(--burgundy);
 }
 /* That day's calendar events, left-aligned below the bar. Each event is a
    flex row that wraps: when "time + title" fits the cell it stays one line;
@@ -733,12 +732,6 @@ nav {
 .print-staff-name { color: var(--soil); font-weight: 700; }
 .print-staff-role { color: var(--dusty-rose); font-weight: 400; }
 .print-staff-phone { color: var(--burgundy); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
-.print-staff-note {
-  font-size: calc(7px * var(--bulletin-scale, 1));
-  color: var(--dusty-rose);
-  font-style: italic;
-  margin-top: calc(3px * var(--bulletin-scale, 1));
-}
 /* Pull-quote — right column, after Staff Directory. There's no dedicated
    quote/citation field on the weeklyReflection doc, so the quote text is
    derived from the already-fetched body (first sentence of its first
@@ -972,18 +965,17 @@ nav {
         </div>
         <div class="print-section-title" style="margin-top:14px;"><span class="print-title-icon">▪</span>Staff Directory</div>
         <div class="print-staff-list">
-          <div class="print-staff-row"><span class="print-staff-name">Fr. Bing Colasito<span class="print-staff-role">, Pastor</span></span><span class="print-staff-phone">465-9740</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Fr. Charles Ouemenga<span class="print-staff-role">, Parochial Vicar</span></span><span class="print-staff-phone">307-8273</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Dr. Tom Henrich<span class="print-staff-role">, Office Administrator</span></span><span class="print-staff-phone">607-8265</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Dcn. John Mezydlo<span class="print-staff-role">, Deacon</span></span><span class="print-staff-phone">465-9740</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Cheyanne Bosn<span class="print-staff-role">, Executive Assistant</span></span><span class="print-staff-phone">307-8264</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Matt Ficarra<span class="print-staff-role">, Music &amp; Media</span></span><span class="print-staff-phone">307-8266</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Maria Gonzalez<span class="print-staff-role">, Accounting</span></span><span class="print-staff-phone">607-8270</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult</span></span><span class="print-staff-phone">307-8269</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed</span></span><span class="print-staff-phone">307-8268</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Ray Lopez<span class="print-staff-role">, Maintenance</span></span><span class="print-staff-phone">465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Fr. Bing Colasito<span class="print-staff-role">, Pastor</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Fr. Charles Ouemenga<span class="print-staff-role">, Parochial Vicar</span></span><span class="print-staff-phone">(623) 307-8273</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Dr. Tom Henrich<span class="print-staff-role">, Office Administrator</span></span><span class="print-staff-phone">(623) 607-8265</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Dcn. John Mezydlo<span class="print-staff-role">, Deacon</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Cheyanne Bosn<span class="print-staff-role">, Executive Assistant</span></span><span class="print-staff-phone">(623) 307-8264</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Matt Ficarra<span class="print-staff-role">, Music &amp; Media</span></span><span class="print-staff-phone">(623) 307-8266</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Maria Gonzalez<span class="print-staff-role">, Accounting</span></span><span class="print-staff-phone">(623) 607-8270</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult</span></span><span class="print-staff-phone">(623) 307-8269</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed</span></span><span class="print-staff-phone">(623) 307-8268</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Ray Lopez<span class="print-staff-role">, Maintenance</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
         </div>
-        <div class="print-staff-note">All numbers area code 623</div>
       </div>
     </div>
     <div class="print-week-strip" id="print-week-strip"></div>
@@ -1023,22 +1015,51 @@ function gf(doc, key) {
   if (f.booleanValue !== undefined) return f.booleanValue;
   return f.stringValue ?? f.integerValue ?? '';
 }
-// Sun-Sat window for "this week" content (Mass Intentions, This Week events).
-// Bulletins are typically printed Saturday morning for distribution at the Sat
-// vigil and Sunday Masses, so from Saturday 4am onward this should show the
-// UPCOMING week (tomorrow through next Saturday), not the week that's ending
-// today. Before Saturday 4am, and on every other day, it's the current Sun-Sat
-// calendar week as normal.
+// Current wall-clock time in America/Phoenix (AZ has no DST, so this is an
+// unambiguous fixed -07:00), returned as a Date whose y/m/d/h/min/s fields
+// ARE the AZ wall-clock numbers -- so getDay()/getDate()/setDate()/etc. all
+// do the calendar arithmetic below in AZ time regardless of the viewer's own
+// timezone. (Only get/set-component methods are used on it below -- its
+// underlying UTC timestamp is never compared against a real instant.) Mirrors
+// phoenixWallClock() further down, which every visitor also agrees on.
+function phoenixNow() {
+  const p = {};
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Phoenix', hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  }).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
+  const hh = p.hour === '24' ? '00' : p.hour; // some engines emit '24' at midnight
+  return new Date(+p.year, +p.month - 1, +p.day, +hh, +p.minute, +p.second);
+}
+
+// Sun-Sat window for "this week" content -- Mass Intentions, This Week events,
+// the print week strip, and the image-rotation lock all share this single
+// function, so changing it shifts all of them in sync.
+//
+// A printed bulletin is prepared and locked (see the Friday-lock block further
+// down) starting Friday 00:00 Arizona time for the week that hasn't started
+// yet -- so this window has to roll over to that SAME upcoming week at that
+// SAME instant, not the week that's still running. Locking the still-running
+// week (the old behavior below) froze it mid-week, after some of its earlier
+// days had already happened and had their events swept up by the nightly
+// expirePastEvents cleanup (functions/src/index.ts, 1am AZ) -- so those days
+// printed blank. Rolling a week early, at its own preceding Friday, guarantees
+// every event in a locked week is still in the future at lock time.
+//
+// Sunday-Thursday AZ (day 0-4): today's own current Sun-Sat week, as before.
+// Friday-Saturday AZ (day 5-6): the prep window for the UPCOMING week has
+// opened, so jump straight to next Sunday. That upcoming week then keeps
+// being "the current week" once its own Sunday arrives (the day-0 case above
+// takes over), so it stays the displayed/locked week through the following
+// Thursday 23:59 AZ -- right up until ITS OWN preceding Friday rolls things
+// forward again.
 function getBulletinWeekWindow() {
-  const now = new Date();
-  const day = now.getDay();
-  const hour = now.getHours();
-  let weekStart;
-  if (day === 6 && hour >= 4) {
-    weekStart = new Date(now); weekStart.setDate(now.getDate() + 1); weekStart.setHours(0,0,0,0);
-  } else {
-    weekStart = new Date(now); weekStart.setDate(now.getDate() - day); weekStart.setHours(0,0,0,0);
-  }
+  const az = phoenixNow();
+  const day = az.getDay();
+  const weekStart = new Date(az);
+  weekStart.setDate(az.getDate() + (day >= 5 ? 7 - day : -day));
+  weekStart.setHours(0, 0, 0, 0);
   const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6); weekEnd.setHours(23,59,59,999);
   return { weekStart, weekEnd };
 }
@@ -1391,17 +1412,18 @@ setPrintDate();
 // (title + time) from the SAME events collection calendar.html reads
 // (parishes/saint-rose-anthem/events, orderBy=startAt) — see queryWeekEvents().
 //
-// Friday-morning lock: a printed bulletin is finalised over its weekend, so
-// once we're at/after Friday 00:00 *Arizona time* (America/Phoenix — AZ has no
-// DST, so it's an unambiguous fixed −07:00) for this window, the first load
-// snapshots that week's events into
-// parishes/saint-rose-anthem/bulletinSnapshots/{weekStartISO} and every later
-// load (including the actual print run over that weekend) renders from the
-// snapshot — so calendar edits made after Friday morning don't change what's
-// already been locked for print. Before Friday 00:00 AZ (shouldn't normally
-// happen given the print cadence) it's a plain live query with no snapshot
-// write. The snapshot doc is immutable once written (firestore.rules), so a
-// lock can't be silently altered.
+// Friday-morning lock: getBulletinWeekWindow() already rolled this window
+// over to the UPCOMING Sun-Sat week the moment its prep Friday 00:00 *Arizona
+// time* (America/Phoenix — AZ has no DST, so it's an unambiguous fixed
+// −07:00) arrived, so by the time we get here that Friday has always already
+// passed — the first load snapshots that (still entirely future) week's
+// events into parishes/saint-rose-anthem/bulletinSnapshots/{weekStartISO} and
+// every later load (including the actual print run over that weekend, and
+// the following Sun-Thu it stays on screen) renders from the snapshot — so
+// calendar edits, and the nightly expirePastEvents cleanup sweeping up
+// completed events, don't change what's already been locked for print. The
+// snapshot doc is immutable once written (firestore.rules), so a lock can't
+// be silently altered.
 
 function isoDate(d) {
   return d.getFullYear() + '-' +
@@ -1411,16 +1433,12 @@ function isoDate(d) {
 
 // Current wall-clock time in America/Phoenix as a lexically-comparable
 // 'YYYY-MM-DDTHH:MM:SS' string — independent of the viewer's own timezone, so
-// every visitor agrees on whether Arizona has reached Friday 00:00.
+// every visitor agrees on whether Arizona has reached Friday 00:00. Built from
+// phoenixNow() (above) so there's one source of AZ wall-clock truth.
 function phoenixWallClock() {
-  const p = {};
-  new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Phoenix', hour12: false,
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit'
-  }).formatToParts(new Date()).forEach(x => { p[x.type] = x.value; });
-  const hh = p.hour === '24' ? '00' : p.hour; // some engines emit '24' at midnight
-  return `${p.year}-${p.month}-${p.day}T${hh}:${p.minute}:${p.second}`;
+  const az = phoenixNow();
+  const pad = n => String(n).padStart(2, '0');
+  return isoDate(az) + `T${pad(az.getHours())}:${pad(az.getMinutes())}:${pad(az.getSeconds())}`;
 }
 
 // Live query: this week's events, grouped by local date key. Mirrors
@@ -1733,7 +1751,14 @@ async function setWeekStrip() {
 
   const weekStartISO = isoDate(weekStart);
   const prevWeekISO = isoDate(new Date(weekStart.getTime() - 7 * 24 * 60 * 60 * 1000));
-  const fridayLock = isoDate(days[5]) + 'T00:00:00'; // Friday 00:00, AZ wall clock
+  // The prep Friday for THIS window is always 2 days before its Sunday, not
+  // a day inside the window itself (see getBulletinWeekWindow above) --
+  // getBulletinWeekWindow() never hands back a window until that Friday
+  // 00:00 AZ has actually arrived, so this is always true in steady state;
+  // it's kept explicit rather than hardcoded so a bootstrap read (no
+  // snapshot written yet) still goes through the normal lock-it-now path
+  // below instead of silently skipping the snapshot.
+  const fridayLock = isoDate(new Date(weekStart.getTime() - 2 * 24 * 60 * 60 * 1000)) + 'T00:00:00';
   const locked = phoenixWallClock() >= fridayLock;
 
   // Center image pool + pointer (see the rotating-image block above).
