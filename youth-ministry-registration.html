@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Youth Ministry Registration — Saint Rose Philippine Duchesne</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+    --success: #4A7C59;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
+
+  .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 72px 40px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
+  .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(30px, 5vw, 48px); color: var(--linen); line-height: 1.2; margin-bottom: 16px; }
+  .hero-sub { font-size: 17px; color: rgba(232,221,208,0.85); max-width: 620px; margin: 0 auto; line-height: 1.7; }
+
+  .gold-divider { height: 3px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+  .form-wrapper { background: var(--white); padding: 56px 24px; }
+  .form-section { max-width: 780px; margin: 0 auto; }
+  .form-sub { font-size: 15px; color: var(--dusty-rose); margin-bottom: 40px; line-height: 1.6; }
+  .form-block { margin-bottom: 40px; }
+  .form-block-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--linen); letter-spacing: 0.5px; }
+  .form-block-sub { font-size: 13px; color: var(--dusty-rose); margin-top: -10px; margin-bottom: 18px; line-height: 1.6; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media(max-width:640px){
+    .form-grid,.form-grid-3{grid-template-columns:1fr;}
+    .hero{padding:56px 24px;}
+  }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 7px; }
+  .form-label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--dusty-rose); }
+  .form-label span { color: var(--danger, #8B2635); }
+  .form-input, .form-select, .form-textarea { padding: 13px 16px; border: 1.5px solid var(--linen); border-radius: 10px; font-family: 'Faustina', serif; font-size: 16px; color: var(--soil); background: var(--sand); outline: none; transition: border-color 0.2s, background 0.2s; width: 100%; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--burgundy); background: var(--white); }
+  .form-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .radio-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .radio-item, .checkbox-item { display: flex; align-items: center; gap: 9px; font-size: 15px; color: var(--soil); cursor: pointer; }
+  .radio-item.stacked, .checkbox-item.stacked { align-items: flex-start; }
+  .radio-item input, .checkbox-item input { width: 18px; height: 18px; accent-color: var(--burgundy); cursor: pointer; flex-shrink: 0; }
+  .checkbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+  @media(max-width:640px){.checkbox-grid{grid-template-columns:1fr;}}
+
+  .child-card { background: var(--sand); border: 1.5px solid var(--linen); border-radius: 14px; padding: 20px; margin-bottom: 16px; position: relative; }
+  .child-card-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--burgundy); letter-spacing: 0.5px; margin-bottom: 14px; }
+  .child-remove-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--dusty-rose); font-size: 13px; cursor: pointer; text-decoration: underline; }
+  .add-child-btn { width: 100%; padding: 14px; background: transparent; border: 1.5px dashed var(--linen); border-radius: 10px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--burgundy); cursor: pointer; transition: all 0.2s; }
+  .add-child-btn:hover { border-color: var(--burgundy); background: var(--sand); }
+  .add-child-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .policy-text { font-size: 13px; line-height: 1.7; color: var(--soil); background: var(--sand); border: 1px solid var(--linen); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+  .indemnity-text { font-size: 13px; line-height: 1.7; color: var(--soil); background: var(--sand); border: 1px solid var(--linen); border-radius: 10px; padding: 18px; margin-bottom: 18px; }
+
+  .fee-box { background: var(--sand); border: 1.5px solid var(--gold); border-radius: 14px; padding: 22px; }
+  .fee-row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--soil); padding: 7px 0; }
+  .fee-row.total { border-top: 1px solid var(--linen); margin-top: 6px; padding-top: 12px; font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); }
+  .fee-note { font-size: 12px; color: var(--dusty-rose); margin-top: 12px; line-height: 1.6; }
+  .weshare-btn { display: inline-block; margin-top: 14px; padding: 13px 24px; background: var(--burgundy); color: var(--linen); border-radius: 10px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; text-decoration: none; }
+  .weshare-btn:hover { background: var(--burgundy-light); }
+
+  .info-panel { background: var(--sand); border-left: 3px solid var(--gold); border-radius: 8px; padding: 16px 18px; font-size: 14px; line-height: 1.7; color: var(--soil); }
+
+  .submit-btn { width: 100%; padding: 20px; background: var(--burgundy); color: var(--linen); border: none; border-radius: 12px; font-family: 'Cinzel', serif; font-size: 17px; letter-spacing: 1px; cursor: pointer; transition: background 0.2s; margin-top: 8px; }
+  .submit-btn:hover { background: var(--burgundy-light); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .success-screen { display: none; text-align: center; padding: 60px 32px; }
+  .success-icon { width: 80px; height: 80px; background: #EDF7F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; }
+  .success-title { font-family: 'Cinzel', serif; font-size: 28px; color: var(--burgundy); margin-bottom: 12px; }
+  .success-sub { font-size: 16px; color: var(--soil); opacity: 0.75; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+  .success-actions { margin-top: 28px; }
+  .success-link { display: inline-block; padding: 14px 28px; border: 1.5px solid var(--burgundy); border-radius: 10px; font-family: 'Cinzel', serif; font-size: 13px; letter-spacing: 0.5px; color: var(--burgundy); text-decoration: none; cursor: pointer; }
+  .success-link:hover { background: var(--sand); }
+
+  .footer { background: var(--burgundy-dark); padding: 40px; text-align: center; }
+  .footer-logo { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; margin-bottom: 8px; }
+  .footer-sub { font-size: 13px; color: rgba(232,221,208,0.4); }
+
+  .required { color: #8B2635; }
+  .error-msg { color: #8B2635; font-size: 13px; margin-top: 4px; display: none; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img class="hero-watermark" src="images/IHS.png" alt="" />
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Youth Ministry Registration</h1>
+  <p class="hero-sub">St. Rose Edge &amp; Life Teen · 2026&ndash;2027. Registration is not complete unless the form is filled out in full. When you submit, this opens a pre-filled email to Chris Bosn so nothing is lost.</p>
+</div>
+
+<div class="gold-divider"></div>
+
+<div class="form-wrapper">
+  <div class="form-section">
+    <div id="form-content">
+
+      <p class="form-sub">Fields marked <span class="required">*</span> are required. We use Flocknote for communication &mdash; you and your teen will receive emails/texts from &ldquo;mail@flocknote.com&rdquo;; this is not junk mail. It is important we have the teen's, the mother's, and the father's email and phone. Staff and core team never contact teens from personal cell phones.</p>
+
+      <!-- SCHEDULE (informational) -->
+      <div class="form-block">
+        <div class="form-block-title">Schedule</div>
+        <div class="info-panel">
+          <strong>Middle School</strong> (Grades 6&ndash;8) &mdash; Sundays 9:15am&ndash;10:45am<br>
+          <strong>High School</strong> (Grades 9&ndash;12) &mdash; Sundays 12:15pm&ndash;1:45pm<br>
+          Every teen is welcome to participate in our youth ministry activities.
+        </div>
+      </div>
+
+      <!-- FAMILY INFORMATION -->
+      <div class="form-block">
+        <div class="form-block-title">Family Information</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Family Last Name <span class="required">*</span></label>
+            <input type="text" class="form-input" id="f-lastname" placeholder="e.g. Smith" />
+          </div>
+        </div>
+      </div>
+
+      <!-- MOTHER -->
+      <div class="form-block">
+        <div class="form-block-title">Mother / Guardian 1</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="m-name" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Address</label>
+            <input type="text" class="form-input" id="m-address" placeholder="Street address" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">City / Zip Code</label>
+            <input type="text" class="form-input" id="m-cityzip" placeholder="Anthem, AZ 85086" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cell Phone</label>
+            <input type="tel" class="form-input" id="m-cell" oninput="formatPhoneInput(this)" placeholder="(623) 555-1234" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="m-email" />
+          </div>
+        </div>
+      </div>
+
+      <!-- FATHER -->
+      <div class="form-block">
+        <div class="form-block-title">Father / Guardian 2</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="fa-name" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Address <span style="text-transform:none;letter-spacing:0;opacity:0.7;">(if different)</span></label>
+            <input type="text" class="form-input" id="fa-address" placeholder="Street address" />
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">City / Zip Code</label>
+            <input type="text" class="form-input" id="fa-cityzip" placeholder="Anthem, AZ 85086" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cell Phone</label>
+            <input type="tel" class="form-input" id="fa-cell" oninput="formatPhoneInput(this)" placeholder="(623) 555-1234" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="fa-email" />
+          </div>
+        </div>
+      </div>
+
+      <!-- EMERGENCY CONTACT -->
+      <div class="form-block">
+        <div class="form-block-title">Emergency Contact</div>
+        <div class="form-block-sub">Whom may we call in an emergency if parents cannot be reached? This should <strong>not</strong> be one of the parents' numbers.</div>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="e-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="e-phone" oninput="formatPhoneInput(this)" placeholder="(623) 555-1234" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Relation</label>
+            <input type="text" class="form-input" id="e-relation" placeholder="e.g. Grandparent" />
+          </div>
+        </div>
+      </div>
+
+      <!-- TEENS / CHILDREN -->
+      <div class="form-block">
+        <div class="form-block-title">Teens / Children</div>
+        <div class="form-block-sub">Add one card per teen (up to 4). Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) carries an additional $60 fee per child &mdash; check the box on the card if enrolling this year.</div>
+        <div id="children-list"></div>
+        <button type="button" class="add-child-btn" id="add-child-btn" onclick="addChildRow()">+ Add Teen</button>
+      </div>
+
+      <!-- PHOTO PERMISSION -->
+      <div class="form-block">
+        <div class="form-block-title">Photo Permission</div>
+        <div class="form-block-sub">Photos are taken throughout the year during classes and retreats and may be posted on our private Facebook page, social media, and/or the bulletin.</div>
+        <div class="radio-row">
+          <label class="radio-item"><input type="radio" name="photo-permission" value="Yes" /> Yes, I give permission</label>
+          <label class="radio-item"><input type="radio" name="photo-permission" value="No" /> No</label>
+        </div>
+      </div>
+
+      <!-- INDEMNITY AGREEMENT -->
+      <div class="form-block">
+        <div class="form-block-title">Indemnity Agreement <span class="required">*</span></div>
+        <div class="indemnity-text">
+          As parent and/or legal guardian, I remain legally responsible for any personal actions taken by the above-named minor(s). I agree on behalf of myself, my child(ren) named herein, or our heirs, successors and assigns, to hold harmless and defend St. Rose Philippine Duchesne, its teachers, CRE, employees and agents, and the Diocese of Phoenix, its employees, agents, chaperons, or representatives associated with youth ministry, from any claim arising from or in connection with my child(ren) attending or in connection therewith. I agree to compensate St. Rose Philippine Duchesne, its teachers, directors, and agents, and the Diocese of Phoenix, its employees and agents and chaperons, or representatives associated with Youth Ministry for reasonable attorney's fees and expenses which may incur in any action brought against them as a result of such injury or damage, unless such claim arises from the negligence of St. Rose Philippine Duchesne or the Diocese of Phoenix.
+        </div>
+        <label class="checkbox-item" style="margin-bottom:18px;">
+          <input type="checkbox" id="indemnity-agree" />
+          I have read and agree to the Indemnity Agreement above.
+        </label>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Parent / Guardian Signature <span class="required">*</span> <span style="text-transform:none;letter-spacing:0;opacity:0.7;">(type your full name)</span></label>
+            <input type="text" class="form-input" id="sig-name" placeholder="Full name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date <span class="required">*</span></label>
+            <input type="date" class="form-input" id="sig-date" />
+          </div>
+        </div>
+        <div class="form-block-sub" style="margin-top:14px;margin-bottom:0;">Typing your full name above serves as your electronic signature.</div>
+      </div>
+
+      <!-- VOLUNTEER INTERESTS -->
+      <div class="form-block">
+        <div class="form-block-title">Volunteer Interests for Daily or Weekend Mass</div>
+        <div class="form-block-sub">We encourage every student to take an active role in serving at the liturgy. Check any roles the teen would like to learn more about &mdash; we provide training and support.</div>
+        <div class="checkbox-grid">
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Greeter" /> Greeter</label>
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Usher" /> Usher</label>
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Choir" /> Choir</label>
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Lector" /> Lector</label>
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Eucharistic Minister (age 16+)" /> Eucharistic Minister (age 16+)</label>
+          <label class="checkbox-item"><input type="checkbox" class="volunteer" value="Altar Server" /> Altar Server</label>
+        </div>
+      </div>
+
+      <!-- TRANSPORTATION OF MINOR -->
+      <div class="form-block">
+        <div class="form-block-title">Transportation of Minor to / from Church Campus</div>
+        <div class="policy-text">
+          The Catholic Diocese of Phoenix &ldquo;Policy on Sexual Misconduct,&rdquo; as it pertains to Diocesan personnel, states: &ldquo;Field trips or other outings involving a minor in places and situations where no other responsible adults are present are to be avoided.&rdquo; Whenever minors are transported to or from parish programs or events, two responsible adults should accompany them in the vehicle.
+          <br><br>
+          Due to the limited number of participants in the St. Rose Youth Program and the times at which events occur, it may not always be feasible to have two adults in every vehicle. Exceptions are allowed when the parish has made reasonable efforts to provide a second adult without success, and the parent or guardian has provided written consent below.
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label">Choose one <span class="required">*</span></label>
+          <label class="radio-item stacked" style="margin-top:8px;">
+            <input type="radio" name="transport-option" value="1" onchange="onTransportChange()" />
+            <span><strong>(1) Consent to allow for exception to policy.</strong> I consent to allow the student named below to travel to and from program events in a vehicle occupied by a single adult person at any time during the current school year.</span>
+          </label>
+          <label class="radio-item stacked" style="margin-top:12px;">
+            <input type="radio" name="transport-option" value="2" onchange="onTransportChange()" />
+            <span><strong>(2) Assumption of transportation responsibility.</strong> I will solely provide transportation for my child to all activities away from the Church campus.</span>
+          </label>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Name of Parent / Guardian</label>
+            <input type="text" class="form-input" id="t-parent" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Name of Student</label>
+            <input type="text" class="form-input" id="t-student" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Signature <span style="text-transform:none;letter-spacing:0;opacity:0.7;">(type full name)</span></label>
+            <input type="text" class="form-input" id="t-signature" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Printed Name of Parent / Guardian</label>
+            <input type="text" class="form-input" id="t-printed" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-input" id="t-date" />
+          </div>
+        </div>
+      </div>
+
+      <!-- SAFE ENVIRONMENT TRAINING -->
+      <div class="form-block">
+        <div class="form-block-title">Safe Environment Training (SET) Acknowledgment</div>
+        <div class="policy-text">
+          St. Rose Philippine Duchesne, the Mission of the Good Shepherd, and the Roman Catholic Diocese of Phoenix are deeply committed to providing a safe environment for all children. It is imperative that all children enrolled in a youth ministry program learn about ways to sustain and foster a safe environment for everyone.
+          <br><br>
+          <strong id="set-session-line">On Sunday, August 23rd, Safe Environment Training (SET) will be offered to your teen. Middle School @ 9:15am / High School @ 12:15pm.</strong>
+          <br><br>
+          All youth who will volunteer at Masses and events on campus are required to complete this teaching.
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label">Please confirm one <span class="required">*</span></label>
+          <label class="radio-item stacked" style="margin-top:8px;">
+            <input type="radio" name="set-confirm" value="attend" />
+            <span>My child(ren) will attend the scheduled Safe Environment youth group.</span>
+          </label>
+          <label class="radio-item stacked" style="margin-top:12px;">
+            <input type="radio" name="set-confirm" value="absent" />
+            <span>My child(ren) will be absent from the Safe Environment lesson for other reasons. I confirm that I will review this information with my child(ren) and complete the required Diocese forms by the required date.</span>
+          </label>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Parent / Guardian Name</label>
+            <input type="text" class="form-input" id="set-parent" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Signature <span style="text-transform:none;letter-spacing:0;opacity:0.7;">(type full name)</span></label>
+            <input type="text" class="form-input" id="set-signature" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-input" id="set-date" />
+          </div>
+        </div>
+        <div class="form-block-sub" style="margin-top:14px;margin-bottom:0;">Each teen's name, age, grade, and program (from the cards above) are included with this acknowledgment.</div>
+      </div>
+
+      <!-- FEE ESTIMATE -->
+      <div class="form-block">
+        <div class="form-block-title">Fee Estimate</div>
+        <div class="fee-box">
+          <div class="fee-row"><span id="fee-teen-label">Registration fee (0 teens @ $100)</span><span id="fee-teen-amount">$0</span></div>
+          <div class="fee-row"><span id="fee-sac-label">Sacramental Preparation (0 children @ $60)</span><span id="fee-sac-amount">$0</span></div>
+          <div class="fee-row total"><span>Estimated Total</span><span id="fee-total-amount">$0</span></div>
+          <div class="fee-note">
+            <strong>This is an estimate.</strong> The suggested registration fee is $100 per teen &mdash; but <strong>no one is turned away due to cost</strong>. Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) adds $60 per child. We are happy to work with each family individually.
+          </div>
+          <a class="weshare-btn" href="https://www.stroseanthem.com" target="_blank" rel="noopener">Pay Online (Giving → Give Online → Faith Formation Fees) →</a>
+          <div class="fee-note">
+            If you are unable to pay online, or need a fee waiver, please contact Chris Bosn in the parish office at <strong>623-465-9740 ext. 102</strong> or <strong>chrisbosn@stroseanthem.com</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="error-msg" id="error-msg"></div>
+      <button class="submit-btn" id="submit-btn" onclick="submitRegistration()">Submit &amp; Open Email →</button>
+      <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Submitting opens a pre-filled email to Chris Bosn. Please press send in your mail app to deliver it.</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✉️</div>
+      <div class="success-title">Almost done</div>
+      <p class="success-sub">Your registration should now be open in your email app, addressed to Chris Bosn. <strong>Please press send</strong> to deliver it. If your email app did not open, use the button below.</p>
+      <div class="success-actions">
+        <a class="success-link" id="retry-mailto" href="#">Open the Email Again</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-logo">Sacred Apps</div>
+  <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
+  const YOUTH_MINISTRY_EMAIL = 'chrisbosn@stroseanthem.com';
+
+  const SACRAMENTS = ['Baptism', 'Reconciliation', 'First Eucharist', 'Confirmation', 'None of the Above'];
+  const PROGRAMS = ['Middle School (Grades 6-8)', 'High School (Grades 9-12)'];
+  // Fallback SET session line — overridden by siteContent/youthMinistry.setSession
+  // (portal-editable) so staff can update it each year without a code change.
+  const SET_SESSION_FALLBACK = 'On Sunday, August 23rd, Safe Environment Training (SET) will be offered to your teen. Middle School @ 9:15am / High School @ 12:15pm.';
+
+  (function loadSetSession() {
+    fetch(`${BASE}/siteContent/youthMinistry?key=${API_KEY}`)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        var v = d && d.fields && d.fields.setSession && d.fields.setSession.stringValue;
+        if (v) document.getElementById('set-session-line').textContent = v;
+      })
+      .catch(function(){ /* keep fallback */ });
+  })();
+
+  function formatPhoneInput(el) {
+    let digits = el.value.replace(/\D/g, '').slice(0, 10);
+    let formatted = digits;
+    if (digits.length > 6) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6) + '-' + digits.slice(6,10);
+    } else if (digits.length > 3) {
+      formatted = '(' + digits.slice(0,3) + ') ' + digits.slice(3,6);
+    } else if (digits.length > 0) {
+      formatted = '(' + digits;
+    }
+    el.value = formatted;
+  }
+
+  function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function radioVal(name) { const el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function checkedVals(cls) { return Array.from(document.querySelectorAll('input.' + cls + ':checked')).map(function(el){ return el.value; }); }
+
+  function onTransportChange() { /* placeholder for future conditional UI; the fields apply to whichever option is chosen */ }
+
+  let childCount = 0;
+  const MAX_CHILDREN = 4;
+
+  function addChildRow() {
+    if (document.querySelectorAll('.child-card').length >= MAX_CHILDREN) return;
+    childCount++;
+    const id = childCount;
+    const div = document.createElement('div');
+    div.className = 'child-card';
+    div.id = 'child-' + id;
+    div.innerHTML = `
+      <button type="button" class="child-remove-btn" onclick="removeChildRow(${id})">Remove</button>
+      <div class="child-card-title">Teen ${document.querySelectorAll('.child-card').length + 1}</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input child-name" oninput="recalcFees()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input child-email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cell #</label>
+          <input type="tel" class="form-input child-cell" oninput="formatPhoneInput(this)" placeholder="(623) 555-1234" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" class="form-input child-dob" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Age</label>
+          <input type="text" class="form-input child-age" inputmode="numeric" placeholder="e.g. 13" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <div class="radio-row" style="padding-top:8px;">
+            <label class="radio-item"><input type="radio" name="child-${id}-gender" value="Female" /> Female</label>
+            <label class="radio-item"><input type="radio" name="child-${id}-gender" value="Male" /> Male</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade / Shirt Size</label>
+          <input type="text" class="form-input child-gradeshirt" placeholder="e.g. 8th / Adult M" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Program</label>
+          <select class="form-select child-program"><option value="">—</option>${PROGRAMS.map(p => '<option>' + p + '</option>').join('')}</select>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Sacraments Already Received</label>
+          <div class="checkbox-grid" style="padding-top:6px;">
+            ${SACRAMENTS.map(s => '<label class="checkbox-item"><input type="checkbox" class="child-sac" value="' + s + '" /> ' + s + '</label>').join('')}
+          </div>
+        </div>
+        <div class="form-group form-full">
+          <label class="checkbox-item"><input type="checkbox" class="child-sacprep" onchange="recalcFees()" /> Enrolling in Sacramental Preparation this year (Reconciliation or Confirmation/First Eucharist) &mdash; adds $60</label>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Allergies / Medical / Behavior Concerns</label>
+          <textarea class="form-textarea child-concerns" placeholder="Optional"></textarea>
+        </div>
+      </div>
+    `;
+    document.getElementById('children-list').appendChild(div);
+    renumberChildren();
+    recalcFees();
+  }
+
+  function removeChildRow(id) {
+    const el = document.getElementById('child-' + id);
+    if (el) el.remove();
+    renumberChildren();
+    recalcFees();
+  }
+
+  function renumberChildren() {
+    document.querySelectorAll('.child-card').forEach(function(card, i) {
+      card.querySelector('.child-card-title').textContent = 'Teen ' + (i + 1);
+    });
+    document.getElementById('add-child-btn').disabled = document.querySelectorAll('.child-card').length >= MAX_CHILDREN;
+  }
+
+  function childCards() { return Array.from(document.querySelectorAll('.child-card')); }
+
+  function collectChildren() {
+    return childCards().map(function(card) {
+      const sacs = Array.from(card.querySelectorAll('.child-sac:checked')).map(function(el){ return el.value; });
+      const genderEl = card.querySelector('input[type="radio"]:checked');
+      return {
+        name: (card.querySelector('.child-name').value || '').trim(),
+        email: (card.querySelector('.child-email').value || '').trim(),
+        cell: (card.querySelector('.child-cell').value || '').trim(),
+        dob: card.querySelector('.child-dob').value,
+        age: (card.querySelector('.child-age').value || '').trim(),
+        gender: genderEl ? genderEl.value : '',
+        gradeShirtSize: (card.querySelector('.child-gradeshirt').value || '').trim(),
+        program: card.querySelector('.child-program').value,
+        sacramentsReceived: sacs.join(', '),
+        sacramentalPrep: card.querySelector('.child-sacprep').checked,
+        concerns: (card.querySelector('.child-concerns').value || '').trim()
+      };
+    }).filter(function(c) { return c.name || c.dob || c.gradeShirtSize || c.email; });
+  }
+
+  function computeFees(children) {
+    const n = children.filter(function(c){ return c.name; }).length;
+    const registrationFee = n * 100;
+    const sacCount = children.filter(function(c){ return c.name && c.sacramentalPrep; }).length;
+    const sacramentalPrepFee = sacCount * 60;
+    return {
+      teenCount: n,
+      registrationFee: registrationFee,
+      sacramentalCount: sacCount,
+      sacramentalPrepFee: sacramentalPrepFee,
+      total: registrationFee + sacramentalPrepFee
+    };
+  }
+
+  function recalcFees() {
+    const f = computeFees(collectChildren());
+    document.getElementById('fee-teen-label').textContent = 'Registration fee (' + f.teenCount + (f.teenCount === 1 ? ' teen' : ' teens') + ' @ $100, suggested)';
+    document.getElementById('fee-teen-amount').textContent = '$' + f.registrationFee;
+    document.getElementById('fee-sac-label').textContent = 'Sacramental Preparation (' + f.sacramentalCount + (f.sacramentalCount === 1 ? ' child' : ' children') + ' @ $60)';
+    document.getElementById('fee-sac-amount').textContent = '$' + f.sacramentalPrepFee;
+    document.getElementById('fee-total-amount').textContent = '$' + f.total;
+  }
+
+  // Builds the plain-text body used both for the mailto: and the Firestore copy.
+  function buildSummary(children, fees) {
+    const lines = [];
+    lines.push('YOUTH MINISTRY REGISTRATION — Saint Rose Philippine Duchesne');
+    lines.push('St. Rose Edge & Life Teen · 2026-2027');
+    lines.push('Submitted: ' + new Date().toLocaleString('en-US'));
+    lines.push('');
+
+    function section(title, rows) {
+      const filled = rows.filter(function(r){ return r[1] && String(r[1]).trim(); });
+      if (!filled.length) return;
+      lines.push('=== ' + title + ' ===');
+      filled.forEach(function(r){ lines.push(r[0] + ': ' + r[1]); });
+      lines.push('');
+    }
+
+    section('FAMILY', [['Family Last Name', val('f-lastname')]]);
+    section('MOTHER / GUARDIAN 1', [
+      ['Name', val('m-name')], ['Address', val('m-address')], ['City / Zip', val('m-cityzip')],
+      ['Cell', val('m-cell')], ['Email', val('m-email')],
+    ]);
+    section('FATHER / GUARDIAN 2', [
+      ['Name', val('fa-name')], ['Address', val('fa-address')], ['City / Zip', val('fa-cityzip')],
+      ['Cell', val('fa-cell')], ['Email', val('fa-email')],
+    ]);
+    section('EMERGENCY CONTACT', [
+      ['Name', val('e-name')], ['Phone', val('e-phone')], ['Relation', val('e-relation')],
+    ]);
+
+    children.forEach(function(c, i) {
+      section('TEEN ' + (i + 1), [
+        ['Name', c.name],
+        ['Email', c.email],
+        ['Cell', c.cell],
+        ['Date of Birth', c.dob],
+        ['Age', c.age],
+        ['Gender', c.gender],
+        ['Grade / Shirt Size', c.gradeShirtSize],
+        ['Program', c.program],
+        ['Sacraments Already Received', c.sacramentsReceived],
+        ['Enrolling in Sacramental Preparation', c.sacramentalPrep ? 'Yes (+$60)' : ''],
+        ['Allergies / Medical / Behavior Concerns', c.concerns],
+      ]);
+    });
+
+    section('PHOTO PERMISSION', [['Permission to post photos', radioVal('photo-permission')]]);
+    section('INDEMNITY AGREEMENT', [
+      ['Agreed', document.getElementById('indemnity-agree').checked ? 'Yes' : 'No'],
+      ['Signature (typed)', val('sig-name')],
+      ['Date', val('sig-date')],
+    ]);
+    section('VOLUNTEER INTERESTS (DAILY / WEEKEND MASS)', [['Roles', checkedVals('volunteer').join(', ')]]);
+
+    const transportOpt = radioVal('transport-option');
+    section('TRANSPORTATION OF MINOR', [
+      ['Option', transportOpt === '1' ? '(1) Consent to allow exception to policy (single-adult transport)'
+        : transportOpt === '2' ? '(2) Assumption of transportation responsibility (parent solely provides transport)' : ''],
+      ['Name of Parent / Guardian', val('t-parent')],
+      ['Name of Student', val('t-student')],
+      ['Signature (typed)', val('t-signature')],
+      ['Printed Name of Parent / Guardian', val('t-printed')],
+      ['Date', val('t-date')],
+    ]);
+
+    const setChildren = children.map(function(c) {
+      return [c.name, c.age ? 'Age ' + c.age : '', c.gradeShirtSize ? 'Grade ' + c.gradeShirtSize : '', c.program].filter(Boolean).join(' · ');
+    }).filter(Boolean).join('\n  ');
+    section('SAFE ENVIRONMENT TRAINING (SET) ACKNOWLEDGMENT', [
+      ['Session', document.getElementById('set-session-line').textContent],
+      ['Confirmation', radioVal('set-confirm') === 'attend' ? 'Will attend scheduled SET'
+        : radioVal('set-confirm') === 'absent' ? 'Will be absent — will review info and complete required Diocese forms' : ''],
+      ['Parent / Guardian Name', val('set-parent')],
+      ['Signature (typed)', val('set-signature')],
+      ['Date', val('set-date')],
+      ['Children', setChildren ? '\n  ' + setChildren : ''],
+    ]);
+
+    section('FEE ESTIMATE', [
+      ['Teens', String(fees.teenCount)],
+      ['Registration fee', '$' + fees.registrationFee + '  (' + fees.teenCount + ' @ $100, suggested)'],
+      ['Sacramental Preparation', '$' + fees.sacramentalPrepFee + '  (' + fees.sacramentalCount + ' @ $60)'],
+      ['Estimated Total', '$' + fees.total + '  (estimate — no one turned away due to cost; contact Chris Bosn)'],
+    ]);
+
+    return lines.join('\n').trim();
+  }
+
+  let lastMailto = '';
+
+  async function submitRegistration() {
+    const errorEl = document.getElementById('error-msg');
+    errorEl.style.display = 'none';
+
+    const lastName = val('f-lastname');
+    const children = collectChildren();
+    const agreed = document.getElementById('indemnity-agree').checked;
+    const sigName = val('sig-name');
+
+    function fail(msg, focusId) {
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+      const el = focusId && document.getElementById(focusId);
+      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+    }
+
+    if (!lastName) return fail('Please enter the Family Last Name.', 'f-lastname');
+    if (children.filter(function(c){ return c.name; }).length === 0) return fail('Please add at least one teen with a name.', 'children-list');
+    if (!agreed) return fail('Please read and agree to the Indemnity Agreement.', 'indemnity-agree');
+    if (!sigName) return fail('Please type your full name as your signature.', 'sig-name');
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Preparing...';
+
+    const fees = computeFees(children);
+    const summary = buildSummary(children, fees);
+    const subject = 'Youth Ministry Registration — ' + lastName + ' Family';
+    lastMailto = 'mailto:' + YOUTH_MINISTRY_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(summary);
+
+    const childrenValues = children.map(function(c) {
+      return { mapValue: { fields: {
+        name: { stringValue: c.name },
+        email: { stringValue: c.email },
+        cell: { stringValue: c.cell },
+        dob: { stringValue: c.dob },
+        age: { stringValue: c.age },
+        gender: { stringValue: c.gender },
+        gradeShirtSize: { stringValue: c.gradeShirtSize },
+        program: { stringValue: c.program },
+        sacramentsReceived: { stringValue: c.sacramentsReceived },
+        sacramentalPrep: { booleanValue: c.sacramentalPrep },
+        concerns: { stringValue: c.concerns }
+      } } };
+    });
+
+    const transportOpt = radioVal('transport-option');
+
+    // Best-effort backup / office copy to Firestore. The mailto is the primary
+    // delivery path, so a failed write here must never block the visitor.
+    // Public unauthenticated shaped create is allowed by an isPublicSubmission
+    // rule scoped to this collection. The reconciliation sub-object starts
+    // empty — staff fill it in from the portal's Youth Ministry Registrations
+    // page.
+    try {
+      await fetch(`${BASE}/youthMinistryRegistrations?key=${API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: {
+          familyLastName: { stringValue: lastName },
+          motherName: { stringValue: val('m-name') },
+          motherAddress: { stringValue: val('m-address') },
+          motherCityZip: { stringValue: val('m-cityzip') },
+          motherCell: { stringValue: val('m-cell') },
+          motherEmail: { stringValue: val('m-email') },
+          fatherName: { stringValue: val('fa-name') },
+          fatherAddress: { stringValue: val('fa-address') },
+          fatherCityZip: { stringValue: val('fa-cityzip') },
+          fatherCell: { stringValue: val('fa-cell') },
+          fatherEmail: { stringValue: val('fa-email') },
+          emergencyName: { stringValue: val('e-name') },
+          emergencyPhone: { stringValue: val('e-phone') },
+          emergencyRelation: { stringValue: val('e-relation') },
+          photoPermission: { stringValue: radioVal('photo-permission') },
+          indemnityAgreed: { booleanValue: agreed },
+          signatureName: { stringValue: sigName },
+          signatureDate: { stringValue: val('sig-date') },
+          volunteerInterests: { stringValue: checkedVals('volunteer').join(', ') },
+          transportation: { mapValue: { fields: {
+            option: { stringValue: transportOpt },
+            parentGuardianName: { stringValue: val('t-parent') },
+            studentName: { stringValue: val('t-student') },
+            signature: { stringValue: val('t-signature') },
+            printedName: { stringValue: val('t-printed') },
+            date: { stringValue: val('t-date') }
+          } } },
+          safeEnvironmentTraining: { mapValue: { fields: {
+            session: { stringValue: document.getElementById('set-session-line').textContent },
+            confirmation: { stringValue: radioVal('set-confirm') },
+            parentName: { stringValue: val('set-parent') },
+            signature: { stringValue: val('set-signature') },
+            date: { stringValue: val('set-date') }
+          } } },
+          children: { arrayValue: { values: childrenValues } },
+          feeEstimate: { mapValue: { fields: {
+            teenCount: { integerValue: String(fees.teenCount) },
+            registrationFee: { integerValue: String(fees.registrationFee) },
+            sacramentalCount: { integerValue: String(fees.sacramentalCount) },
+            sacramentalPrepFee: { integerValue: String(fees.sacramentalPrepFee) },
+            total: { integerValue: String(fees.total) }
+          } } },
+          reconciliation: { mapValue: { fields: {
+            paymentReceived: { booleanValue: false },
+            amountReceived: { nullValue: null },
+            paymentType: { nullValue: null },
+            checkOrReceiptNumber: { nullValue: null },
+            balanceDue: { nullValue: null },
+            receivedBy: { nullValue: null },
+            receivedDate: { nullValue: null }
+          } } },
+          summary: { stringValue: summary },
+          status: { stringValue: 'pending' },
+          submittedAt: { stringValue: new Date().toISOString() }
+        } })
+      });
+    } catch (e) { /* mailto is the primary delivery path — ignore */ }
+
+    document.getElementById('retry-mailto').setAttribute('href', lastMailto);
+    document.getElementById('form-content').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    window.location.href = lastMailto;
+  }
+
+  document.getElementById('retry-mailto').addEventListener('click', function(e) {
+    if (lastMailto) { e.preventDefault(); window.location.href = lastMailto; }
+  });
+
+  // Start with one teen card.
+  addChildRow();
+  recalcFees();
+</script>
+
+</body>
+</html>
