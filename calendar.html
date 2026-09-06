@@ -130,6 +130,7 @@
     <span>ANTHEM · ARIZONA</span>
   </div>
   <div class="nav-links">
+    <a href="welcome.html">Welcome</a>
     <a href="index.html#mass-times">Mass Times</a>
     <a href="calendar.html" class="active">Calendar</a>
     <a href="index.html#location">Visit</a>
@@ -138,12 +139,6 @@
          Un-comment here + in index.html (desktop + mobile) to bring it back. -->
     <!-- <a href="advertisers.html">Directory</a> -->
     <!-- FORMS dropdown — keep this list identical to index.html (desktop + mobile). Add a form as one <a> line. -->
-    <div class="nav-forms" id="serving-nav" style="display:none">
-      <a href="#" onclick="return false;" aria-haspopup="true">Serving ▾</a>
-      <div class="nav-forms-menu">
-        <a id="mb-link-desktop" href="#" target="_blank" rel="noopener">Ministry Booklet</a>
-      </div>
-    </div>
     <div class="nav-forms">
       <a href="#" onclick="return false;" aria-haspopup="true">Forms ▾</a>
       <div class="nav-forms-menu">
@@ -280,18 +275,8 @@ function renderCalendar() {
 
 loadAllEvents();
 
-// Ministry Booklet link — staff-set URL from siteContent/ministryBooklet.url.
-// No hardcoded link: the "Serving" menu stays hidden if the field is empty.
-(async function loadMinistryBooklet() {
-  try {
-    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/siteContent/ministryBooklet?key=${API_KEY}`);
-    const data = await res.json();
-    const url = data.fields && data.fields.url && data.fields.url.stringValue;
-    if (!url) return;
-    const a = document.getElementById('mb-link-desktop'); if (a) a.href = url;
-    const nav = document.getElementById('serving-nav'); if (nav) nav.style.display = '';
-  } catch (e) { /* leave hidden */ }
-})();
+// (The Ministry Booklet link moved to welcome.html — "Father's Welcome".
+// The old "Serving ▾" nav dropdown that held it was removed.)
 </script>
 
 </body>

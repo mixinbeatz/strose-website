@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Father's Welcome | Saint Rose Philippine Duchesne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --burgundy-dark: #3D0F1E;
+    --burgundy-light: #7A2340;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+    --white: #FFFFFF;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+  body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); overflow-x: hidden; }
+
+  /* ── NAV (matches index.html) ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(92, 26, 46, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    padding: 0 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .nav-brand { font-family: 'Cinzel', serif; color: var(--gold); font-size: 13px; letter-spacing: 2px; line-height: 1.4; }
+  .nav-brand span { display: block; color: rgba(232,221,208,0.6); font-size: 10px; letter-spacing: 3px; margin-top: 2px; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a { color: rgba(232,221,208,0.8); text-decoration: none; font-size: 13px; letter-spacing: 1.5px; font-family: 'Cinzel', serif; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a.active { color: var(--gold); }
+  .nav-cta { background: var(--gold); color: var(--burgundy-dark) !important; padding: 10px 20px; border-radius: 6px; font-weight: 600 !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; color: var(--burgundy-dark) !important; }
+  .nav-admin { color: rgba(232,221,208,0.3) !important; font-size: 11px !important; letter-spacing: 1px !important; }
+  .nav-admin:hover { color: rgba(232,221,208,0.6) !important; }
+
+  /* ── FORMS NAV DROPDOWN (CSS-only, opens on hover/focus) — matches index.html ── */
+  .nav-forms { position: relative; }
+  .nav-forms-menu {
+    display: none;
+    position: absolute; right: 0; top: 100%;
+    min-width: 210px;
+    background: var(--burgundy-dark);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 6px 0;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .nav-forms:hover .nav-forms-menu,
+  .nav-forms:focus-within .nav-forms-menu { display: block; }
+  .nav-forms-menu a { display: block; padding: 10px 18px; font-size: 13px; letter-spacing: 1px; white-space: nowrap; }
+  .nav-forms-menu a:hover { background: rgba(255,255,255,0.06); color: var(--gold); }
+
+  /* ── HAMBURGER + MOBILE MENU (matches index.html) ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 68px; left: 0; right: 0;
+    background: var(--burgundy-dark);
+    z-index: 99; padding: 16px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    flex-direction: column;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: rgba(232,221,208,0.8); text-decoration: none;
+    font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1.5px;
+    padding: 14px 32px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu a.active { color: var(--gold); }
+  .mobile-menu-divider { height: 1px; background: rgba(201,168,76,0.2); margin: 8px 0; }
+  .mobile-menu-admin { color: var(--dusty-rose) !important; font-size: 12px !important; }
+  .mobile-menu details > summary {
+    color: rgba(232,221,208,0.8); font-family: 'Cinzel', serif;
+    font-size: 14px; letter-spacing: 1.5px;
+    padding: 14px 32px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer; list-style: none;
+  }
+  .mobile-menu details > summary::-webkit-details-marker { display: none; }
+  .mobile-menu details > summary::after { content: ' \25BE'; opacity: 0.55; }
+  .mobile-menu details[open] > summary::after { content: ' \25B4'; }
+  .mobile-menu details > a { display: block; padding-left: 48px; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
+    padding: 128px 24px 44px;
+    text-align: center;
+    position: relative;
+  }
+  .hero-back { position: absolute; top: 24px; left: 24px; color: var(--linen); opacity: 0.7; text-decoration: none; font-size: 13px; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .hero-title { font-family: 'Cinzel', serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--linen); line-height: 1.2; }
+
+  /* ── WELCOME CARD ── */
+  .welcome-wrap { max-width: 920px; margin: -24px auto 0; padding: 0 24px 90px; position: relative; z-index: 5; }
+  .welcome-card {
+    background: var(--white); border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(92,26,46,0.15);
+    padding: 40px;
+  }
+  .welcome-head { display: flex; align-items: center; gap: 22px; margin-bottom: 28px; }
+  .welcome-photo {
+    width: 108px; height: 108px; border-radius: 54px;
+    object-fit: cover; flex-shrink: 0;
+    border: 3px solid var(--gold);
+    background: var(--linen);
+  }
+  .welcome-name { font-family: 'Cinzel', serif; font-size: 22px; color: var(--burgundy); }
+  .welcome-role { color: var(--dusty-rose); font-size: 14px; margin-top: 4px; letter-spacing: 1px; }
+  .welcome-h2 { font-family: 'Cinzel', serif; font-size: clamp(22px, 3.4vw, 30px); color: var(--burgundy); margin-bottom: 20px; }
+  .mb-button {
+    display: none; /* revealed once the Firestore URL resolves */
+    background: var(--gold); color: var(--burgundy-dark);
+    font-family: 'Cinzel', serif; font-weight: 600; font-size: 13px;
+    letter-spacing: 1px; text-decoration: none;
+    padding: 12px 24px; border-radius: 22px;
+    margin-bottom: 28px;
+  }
+  .mb-button:hover { background: var(--gold-light); }
+  .welcome-body p { font-size: 16px; line-height: 1.9; color: var(--soil); }
+  .welcome-body p + p { margin-top: 16px; }
+  .welcome-body strong { font-family: 'Faustina', serif; font-weight: 700; }
+  .welcome-body em { font-style: italic; }
+
+  /* ── FOOTER (matches index.html) ── */
+  footer {
+    background: var(--burgundy-dark); padding: 60px;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+    border-top: 2px solid rgba(201,168,76,0.3);
+  }
+  .footer-brand { font-family: 'Cinzel', serif; color: var(--gold); font-size: 16px; margin-bottom: 12px; }
+  .footer-sub { color: rgba(232,221,208,0.5); font-size: 13px; line-height: 1.8; }
+  .footer-col-title { color: var(--gold); font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 2px; margin-bottom: 16px; }
+  .footer-link { display: block; color: rgba(232,221,208,0.6); text-decoration: none; font-size: 14px; margin-bottom: 10px; transition: color 0.2s; }
+  .footer-link:hover { color: var(--gold); }
+  .footer-bottom {
+    background: var(--burgundy-dark); padding: 20px 60px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom-text { color: rgba(232,221,208,0.3); font-size: 12px; }
+  .sacred-apps-badge { color: rgba(201,168,76,0.5); font-size: 11px; letter-spacing: 1.5px; font-family: 'Cinzel', serif; text-decoration: none; transition: color 0.2s; }
+  .sacred-apps-badge:hover { color: var(--gold); }
+
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero { padding: 100px 20px 32px; }
+    .welcome-card { padding: 28px 22px; }
+    .welcome-head { flex-direction: column; text-align: center; gap: 14px; }
+    footer { grid-template-columns: 1fr 1fr; padding: 40px 24px; }
+    .footer-bottom { flex-direction: column; gap: 10px; padding: 20px 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV (keep in sync with index.html / calendar.html) -->
+<nav>
+  <div class="nav-brand">
+    SAINT ROSE PHILIPPINE DUCHESNE
+    <span>ANTHEM · ARIZONA</span>
+  </div>
+  <div class="nav-links" id="navLinks">
+    <a href="welcome.html" class="active">Welcome</a>
+    <a href="index.html#mass-times">Mass Times</a>
+    <a href="calendar.html">Calendar</a>
+    <a href="index.html#location">Visit</a>
+    <a href="bulletin.html">Bulletin</a>
+    <div class="nav-forms">
+      <a href="#" onclick="return false;" aria-haspopup="true">Forms ▾</a>
+      <div class="nav-forms-menu">
+        <a href="parish-registration.html">Parish Registration</a>
+        <a href="faith-formation-registration.html">Faith Formation Registration</a>
+        <a href="youth-ministry-registration.html">Youth Ministry Registration</a>
+        <a href="funeral-planning-form.html">Funeral Planning Form</a>
+        <a href="advertise.html">Become an Advertiser</a>
+        <a href="delete-account.html">Delete My Account</a>
+      </div>
+    </div>
+    <a href="index.html#app" class="nav-cta">Get the App</a>
+    <div style="position:relative;display:inline-block" onmouseenter="this.querySelector('.admin-dropdown').style.display='block'" onmouseleave="this.querySelector('.admin-dropdown').style.display='none'">
+      <a href="#" class="nav-admin" onclick="return false;">Admin ▾</a>
+      <div class="admin-dropdown" style="display:none;position:absolute;right:0;top:100%;background:#3D2B2B;border-radius:8px;padding:8px 0;min-width:160px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+        <a href="https://portal.saintroseanthem.org" target="_blank" style="display:block;padding:10px 16px;color:#E8DDD0;font-size:13px;text-decoration:none;font-family:'Faustina',serif;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background=''">Parish Staff</a>
+        <a href="https://portal.saintroseanthem.org/finance.html" target="_blank" style="display:block;padding:10px 16px;color:#E8DDD0;font-size:13px;text-decoration:none;font-family:'Faustina',serif;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background=''">Finance Council</a>
+      </div>
+    </div>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="welcome.html" class="active" onclick="toggleMenu()">Welcome</a>
+  <a href="index.html#mass-times" onclick="toggleMenu()">Mass Times</a>
+  <a href="calendar.html" onclick="toggleMenu()">Calendar</a>
+  <a href="index.html#location" onclick="toggleMenu()">Visit</a>
+  <a href="bulletin.html" onclick="toggleMenu()">Bulletin</a>
+  <details class="mobile-forms">
+    <summary>Forms</summary>
+    <a href="parish-registration.html" onclick="toggleMenu()">Parish Registration</a>
+    <a href="faith-formation-registration.html" onclick="toggleMenu()">Faith Formation Registration</a>
+    <a href="youth-ministry-registration.html" onclick="toggleMenu()">Youth Ministry Registration</a>
+    <a href="funeral-planning-form.html" onclick="toggleMenu()">Funeral Planning Form</a>
+    <a href="advertise.html" onclick="toggleMenu()">Become an Advertiser</a>
+    <a href="delete-account.html" onclick="toggleMenu()">Delete My Account</a>
+  </details>
+  <a href="index.html#app" onclick="toggleMenu()">Get the App</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="https://portal.saintroseanthem.org" target="_blank" class="mobile-menu-admin">Admin Portal</a>
+  <a href="https://portal.saintroseanthem.org/finance.html" target="_blank" class="mobile-menu-admin">Finance Portal</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <a href="index.html" class="hero-back">← Back to Home</a>
+  <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
+  <h1 class="hero-title">Father's Welcome</h1>
+</div>
+
+<div class="welcome-wrap">
+  <div class="welcome-card">
+    <div class="welcome-head">
+      <img id="welcome-photo" class="welcome-photo" src="images/fr-bing.jpg" alt="Fr. Bing Colasito" />
+      <div>
+        <div class="welcome-name">Fr. Bing Colasito</div>
+        <div class="welcome-role">Pastor</div>
+      </div>
+    </div>
+    <h2 class="welcome-h2">Welcome to Saint Rose</h2>
+    <a id="mb-button" class="mb-button" href="#" target="_blank" rel="noopener">📖 View Our Ministry Book</a>
+    <div class="welcome-body" id="welcome-body">
+      <p>We are &ldquo;A Welcoming and Joyful Community committed to making Disciples by igniting and strengthening Faith in Christ and the Celebration of God&rsquo;s Grace.&rdquo; We&rsquo;d love for you to join us.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>
+    <div class="footer-brand">Saint Rose Philippine Duchesne</div>
+    <div class="footer-sub">
+      3901 W Anthem Way<br>
+      Anthem, Arizona 85086<br><br>
+      A welcoming and joyful Catholic community<br>
+      in the Diocese of Phoenix.
+    </div>
+  </div>
+  <div>
+    <div class="footer-col-title">WORSHIP</div>
+    <a href="index.html#mass-times" class="footer-link">Mass Times</a>
+    <a href="https://www.stroseanthem.com/about-masstimes" class="footer-link">Sacraments</a>
+    <a href="https://stroseanthem.weadorehim.com" class="footer-link">Adoration</a>
+    <a href="https://parishesonline.com/publication-page/st-rose-philippine-duchesne-roman-catholic-parish" class="footer-link">Bulletin</a>
+  </div>
+  <div>
+    <div class="footer-col-title">COMMUNITY</div>
+    <a href="https://stroseanthem.flocknote.com" class="footer-link">Flocknote</a>
+    <a href="https://www.wesharegiving.org/app/giving/WeShare-2050?tab=home" class="footer-link">Online Giving</a>
+    <a href="https://www.youtube.com/c/SaintRoseAnthemAz" class="footer-link">YouTube</a>
+    <a href="index.html#app" class="footer-link">Get the App</a>
+  </div>
+  <div>
+    <div class="footer-col-title">CONTACT</div>
+    <a href="tel:6234659740" class="footer-link">(623) 465-9740</a>
+    <a href="https://www.stroseanthem.com" class="footer-link">stroseanthem.com</a>
+    <a href="mailto:parish@stroseanthem.com" class="footer-link">parish@stroseanthem.com</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span class="footer-bottom-text">© 2026 Saint Rose Philippine Duchesne Parish · Anthem, Arizona</span>
+  <a href="https://sacredapps.com" class="sacred-apps-badge">POWERED BY SACRED APPS</a>
+</div>
+
+<script>
+  const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  const PROJECT_ID = 'saint-rose-anthem';
+  const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
+  }
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('hamburger');
+    if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove('open');
+      btn.classList.remove('open');
+    }
+  });
+
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  // Inline **bold** / *italic* / ***bold-italic*** markdown -> HTML, matching
+  // the app's renderFormattedWelcomeText. Run AFTER esc() so the source text
+  // is already HTML-safe; the marker replacements only introduce our own tags.
+  function mdInline(safe) {
+    return safe
+      .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  }
+
+  // Welcome text + photo — live from siteContent/welcome (staff-set in the
+  // portal's Welcome Message page). Same graceful-fallback pattern as the
+  // homepage's Firestore sections: on empty/failed fetch the hardcoded
+  // paragraph + bundled photo already in the DOM stay put.
+  async function loadWelcome() {
+    try {
+      const res = await fetch(`${BASE}/parishes/saint-rose-anthem/siteContent/welcome?key=${API_KEY}`);
+      const data = await res.json();
+      const photoUrl = data.fields?.photoUrl?.stringValue;
+      const body = data.fields?.body?.stringValue;
+      if (photoUrl) document.getElementById('welcome-photo').src = photoUrl;
+      if (body) {
+        const paras = body.split(/\n\n+/).filter(p => p.trim());
+        document.getElementById('welcome-body').innerHTML =
+          paras.map(p => `<p>${mdInline(esc(p)).replace(/\n/g, '<br>')}</p>`).join('');
+      }
+    } catch (e) { /* keep the fallback paragraph + photo */ }
+  }
+  loadWelcome();
+
+  // Ministry Booklet button — same live-Firestore pattern as index.html /
+  // calendar.html: staff-set URL at siteContent/ministryBooklet.url. No
+  // hardcoded link; the button stays hidden if the field is empty or the
+  // fetch fails.
+  async function loadMinistryBooklet() {
+    try {
+      const res = await fetch(`${BASE}/parishes/saint-rose-anthem/siteContent/ministryBooklet?key=${API_KEY}`);
+      const data = await res.json();
+      const url = data.fields?.url?.stringValue || '';
+      if (!url) return;
+      const a = document.getElementById('mb-button');
+      a.href = url;
+      a.style.display = 'inline-block';
+    } catch (e) { /* leave the button hidden */ }
+  }
+  loadMinistryBooklet();
+</script>
+
+</body>
+</html>
