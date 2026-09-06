@@ -396,6 +396,13 @@ nav {
    fitFrontPageToPage() in the script below dials it down when a heavy
    week's content would otherwise overflow the page. */
 .print-page-front { --bulletin-scale: 1; }
+/* Page-2 fit-to-page scale — the back-page analogue of --bulletin-scale.
+   Page 2's copy (Weekly Reflection + Around the Parish) is static-length by
+   design, so it normally sits at scale 1; fitBackPageToPage() only dials this
+   down if a long reflection + a heavy announcements week would otherwise
+   overflow the 11in box. Consumed by the .print-reflection-* and
+   .print-page-back .notice-* rules below. */
+.print-page-back { --bulletin-scale-back: 1; }
 /* Masthead: the circular logo is left-aligned to the page margin and taken
    out of flow (position:absolute); the 3-line name block is its own group,
    centered on the page (margin:0 auto on a max-content box) independent of
@@ -555,36 +562,39 @@ nav {
   margin-bottom: calc(8px * var(--bulletin-scale, 1));
 }
 /* Page-2 body copy (Weekly Reflection + Announcements) runs ~20% larger
-   than it used to — the small print was hard to read. Fixed sizes (page 2
-   has no --bulletin-scale fit pass). Sep 2026. */
+   than it used to — the small print was hard to read. Base sizes stay at
+   that larger value; the * var(--bulletin-scale-back) multiplier only bites
+   when fitBackPageToPage() has to pull a genuinely overlong page 2 back onto
+   one sheet (e.g. on iOS/WebKit, whose print metrics differ just enough to
+   tip an otherwise-fitting page over). Sep 2026. */
 .print-reflection-title {
   font-family: 'Cinzel', serif;
-  font-size: 14.5px;
+  font-size: calc(14.5px * var(--bulletin-scale-back, 1));
   font-weight: 700;
   color: var(--burgundy);
   margin-bottom: 2px;
 }
 .print-reflection-meta {
-  font-size: 11px;
+  font-size: calc(11px * var(--bulletin-scale-back, 1));
   color: var(--dusty-rose);
   font-style: italic;
-  margin-bottom: 8px;
+  margin-bottom: calc(8px * var(--bulletin-scale-back, 1));
 }
 .print-reflection-body {
   column-count: 2;
-  column-gap: 20px;
-  font-size: 11.5px;
+  column-gap: calc(20px * var(--bulletin-scale-back, 1));
+  font-size: calc(11.5px * var(--bulletin-scale-back, 1));
   line-height: 1.4;
   color: var(--soil);
   text-align: justify;
 }
-.print-reflection-body p { margin-bottom: 4px; }
+.print-reflection-body p { margin-bottom: calc(4px * var(--bulletin-scale-back, 1)); }
 .print-reflection-closing {
-  margin-top: 6px;
+  margin-top: calc(6px * var(--bulletin-scale-back, 1));
   padding-top: 5px;
   border-top: 1px solid var(--linen);
   font-style: italic;
-  font-size: 11px;
+  font-size: calc(11px * var(--bulletin-scale-back, 1));
   color: var(--burgundy);
   text-align: center;
 }
@@ -710,10 +720,18 @@ nav {
 /* Print notices: masonry-style columns (not a grid) so short cards don't
    leave a stretched row gap — lets the ~20%-larger text still fit page 2
    without an Advertisers block. */
-.print-page-back .notices-grid { display: block; column-count: 2; column-gap: 12px; }
-.print-page-back .notice-card { padding: 6px 9px; margin: 0 0 6px; break-inside: avoid; }
-.print-page-back .notice-title { font-size: 11.5px; margin-bottom: 2px; }
-.print-page-back .notice-body { font-size: 10.5px; line-height: 1.32; }
+.print-page-back .notices-grid { display: block; column-count: 2; column-gap: calc(12px * var(--bulletin-scale-back, 1)); }
+.print-page-back .notice-card { padding: calc(6px * var(--bulletin-scale-back, 1)) calc(9px * var(--bulletin-scale-back, 1)); margin: 0 0 calc(6px * var(--bulletin-scale-back, 1)); break-inside: avoid; }
+.print-page-back .notice-title { font-size: calc(11.5px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
+.print-page-back .notice-body { font-size: calc(10.5px * var(--bulletin-scale-back, 1)); line-height: 1.32; }
+/* Back-page section headers (Weekly Reflection / Around the Parish) — the
+   front page's Mass Intentions header rides --bulletin-scale via the
+   .print-main override; these ride the page-2 scale instead. */
+.print-page-back .print-section-title {
+  font-size: calc(11px * var(--bulletin-scale-back, 1));
+  padding-bottom: calc(3px * var(--bulletin-scale-back, 1));
+  margin-bottom: calc(8px * var(--bulletin-scale-back, 1));
+}
 /* Compact staff-directory list — front page's right column. Vertical,
    one row per person (name + role on the left, phone on the right), sized
    off --bulletin-scale like the rest of the front page's dynamic content. */
@@ -1391,6 +1409,80 @@ function fitFrontPageToPage() {
   }
 }
 
+// ── Page-2 fit-to-page pass ────────────────────────────────────────────────
+// Page 2 (Weekly Reflection + Around the Parish) is static-length by design
+// and normally needs no scaling. But its content still varies a little — a
+// long reflection, a heavy announcements week — and, critically, iOS/WebKit's
+// print pipeline lays text out with slightly different metrics than the
+// desktop engines this page was tuned against, which is enough to tip an
+// otherwise-fitting page 2 just past the 11in box. When that happens WebKit
+// paginates the overflow onto a THIRD sheet for page 2 (so the intended
+// 1-sheet / 2-page bulletin prints as 4 pages). Same mechanism and same
+// synchronous-measure loop as fitFrontPageToPage(), driving the separate
+// --bulletin-scale-back custom property so the two pages scale independently.
+function fitBackPageToPage() {
+  const page = document.querySelector('.print-page-back');
+  if (!page) return;
+  const MIN_SCALE = 0.82; // ~11.5px reflection body -> ~9.4px floor
+  const STEP = 0.02;
+
+  page.style.setProperty('--bulletin-scale-back', 1);
+  let scale = 1;
+  while (page.scrollHeight > page.clientHeight + 1 && scale > MIN_SCALE) {
+    scale = Math.max(MIN_SCALE, scale - STEP);
+    page.style.setProperty('--bulletin-scale-back', scale);
+  }
+}
+
+// ── Re-fit both print pages right before the browser rasterises them ───────
+// The load-time fit pass (bottom of this script) is enough for desktop
+// browsers: they fully lay out the off-screen .print-only block, so a correct
+// --bulletin-scale / --bulletin-scale-back is already in place by the time
+// anyone hits Print.
+//
+// iOS / WebKit is not reliable that way. Its print pipeline can capture the
+// page before the load-time JS layout/measure pass has produced a usable size
+// for an absolutely-positioned, off-screen, visibility:hidden subtree — so a
+// heavy week keeps the default scale of 1, overflows its 11in box, and WebKit
+// spills the remainder onto extra sheets (the reported "2 pages -> 4 pages").
+// Re-running the fit synchronously at print time puts the right scale in place
+// at the one moment it has to be correct — by then .print-only is in normal
+// flow and fully laid out (@media print), and every image/font has loaded.
+//
+// We hook every signal that can precede print rendering, because no single one
+// is dependable across engines — notably, historically neither `beforeprint`
+// nor a matchMedia('print') change fired on iOS Safari at all (only recent
+// WebKit added them), so the window.load / orientationchange / resize re-fits
+// below are what actually has to carry the iOS case. All the fit functions are
+// idempotent (they reset scale to 1 and re-measure), so firing several times
+// is harmless.
+function refitPrintPages() {
+  fitFrontPageToPage();
+  fitBackPageToPage();
+}
+
+window.addEventListener('beforeprint', refitPrintPages);
+if (window.matchMedia) {
+  const printMql = window.matchMedia('print');
+  const onPrintChange = e => { if (e.matches) refitPrintPages(); };
+  if (printMql.addEventListener) printMql.addEventListener('change', onPrintChange);
+  else if (printMql.addListener) printMql.addListener(onPrintChange); // Safari < 14
+}
+// window.load: fires after images (center art, QR codes) finish, which the
+// load-time Promise.all does not wait for — their height matters to the fit.
+window.addEventListener('load', refitPrintPages);
+// iOS often emits a resize/orientationchange as the print sheet is prepared;
+// debounced so an ordinary screen resize doesn't thrash the loop. (The
+// off-screen print block is sized in fixed in/px units, so a re-measure only
+// changes the scale when content genuinely overflows.)
+let refitTimer = null;
+const refitSoon = () => {
+  clearTimeout(refitTimer);
+  refitTimer = setTimeout(refitPrintPages, 150);
+};
+window.addEventListener('resize', refitSoon);
+window.addEventListener('orientationchange', refitSoon);
+
 // Init
 function setPrintDate() {
   const { weekStart, weekEnd } = getBulletinWeekWindow();
@@ -1802,21 +1894,29 @@ async function setWeekStrip() {
   }
 }
 
-loadReflection();
-loadNotices();
-// Fit-to-page only depends on the front page's own data (Mass Intentions;
-// the week strip is fixed-size) — reflection/notices feed page 2 and the
-// screen "This Week" panel doesn't affect the print page's height.
+// reflection/notices feed page 2, so fitBackPageToPage() has to wait on them
+// (kept as their own handles so the Promise.all below can await them rather
+// than firing and forgetting).
+// .catch so a failed Firestore fetch can't reject Promise.all and skip the
+// fit pass — each loader already renders its own offline fallback into the
+// print DOM, which is exactly what we then want to measure.
+const reflectionReady = loadReflection().catch(() => {});
+const noticesReady = loadNotices().catch(() => {});
 // Also wait on web fonts so the first measurement uses real font metrics
 // instead of a fallback face's (slightly different) dimensions.
 const fontsReady = (typeof document.fonts !== 'undefined' && document.fonts && document.fonts.ready)
   ? document.fonts.ready : Promise.resolve();
-Promise.all([loadIntentions(), loadEvents(), setWeekStrip(), fontsReady]).then(() => {
+Promise.all([
+  loadIntentions(), loadEvents(), setWeekStrip(),
+  reflectionReady, noticesReady, fontsReady
+]).then(() => {
   // Re-measure the week strip's event lines now that the real fonts are in,
-  // then fit the front page.
+  // then fit both print pages. (These also re-run at print time — see
+  // refitPrintPages — which is what covers iOS/WebKit, where this load-time
+  // pass can measure an off-screen subtree before it's fully laid out.)
   const strip = document.getElementById('print-week-strip');
   if (strip) layoutWeekStripEvents(strip);
-  fitFrontPageToPage();
+  refitPrintPages();
 });
 </script>
 </body>
