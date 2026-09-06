@@ -822,6 +822,14 @@
         2. the mobile "Forms" <details> further down in this file
         3. calendar.html's desktop nav (it has no mobile menu)
     -->
+    <!-- SERVING dropdown — hidden until the ministry booklet URL resolves from
+         Firestore (siteContent/ministryBooklet.url). No hardcoded link. -->
+    <div class="nav-forms" id="serving-nav" style="display:none">
+      <a href="#" onclick="return false;" aria-haspopup="true">Serving ▾</a>
+      <div class="nav-forms-menu">
+        <a id="mb-link-desktop" href="#" target="_blank" rel="noopener">Ministry Booklet</a>
+      </div>
+    </div>
     <div class="nav-forms">
       <a href="#" onclick="return false;" aria-haspopup="true">Forms ▾</a>
       <div class="nav-forms-menu">
@@ -854,6 +862,10 @@
   <!-- "Directory" (advertisers.html) temporarily hidden — see note in desktop nav above. -->
   <!-- <a href="advertisers.html" onclick="toggleMenu()">Directory</a> -->
   <!-- FORMS: keep this list identical to the desktop dropdown above / calendar.html -->
+  <details class="mobile-forms" id="serving-mobile" style="display:none">
+    <summary>Serving</summary>
+    <a id="mb-link-mobile" href="#" target="_blank" rel="noopener" onclick="toggleMenu()">Ministry Booklet</a>
+  </details>
   <details class="mobile-forms">
     <summary>Forms</summary>
     <a href="parish-registration.html" onclick="toggleMenu()">Parish Registration</a>
@@ -1400,6 +1412,23 @@
   // "Get the App" -> #app) stranded partway down if you clicked before it loaded.
   renderMassScheduleGrid(MASS_SCHEDULE_DEFAULTS);
   loadMassScheduleWidget();
+
+  // Ministry Booklet link — same live-Firestore pattern as the Mass Times
+  // widget. The URL is staff-set (siteContent/ministryBooklet.url, uploaded
+  // from the portal). No hardcoded link: if the field is empty or the fetch
+  // fails, the "Serving" menu stays hidden.
+  async function loadMinistryBooklet() {
+    try {
+      const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/ministryBooklet?key=${API_KEY}`);
+      const data = await res.json();
+      const url = data.fields?.url?.stringValue || '';
+      if (!url) return;
+      ['mb-link-desktop', 'mb-link-mobile'].forEach(id => { const a = document.getElementById(id); if (a) a.href = url; });
+      const nav = document.getElementById('serving-nav'); if (nav) nav.style.display = '';
+      const mob = document.getElementById('serving-mobile'); if (mob) mob.style.display = '';
+    } catch (e) { /* leave the Serving menu hidden */ }
+  }
+  loadMinistryBooklet();
 
   // Homepage gallery — portal-managed photo overrides. Slots left empty in
   // Firestore keep using the default photo already in the HTML above.
