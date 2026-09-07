@@ -577,15 +577,19 @@ nav {
   padding-bottom: calc(3px * var(--bulletin-scale, 1));
   margin-bottom: calc(8px * var(--bulletin-scale, 1));
 }
-/* Page-2 body copy (Weekly Reflection + Announcements) runs ~20% larger
-   than it used to — the small print was hard to read. Base sizes stay at
-   that larger value; the * var(--bulletin-scale-back) multiplier only bites
+/* Page-2 body copy (Weekly Reflection + Announcements) is deliberately large
+   for legibility: reflection + announcement body both 12.5px (~9.4pt),
+   section headers 12px, reflection title 15.5px (Sep 2026 — up from
+   11.5/10.5/11/14.5). The * var(--bulletin-scale-back) multiplier only bites
    when fitBackPageToPage() has to pull a genuinely overlong page 2 back onto
    one sheet (e.g. on iOS/WebKit, whose print metrics differ just enough to
-   tip an otherwise-fitting page over). Sep 2026. */
+   tip an otherwise-fitting page over). At these sizes the reflection alone
+   fills most of page 2, so the "Around the Parish" block is no longer a flat
+   cap — trimPrintNotices() adds announcements newest-first until the page is
+   full and drops the rest, keeping the page whole without a scale-down. */
 .print-reflection-title {
   font-family: 'Cinzel', serif;
-  font-size: calc(14.5px * var(--bulletin-scale-back, 1));
+  font-size: calc(15.5px * var(--bulletin-scale-back, 1));
   font-weight: 700;
   color: var(--burgundy);
   margin-bottom: 2px;
@@ -599,7 +603,7 @@ nav {
 .print-reflection-body {
   column-count: 2;
   column-gap: calc(20px * var(--bulletin-scale-back, 1));
-  font-size: calc(11.5px * var(--bulletin-scale-back, 1));
+  font-size: calc(12.5px * var(--bulletin-scale-back, 1));
   line-height: 1.4;
   color: var(--soil);
   text-align: justify;
@@ -738,13 +742,13 @@ nav {
    without an Advertisers block. */
 .print-page-back .notices-grid { display: block; column-count: 2; column-gap: calc(12px * var(--bulletin-scale-back, 1)); }
 .print-page-back .notice-card { padding: calc(6px * var(--bulletin-scale-back, 1)) calc(9px * var(--bulletin-scale-back, 1)); margin: 0 0 calc(6px * var(--bulletin-scale-back, 1)); break-inside: avoid; }
-.print-page-back .notice-title { font-size: calc(11.5px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
-.print-page-back .notice-body { font-size: calc(10.5px * var(--bulletin-scale-back, 1)); line-height: 1.32; }
+.print-page-back .notice-title { font-size: calc(13px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
+.print-page-back .notice-body { font-size: calc(12.5px * var(--bulletin-scale-back, 1)); line-height: 1.32; }
 /* Back-page section headers (Weekly Reflection / Around the Parish) — the
    front page's Mass Intentions header rides --bulletin-scale via the
    .print-main override; these ride the page-2 scale instead. */
 .print-page-back .print-section-title {
-  font-size: calc(11px * var(--bulletin-scale-back, 1));
+  font-size: calc(12px * var(--bulletin-scale-back, 1));
   padding-bottom: calc(3px * var(--bulletin-scale-back, 1));
   margin-bottom: calc(8px * var(--bulletin-scale-back, 1));
 }
@@ -1342,42 +1346,80 @@ async function loadEvents() {
   }
 }
 
-// Load announcements for "Around the Parish"
+// Load announcements for "Around the Parish".
+// The web page shows every non-expired announcement, newest first. The print
+// bulletin shows only as many as fit on page 2 after the Weekly Reflection --
+// see trimPrintNotices(), which runs once the reflection height is known.
+let printNoticeDocs = []; // non-expired, newest-first; consumed by trimPrintNotices()
+function noticeCardHtml(doc) {
+  return `
+      <div class="notice-card">
+        <div class="notice-title">${escHtml(gf(doc, 'title'))}</div>
+        <div class="notice-body">${escHtml(gf(doc, 'body'))}</div>
+      </div>`;
+}
 async function loadNotices() {
   const grid = document.getElementById('notices-grid');
+  const printGrid = document.getElementById('print-notices-body');
   try {
     const res = await fetch(`${BASE}/parishes/saint-rose-anthem/announcements?key=${API_KEY}&pageSize=20`);
     const data = await res.json();
     const now = new Date();
-    // Non-expired, newest first, capped at 12 — the print bulletin's
-    // "Around the Parish" grid is a one-page block; more than 12 would push
-    // page 2 onto a third sheet.
-    const docs = (data.documents || [])
+    printNoticeDocs = (data.documents || [])
       .filter(doc => {
         const exp = gf(doc, 'expiresAt');
         return !exp || new Date(exp) >= now;
       })
-      .sort((a, b) => new Date(gf(b, 'createdAt') || 0) - new Date(gf(a, 'createdAt') || 0))
-      .slice(0, 12);
+      .sort((a, b) => new Date(gf(b, 'createdAt') || 0) - new Date(gf(a, 'createdAt') || 0));
 
-    if (docs.length === 0) {
+    if (printNoticeDocs.length === 0) {
       grid.innerHTML = '<p class="empty-state">No announcements this week.</p>';
-      const printGridEmpty = document.getElementById('print-notices-body');
-      if (printGridEmpty) printGridEmpty.innerHTML = grid.innerHTML;
+      if (printGrid) printGrid.innerHTML = grid.innerHTML;
       return;
     }
 
-    grid.innerHTML = docs.map(doc => `
-      <div class="notice-card">
-        <div class="notice-title">${escHtml(gf(doc, 'title'))}</div>
-        <div class="notice-body">${escHtml(gf(doc, 'body'))}</div>
-      </div>
-    `).join('');
-    const printGrid = document.getElementById('print-notices-body');
+    grid.innerHTML = printNoticeDocs.map(noticeCardHtml).join('');
+    // Seed the print grid with the full set so a print that happens before the
+    // fit pass still has content; trimPrintNotices() replaces it with the
+    // fitted subset.
     if (printGrid) printGrid.innerHTML = grid.innerHTML;
   } catch(e) {
     grid.innerHTML = '<p class="empty-state">Unable to load parish announcements.</p>';
+    if (printGrid && !printGrid.innerHTML.trim()) printGrid.innerHTML = grid.innerHTML;
   }
+}
+
+// Fill the print bulletin's "Around the Parish" block with as many
+// announcements (newest first) as fit on page 2 after the Weekly Reflection,
+// then stop -- whatever doesn't fit this week doesn't print. This replaces the
+// old flat cap: at the larger page-2 text sizes the reflection alone can fill
+// most of the sheet, so the number of announcements shown varies week to week.
+// Runs after loadReflection() + fonts are ready (so the reflection's real
+// height is in the measurement) and before the fitBackPageToPage() pass, so a
+// full page never triggers the auto-shrink.
+function trimPrintNotices() {
+  const printGrid = document.getElementById('print-notices-body');
+  const page = document.querySelector('.print-page-back');
+  if (!printGrid || !page || printNoticeDocs.length === 0) return;
+  printGrid.innerHTML = '';
+  // The notices grid is the last thing on page 2, so its bottom edge is the
+  // page's lowest content point. Keep it above the bottom padding, less a few
+  // px of headroom for column-balancing jitter + the print engine's rounding
+  // -- that margin also keeps fitBackPageToPage() from ever having to shrink.
+  const pageTop = page.getBoundingClientRect().top;
+  const padBottom = parseFloat(getComputedStyle(page).paddingBottom) || 0;
+  const maxBottom = page.clientHeight - padBottom - 6;
+  let shown = 0;
+  for (const doc of printNoticeDocs) {
+    printGrid.insertAdjacentHTML('beforeend', noticeCardHtml(doc));
+    if (printGrid.getBoundingClientRect().bottom - pageTop > maxBottom) {
+      printGrid.removeChild(printGrid.lastElementChild);
+      break;
+    }
+    shown++;
+  }
+  printGrid.dataset.shown = String(shown);
+  printGrid.dataset.total = String(printNoticeDocs.length);
 }
 
 // Advertisers were removed from the printed bulletin (Sep 2026): after
@@ -1476,6 +1518,12 @@ function fitBackPageToPage() {
 // idempotent (they reset scale to 1 and re-measure), so firing several times
 // is harmless.
 function refitPrintPages() {
+  // Re-run the notice fit first: it depends on the reflection's laid-out
+  // height, and on iOS the load-time pass can measure an off-screen subtree
+  // before it settles. trimPrintNotices() is idempotent (rebuilds from
+  // printNoticeDocs), so re-firing here is safe and leaves the back page at a
+  // size fitBackPageToPage() won't need to shrink.
+  trimPrintNotices();
   fitFrontPageToPage();
   fitBackPageToPage();
 }
