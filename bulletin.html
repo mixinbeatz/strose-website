@@ -510,8 +510,13 @@ nav {
   display: grid;
   /* left (Mass times) · center (artwork + reflection quote) · right (Mass
      Intentions + Parish Office + Staff Directory). Left and right are equal
-     width; the center column sits centered between them. */
-  grid-template-columns: 1fr 1.35fr 1fr;
+     width; the center column sits centered between them. Center column was
+     1.35fr; shrunk ~20% to 1.08fr (Sep 2026), the freed share split evenly
+     back to left/right (1 -> 1.135 each) so the total track sum is unchanged.
+     .print-art fills the column at width:100%, so a narrower column shrinks
+     the image proportionally; the pull-quote font-size is fixed px * scale
+     and does NOT follow the column width. */
+  grid-template-columns: 1.135fr 1.08fr 1.135fr;
   gap: calc(16px * var(--bulletin-scale, 1));
 }
 /* Center column, front page — the "I am the bread of life" stained-glass
