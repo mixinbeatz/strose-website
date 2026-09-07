@@ -580,7 +580,7 @@ nav {
 /* Page-2 body copy (Weekly Reflection + Announcements) is deliberately large
    for legibility: reflection + announcement body both 12.5px (~9.4pt),
    section headers 12px, reflection title 15.5px (Sep 2026 — up from
-   11.5/10.5/11/14.5). The * var(--bulletin-scale-back) multiplier only bites
+   11.5/10.5/11/14.5; announcement title 13.5px). The * var(--bulletin-scale-back) multiplier only bites
    when fitBackPageToPage() has to pull a genuinely overlong page 2 back onto
    one sheet (e.g. on iOS/WebKit, whose print metrics differ just enough to
    tip an otherwise-fitting page over). At these sizes the reflection alone
@@ -742,7 +742,7 @@ nav {
    without an Advertisers block. */
 .print-page-back .notices-grid { display: block; column-count: 2; column-gap: calc(12px * var(--bulletin-scale-back, 1)); }
 .print-page-back .notice-card { padding: calc(6px * var(--bulletin-scale-back, 1)) calc(9px * var(--bulletin-scale-back, 1)); margin: 0 0 calc(6px * var(--bulletin-scale-back, 1)); break-inside: avoid; }
-.print-page-back .notice-title { font-size: calc(13px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
+.print-page-back .notice-title { font-size: calc(13.5px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
 .print-page-back .notice-body { font-size: calc(12.5px * var(--bulletin-scale-back, 1)); line-height: 1.32; }
 /* Back-page section headers (Weekly Reflection / Around the Parish) — the
    front page's Mass Intentions header rides --bulletin-scale via the
