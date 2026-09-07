@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Ministry Booklet | Saint Rose Philippine Duchesne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Faustina', serif;
+    background: var(--sand);
+    color: var(--soil);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .box { max-width: 420px; }
+  .spinner {
+    width: 34px;
+    height: 34px;
+    margin: 0 auto 22px;
+    border: 3px solid var(--linen);
+    border-top-color: var(--burgundy);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--burgundy);
+    margin-bottom: 10px;
+  }
+  p { font-size: 15px; line-height: 1.6; }
+  p a { color: var(--burgundy); }
+  .muted { color: var(--dusty-rose); font-size: 13px; margin-top: 16px; }
+  #fallback { display: none; }
+  #fallback .spinner { display: none; }
+</style>
+</head>
+<body>
+  <div class="box" id="loading">
+    <div class="spinner"></div>
+    <h1>Ministry Booklet</h1>
+    <p>Opening the Ministry Booklet…</p>
+  </div>
+
+  <div class="box" id="fallback">
+    <h1>Ministry Booklet</h1>
+    <p>The Ministry Booklet isn&rsquo;t available right now. Please check back soon, or
+       visit <a href="https://saintroseanthem.org">saintroseanthem.org</a>.</p>
+  </div>
+
+<script>
+  var API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
+  var PROJECT_ID = 'saint-rose-anthem';
+  var BASE = 'https://firestore.googleapis.com/v1/projects/' + PROJECT_ID + '/databases/(default)/documents';
+
+  function showFallback() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('fallback').style.display = 'block';
+  }
+
+  // Staff-set URL at parishes/saint-rose-anthem/siteContent/ministryBooklet.url
+  // (a Firebase Storage PDF link, uploaded from the admin portal). This page is
+  // a thin, branded redirect so the app / any address bar shows
+  // saintroseanthem.org/ministry-booklet.html instead of the raw Storage path.
+  // Same live-Firestore pattern as welcome.html / calendar.html; no hardcoded
+  // fallback link — an empty/unreachable field shows the "not available" state
+  // rather than a blank page.
+  (function () {
+    var done = false;
+    var giveUp = setTimeout(function () { if (!done) { done = true; showFallback(); } }, 8000);
+
+    fetch(BASE + '/parishes/saint-rose-anthem/siteContent/ministryBooklet?key=' + API_KEY)
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        if (done) return;
+        done = true;
+        clearTimeout(giveUp);
+        var url = data && data.fields && data.fields.url && data.fields.url.stringValue;
+        if (url) {
+          window.location.replace(url);
+        } else {
+          showFallback();
+        }
+      })
+      .catch(function () {
+        if (done) return;
+        done = true;
+        clearTimeout(giveUp);
+        showFallback();
+      });
+  })();
+</script>
+</body>
+</html>
