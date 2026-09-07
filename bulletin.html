@@ -1180,22 +1180,21 @@ async function loadReflection() {
     const body    = gf(r, 'body') || '';
     const liturgical = gf(r, 'liturgicalDate') || '';
 
+    // The reflection byline doubles as the parish's Pastor acknowledgement
+    // (on both the web page and the printed bulletin's page 2 — the standalone
+    // page-1 print line was dropped), so tag the author with ", Pastor" when
+    // the reflection is Fr. Bing's — but not when a guest author wrote it.
+    const byline = /colasito/i.test(author) ? `${author}, Pastor` : author;
+    const bylineLine = `${byline}${liturgical ? ' · ' + liturgical : ''}`;
+
     document.getElementById('reflection-title').textContent = heading;
     document.getElementById('sunday-name').textContent = liturgical || heading;
-    document.getElementById('reflection-meta').textContent =
-      `${author}${liturgical ? ' · ' + liturgical : ''}`;
+    document.getElementById('reflection-meta').textContent = bylineLine;
 
     const printTitle = document.getElementById('print-reflection-title');
     const printMeta = document.getElementById('print-reflection-meta');
     if (printTitle) printTitle.textContent = heading;
-    // Page 2's byline also stands in as the printed bulletin's Pastor
-    // acknowledgement (the standalone page-1 line was dropped), so tag the
-    // author with ", Pastor" when the reflection is Fr. Bing's — not when a
-    // guest author wrote it.
-    if (printMeta) {
-      const byline = /colasito/i.test(author) ? `${author}, Pastor` : author;
-      printMeta.textContent = `${byline}${liturgical ? ' · ' + liturgical : ''}`;
-    }
+    if (printMeta) printMeta.textContent = bylineLine;
 
     // Liturgical date band (below the masthead) — right side. Same
     // liturgicalDate field already fetched above for #sunday-name /
