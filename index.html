@@ -521,9 +521,40 @@
   }
   .parish-dev-funded-title { font-family: 'Cinzel', serif; font-size: 20px; color: var(--burgundy); margin-bottom: 10px; }
   .parish-dev-funded-body { font-size: 15px; color: var(--soil); opacity: 0.85; line-height: 1.7; }
-  #lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; cursor:pointer; }
+  #lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; cursor:pointer; touch-action:pan-y; }
   #lightbox.active { display:flex; }
-  #lightbox img { max-width:90%; max-height:90vh; border-radius:8px; object-fit:contain; }
+  #lightbox img { max-width:90%; max-height:90vh; border-radius:8px; object-fit:contain; cursor:default; }
+  /* prev/next controls — only shown when the opened set has more than one photo */
+  #lightbox-prev, #lightbox-next {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:48px; height:48px; padding:0; border-radius:50%;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.35); color:var(--linen); border:1px solid rgba(232,221,208,0.3);
+    font-family:'Cinzel', serif; font-size:26px; line-height:1; cursor:pointer;
+    transition:background .2s, color .2s, border-color .2s; -webkit-tap-highlight-color:transparent;
+  }
+  #lightbox.multi #lightbox-prev, #lightbox.multi #lightbox-next { display:flex; }
+  #lightbox-prev:hover, #lightbox-next:hover, #lightbox-close:hover { background:rgba(0,0,0,0.6); color:var(--gold); border-color:var(--gold); }
+  #lightbox-prev { left:16px; }
+  #lightbox-next { right:16px; }
+  #lightbox-close {
+    position:absolute; top:16px; right:16px; width:44px; height:44px; padding:0; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.35); color:var(--linen); border:1px solid rgba(232,221,208,0.3);
+    font-family:'Cinzel', serif; font-size:24px; line-height:1; cursor:pointer;
+    transition:background .2s, color .2s, border-color .2s; -webkit-tap-highlight-color:transparent;
+  }
+  #lightbox-counter {
+    position:absolute; bottom:22px; left:50%; transform:translateX(-50%); display:none;
+    color:rgba(232,221,208,0.85); font-size:12px; letter-spacing:2px; font-family:'Cinzel', serif;
+    background:rgba(0,0,0,0.35); padding:6px 14px; border-radius:20px;
+  }
+  #lightbox.multi #lightbox-counter { display:block; }
+  @media (max-width: 900px) {
+    #lightbox-prev, #lightbox-next { width:40px; height:40px; font-size:22px; }
+    #lightbox-prev { left:6px; }
+    #lightbox-next { right:6px; }
+  }
 
   /* ── QUICK LINKS ── */
   .quick-links {
@@ -931,23 +962,23 @@
     <p class="section-body" id="gallery-text-body">Dedicated on May 13, 2026, our new church building is the culmination of years of prayer, sacrifice, and generosity. Bishop Dolan blessed this sacred space as our permanent home — a place where generations will come to worship, celebrate the sacraments, and encounter the living God.</p>
   </div>
   <div class="church-gallery">
-    <div class="gallery-item" id="gallery-wrap-1" onclick="openLightbox(document.getElementById('gallery-img-1').src)" style="cursor:pointer">
+    <div class="gallery-item" id="gallery-wrap-1" onclick="openLightbox(this)" style="cursor:pointer">
       <img id="gallery-img-1" class="img-fade" src="images/hero-exterior.jpeg" alt="Saint Rose Church Exterior" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="gallery-wrap-2" onclick="openLightbox(document.getElementById('gallery-img-2').src)" style="cursor:pointer">
+    <div class="gallery-item" id="gallery-wrap-2" onclick="openLightbox(this)" style="cursor:pointer">
       <img id="gallery-img-2" class="img-fade" src="images/retablo-full.jpeg" alt="Church Retablo" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="gallery-wrap-3" onclick="openLightbox(document.getElementById('gallery-img-3').src)" style="cursor:pointer">
+    <div class="gallery-item" id="gallery-wrap-3" onclick="openLightbox(this)" style="cursor:pointer">
       <img id="gallery-img-3" class="img-fade" src="images/crucifix-detail.jpeg" alt="Church Crucifix" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="gallery-wrap-4" onclick="openLightbox(document.getElementById('gallery-img-4').src)" style="cursor:pointer">
+    <div class="gallery-item" id="gallery-wrap-4" onclick="openLightbox(this)" style="cursor:pointer">
       <img id="gallery-img-4" class="img-fade" src="images/crucifix.jpg" alt="Church Crucifix" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="gallery-wrap-5" onclick="openLightbox(document.getElementById('gallery-img-5').src)" style="cursor:pointer">
+    <div class="gallery-item" id="gallery-wrap-5" onclick="openLightbox(this)" style="cursor:pointer">
       <img id="gallery-img-5" class="img-fade" src="images/Roseicon.jpg" alt="Church Retablo Detail" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
@@ -963,23 +994,23 @@
     <p class="section-body">Bishop Dolan celebrated the dedication of our new church, marking a milestone that the Saint Rose community has prayed and sacrificed toward for years.</p>
   </div>
   <div class="dedication-gallery reveal">
-    <div class="gallery-item" onclick="openLightbox('Dedication/main.jpg')">
+    <div class="gallery-item" onclick="openLightbox(this)">
       <img src="Dedication/main.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('Dedication/1.jpg')">
+    <div class="gallery-item" onclick="openLightbox(this)">
       <img src="Dedication/1.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('Dedication/2.jpg')">
+    <div class="gallery-item" onclick="openLightbox(this)">
       <img src="Dedication/2.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('Dedication/3.jpg')">
+    <div class="gallery-item" onclick="openLightbox(this)">
       <img src="Dedication/3.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" onclick="openLightbox('Dedication/4.jpg')">
+    <div class="gallery-item" onclick="openLightbox(this)">
       <img src="Dedication/4.jpg" alt="Dedication Day" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
@@ -994,23 +1025,23 @@
     <p class="section-body" id="around-parish-text-body">A look at what's happening in our community — updated throughout the year.</p>
   </div>
   <div class="dedication-gallery reveal">
-    <div class="gallery-item" id="around-parish-wrap-1" onclick="openLightbox(document.getElementById('around-parish-img-1').src)">
+    <div class="gallery-item" id="around-parish-wrap-1" onclick="openLightbox(this)">
       <img id="around-parish-img-1" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="around-parish-wrap-2" onclick="openLightbox(document.getElementById('around-parish-img-2').src)">
+    <div class="gallery-item" id="around-parish-wrap-2" onclick="openLightbox(this)">
       <img id="around-parish-img-2" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="around-parish-wrap-3" onclick="openLightbox(document.getElementById('around-parish-img-3').src)">
+    <div class="gallery-item" id="around-parish-wrap-3" onclick="openLightbox(this)">
       <img id="around-parish-img-3" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="around-parish-wrap-4" onclick="openLightbox(document.getElementById('around-parish-img-4').src)">
+    <div class="gallery-item" id="around-parish-wrap-4" onclick="openLightbox(this)">
       <img id="around-parish-img-4" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
-    <div class="gallery-item" id="around-parish-wrap-5" onclick="openLightbox(document.getElementById('around-parish-img-5').src)">
+    <div class="gallery-item" id="around-parish-wrap-5" onclick="openLightbox(this)">
       <img id="around-parish-img-5" class="img-fade" src="images/Roseicon.jpg" alt="Around the Parish" style="width:100%;height:100%;object-fit:cover;" />
       <div class="gallery-item-overlay"></div>
     </div>
@@ -1024,7 +1055,7 @@
     <p class="section-body" id="parish-dev-text-body">Help us grow our parish community — every gift makes a lasting difference.</p>
   </div>
   <div id="parish-dev-active-content">
-    <div class="parish-dev-main" id="parish-dev-main-wrap" onclick="openLightbox(document.getElementById('parish-dev-main-img').src)">
+    <div class="parish-dev-main" id="parish-dev-main-wrap" onclick="openParishDevLightbox()">
       <img id="parish-dev-main-img" src="" alt="" />
     </div>
     <div class="parish-dev-main-funded-note" id="parish-dev-main-note">This item is fully funded — thank you!</div>
@@ -1231,14 +1262,119 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  function openLightbox(src) {
-    document.getElementById('lightbox-img').src = src;
+  // ── Lightbox ──────────────────────────────────────────────────────────────
+  // One reusable lightbox for every gallery on the page. It's opened with a
+  // *list* of photos (scoped to the gallery that was clicked) plus a starting
+  // index, so a visitor can page through that one gallery — via the on-screen
+  // arrows, the left/right arrow keys, or a swipe — without closing it. A set
+  // with only one photo opens with no arrows/counter (the .multi class gates
+  // both in CSS), so single-image lightboxes are unaffected.
+  let lightboxImages = [];
+  let lightboxIndex = 0;
+
+  function lightboxRender() {
+    const cur = lightboxImages[lightboxIndex];
+    if (!cur) return;
+    const imgEl = document.getElementById('lightbox-img');
+    imgEl.src = cur.src;
+    imgEl.alt = cur.alt || '';
+    const box = document.getElementById('lightbox');
+    const multi = lightboxImages.length > 1;
+    box.classList.toggle('multi', multi);
+    if (multi) {
+      document.getElementById('lightbox-counter').textContent =
+        (lightboxIndex + 1) + ' / ' + lightboxImages.length;
+    }
+  }
+
+  function showLightbox(images, index) {
+    lightboxImages = (images || []).filter(x => x && x.src);
+    if (!lightboxImages.length) return;
+    lightboxIndex = Math.min(Math.max(parseInt(index, 10) || 0, 0), lightboxImages.length - 1);
+    lightboxRender();
     document.getElementById('lightbox').classList.add('active');
   }
+
+  function lightboxStep(dir) {
+    if (lightboxImages.length < 2) return;
+    lightboxIndex = (lightboxIndex + dir + lightboxImages.length) % lightboxImages.length;
+    lightboxRender();
+  }
+
+  // Accepts either a clicked .gallery-item element (pages through its whole
+  // gallery) or a bare src string (legacy single-image call).
+  function openLightbox(arg, alt) {
+    if (typeof arg === 'string') { showLightbox([{ src: arg, alt: alt || '' }], 0); return; }
+    const el = arg;
+    const container = el.closest('.church-gallery, .dedication-gallery');
+    if (!container) {
+      const only = el.querySelector('img') || el;
+      showLightbox([{ src: only.src, alt: only.alt || '' }], 0);
+      return;
+    }
+    const items = Array.prototype.slice.call(container.querySelectorAll('.gallery-item'));
+    const images = items.map(it => {
+      const im = it.querySelector('img');
+      return im ? { src: im.src, alt: im.alt || '' } : null;
+    }).filter(Boolean);
+    let idx = items.indexOf(el);
+    if (idx < 0) idx = 0;
+    showLightbox(images, idx);
+  }
+
+  // Parish Development uses a main-image + thumbnail-strip layout rather than a
+  // grid of .gallery-item cells, so it gets its own opener that pages through
+  // the same parishDevPhotos array the thumbnails are built from.
+  function openParishDevLightbox() {
+    const list = (parishDevPhotos || [])
+      .map(p => ({ src: safeImgSrc(p.url), alt: p.alt || '' }))
+      .filter(x => x.src);
+    const cur = document.getElementById('parish-dev-main-img');
+    if (!list.length) {
+      if (cur && cur.src) showLightbox([{ src: cur.src, alt: cur.alt || '' }], 0);
+      return;
+    }
+    const curSrc = cur ? (cur.getAttribute('src') || '') : '';
+    let idx = list.findIndex(x => x.src === curSrc);
+    if (idx < 0) idx = 0;
+    showLightbox(list, idx);
+  }
+
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('active');
     document.getElementById('lightbox-img').src = '';
+    lightboxImages = [];
   }
+
+  // Keyboard: Esc closes, ←/→ page through a multi-photo set.
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('lightbox').classList.contains('active')) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') lightboxStep(-1);
+    else if (e.key === 'ArrowRight') lightboxStep(1);
+  });
+
+  // Touch: horizontal swipe pages through a multi-photo set. Bound on document
+  // (the #lightbox element is further down the page than this script) and gated
+  // on the lightbox being open so it's inert everywhere else.
+  (function () {
+    let startX = 0, startY = 0, tracking = false;
+    document.addEventListener('touchstart', (e) => {
+      const box = document.getElementById('lightbox');
+      if (!box || !box.classList.contains('active') || e.touches.length !== 1) { tracking = false; return; }
+      tracking = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) lightboxStep(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  })();
   // Firestore events
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
@@ -1684,6 +1820,12 @@
   }
   // loadIntentions removed from homepage — Mass Intentions now shown only on bulletin.html
 </script>
-<div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img" src="" alt="" /></div>
+<div id="lightbox" onclick="closeLightbox()">
+  <button type="button" id="lightbox-close" aria-label="Close" onclick="event.stopPropagation();closeLightbox()">&#215;</button>
+  <button type="button" id="lightbox-prev" aria-label="Previous photo" onclick="event.stopPropagation();lightboxStep(-1)">&#8249;</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
+  <button type="button" id="lightbox-next" aria-label="Next photo" onclick="event.stopPropagation();lightboxStep(1)">&#8250;</button>
+  <div id="lightbox-counter"></div>
+</div>
 </body>
 </html>
