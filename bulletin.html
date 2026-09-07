@@ -1911,6 +1911,19 @@ function applyBulletinImage(url) {
 }
 
 const WEEK_STRIP_DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WEEK_STRIP_DOW_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Each strip cell is only ~88px wide for text and already prints the weekday
+// in its header, so a title that opens with that same weekday ("Wednesday
+// Prayer Hour" in the Wed cell) just burns that scarce width and can tip a
+// one-line entry into a two-line wrap — which, on the tightest week, grows the
+// whole strip. Drop the redundant leading weekday for the strip label only;
+// the full event title is untouched on the calendar and everywhere else.
+function weekStripTitle(title, d) {
+  const dow = WEEK_STRIP_DOW_FULL[d.getDay()];
+  const short = String(title || '').replace(new RegExp('^' + dow + '\\b[\\s:.–-]*', 'i'), '').trim();
+  return short || title;
+}
 
 function renderWeekStrip(el, days, byKey) {
   el.innerHTML = days.map(d => {
@@ -1918,7 +1931,7 @@ function renderWeekStrip(el, days, byKey) {
     const evHtml = evs.map(e =>
       '<div class="print-week-strip-event">' +
         (e.time ? '<span class="print-week-strip-event-time">' + escHtml(e.time) + '</span>' : '') +
-        '<span class="print-week-strip-event-title">' + escHtml(e.title) + '</span>' +
+        '<span class="print-week-strip-event-title">' + escHtml(weekStripTitle(e.title, d)) + '</span>' +
       '</div>'
     ).join('');
     return '<div class="print-week-strip-cell">' +
