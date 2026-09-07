@@ -124,6 +124,13 @@
     border: 3px solid var(--gold);
     background: var(--linen);
   }
+  /* Until the siteContent/welcome fetch resolves the <img> carries no src and
+     paints as this neutral linen disc — so the first photo shown is the final
+     one, never the bundled fr-bing.jpg flashing to the portal upload. Mirrors
+     the welcomePhotoResolved gate added to the app's Welcome modal. */
+  .welcome-photo.is-loading { animation: welcome-photo-pulse 1.4s ease-in-out infinite; }
+  @keyframes welcome-photo-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  @media (prefers-reduced-motion: reduce) { .welcome-photo.is-loading { animation: none; } }
   .welcome-name { font-family: 'Cinzel', serif; font-size: 22px; color: var(--burgundy); }
   .welcome-role { color: var(--dusty-rose); font-size: 14px; margin-top: 4px; letter-spacing: 1px; }
   .welcome-h2 { font-family: 'Cinzel', serif; font-size: clamp(22px, 3.4vw, 30px); color: var(--burgundy); margin-bottom: 20px; }
@@ -242,7 +249,7 @@
 <div class="welcome-wrap">
   <div class="welcome-card">
     <div class="welcome-head">
-      <img id="welcome-photo" class="welcome-photo" src="images/fr-bing.jpg" alt="Fr. Bing Colasito" />
+      <img id="welcome-photo" class="welcome-photo is-loading" alt="" />
       <div>
         <div class="welcome-name">Fr. Bing Colasito</div>
         <div class="welcome-role">Pastor</div>
@@ -326,20 +333,41 @@
   // Welcome text + photo — live from siteContent/welcome (staff-set in the
   // portal's Welcome Message page). Same graceful-fallback pattern as the
   // homepage's Firestore sections: on empty/failed fetch the hardcoded
-  // paragraph + bundled photo already in the DOM stay put.
+  // paragraph stays put.
+  //
+  // The photo is gated so the FIRST image painted is the final one: the <img>
+  // starts src-less (a neutral .is-loading disc) and only gets a src once the
+  // fetch reaches a definitive answer — the portal photoUrl, or the bundled
+  // images/fr-bing.jpg. This avoids the flash of the bundled photo swapping to
+  // the portal upload (same fix as the app's Welcome modal, 745dab2 in
+  // StRoseAnthem). A timeout settles it to the bundled photo if the fetch hangs.
+  const WELCOME_PHOTO_FALLBACK = 'images/fr-bing.jpg';
+  function settleWelcomePhoto(src) {
+    const img = document.getElementById('welcome-photo');
+    if (img.dataset.settled) return;
+    img.dataset.settled = '1';
+    img.src = src || WELCOME_PHOTO_FALLBACK;
+    img.alt = 'Fr. Bing Colasito'; // held blank while loading so the disc is clean
+    img.classList.remove('is-loading');
+  }
   async function loadWelcome() {
+    const photoTimeout = setTimeout(() => settleWelcomePhoto(WELCOME_PHOTO_FALLBACK), 6000);
     try {
       const res = await fetch(`${BASE}/parishes/saint-rose-anthem/siteContent/welcome?key=${API_KEY}`);
       const data = await res.json();
       const photoUrl = data.fields?.photoUrl?.stringValue;
       const body = data.fields?.body?.stringValue;
-      if (photoUrl) document.getElementById('welcome-photo').src = photoUrl;
+      clearTimeout(photoTimeout);
+      settleWelcomePhoto(photoUrl || WELCOME_PHOTO_FALLBACK);
       if (body) {
         const paras = body.split(/\n\n+/).filter(p => p.trim());
         document.getElementById('welcome-body').innerHTML =
           paras.map(p => `<p>${mdInline(esc(p)).replace(/\n/g, '<br>')}</p>`).join('');
       }
-    } catch (e) { /* keep the fallback paragraph + photo */ }
+    } catch (e) {
+      clearTimeout(photoTimeout);
+      settleWelcomePhoto(WELCOME_PHOTO_FALLBACK); // keep the fallback paragraph
+    }
   }
   loadWelcome();
 
