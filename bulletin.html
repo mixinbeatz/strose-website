@@ -618,13 +618,18 @@ nav {
   color: var(--burgundy);
   text-align: center;
 }
+/* Sizes bumped ~+2px (Sep 2026): day labels 8.5 -> 10.5px, entry lines
+   9.5 -> 11.5px, time labels 8.5 -> 10.5px. The center column shrank and the
+   Staff Directory dropped from 10 rows to 4, freeing height + width in the
+   right column, so Mass Intentions can carry a more readable size. Still
+   * var(--bulletin-scale) so fitFrontPageToPage() can pull a heavy week back. */
 .print-main .intention-day { margin-bottom: calc(8px * var(--bulletin-scale, 1)); }
-.print-main .intention-day-label { font-size: calc(8.5px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
-.print-main .intention-row { font-size: calc(9.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
+.print-main .intention-day-label { font-size: calc(10.5px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
+.print-main .intention-row { font-size: calc(11.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
 /* Mass Intention time labels: burgundy in print (the shared .intention-time
    base is --dusty-rose, which washes out in grayscale) -- print-scoped so the
    on-screen bulletin keeps its lighter time colour. */
-.print-main .intention-time { font-size: calc(8.5px * var(--bulletin-scale, 1)); width: 46px; color: var(--burgundy); }
+.print-main .intention-time { font-size: calc(10.5px * var(--bulletin-scale, 1)); width: 54px; color: var(--burgundy); }
 
 /* Weekly calendar strip — 7 day cells, Sunday → Saturday, for the bulletin's
    week window. Pinned directly above the QR footer: it now carries the
@@ -711,24 +716,28 @@ nav {
 
 .print-qr-footer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  gap: 20px;
+  gap: 34px;
 }
+.print-qr-group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .print-qr-text {
   font-family: 'Cinzel', serif;
   font-size: 11px;
   color: var(--burgundy);
   font-weight: 600;
 }
-.print-qr-codes { display: flex; gap: 12px; }
+/* Boxes spaced further apart (Sep 2026) so each is an easy individual scan
+   target, and each label now sits directly under its own box rather than
+   centered inside it. */
+.print-qr-codes { display: flex; gap: 24px; }
+.print-qr-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .print-qr-box {
-  width: 0.8in;
-  height: 0.8in;
+  width: 1in;
+  height: 1in;
   border: 1px dashed var(--burgundy);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+.print-qr-label {
   font-size: 8px;
   color: var(--burgundy);
   text-align: center;
@@ -736,10 +745,15 @@ nav {
 .print-footer-address {
   margin-top: 6px;
   text-align: center;
-  font-size: 7.5px;
+  font-size: 10px;
   letter-spacing: 0.02em;
   color: var(--burgundy);
 }
+/* Same address line repeated at the foot of page 2, pinned to the bottom of
+   the flex-column page the way page 1's rides above its QR footer.
+   trimPrintNotices() reserves its height so it never collides with the
+   notices grid. */
+.print-page-back .print-footer-address { margin-top: auto; padding-top: 12px; }
 /* Degraded-state messages ("Unable to load...", "No intentions/announcements
    this week.") are shared screen+print classes coloured --dusty-rose; force
    burgundy when they land on a printed page so a fetch-failure/empty week
@@ -779,6 +793,18 @@ nav {
 .print-staff-name { color: var(--soil); font-weight: 700; }
 .print-staff-role { color: var(--burgundy); font-weight: 400; }
 .print-staff-phone { color: var(--burgundy); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
+/* Standalone pastor acknowledgement — sits just under the (now 4-line) Staff
+   Directory list. Deliberately not a .print-staff-row: no phone column and
+   no divider rule, so it reads as a caption rather than a directory entry.
+   Scaled with the rest of the front page's dynamic content. */
+.print-pastor-line {
+  margin-top: calc(3px * var(--bulletin-scale, 1));
+  font-family: 'Cinzel', serif;
+  font-size: calc(9px * var(--bulletin-scale, 1));
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--burgundy);
+}
 /* Pull-quote — right column, after Staff Directory. There's no dedicated
    quote/citation field on the weeklyReflection doc, so the quote text is
    derived from the already-fetched body (first sentence of its first
@@ -1015,30 +1041,29 @@ nav {
         </div>
         <div class="print-section-title" style="margin-top:14px;"><span class="print-title-icon">▪</span>Staff Directory</div>
         <div class="print-staff-list">
-          <div class="print-staff-row"><span class="print-staff-name">Fr. Bing Colasito<span class="print-staff-role">, Pastor</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Fr. Charles Ouemenga<span class="print-staff-role">, Parochial Vicar</span></span><span class="print-staff-phone">(623) 307-8273</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Parish Office</span><span class="print-staff-phone">(623) 465-9740</span></div>
           <div class="print-staff-row"><span class="print-staff-name">Dr. Tom Henrich<span class="print-staff-role">, Office Administrator</span></span><span class="print-staff-phone">(623) 607-8265</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Dcn. John Mezydlo<span class="print-staff-role">, Deacon</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Cheyanne Bosn<span class="print-staff-role">, Executive Assistant</span></span><span class="print-staff-phone">(623) 307-8264</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Matt Ficarra<span class="print-staff-role">, Music &amp; Media</span></span><span class="print-staff-phone">(623) 307-8266</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Maria Gonzalez<span class="print-staff-role">, Accounting</span></span><span class="print-staff-phone">(623) 607-8270</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult</span></span><span class="print-staff-phone">(623) 307-8269</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed</span></span><span class="print-staff-phone">(623) 307-8268</span></div>
-          <div class="print-staff-row"><span class="print-staff-name">Ray Lopez<span class="print-staff-role">, Maintenance</span></span><span class="print-staff-phone">(623) 465-9740</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult, Funeral Ministry</span></span><span class="print-staff-phone">(623) 307-8269</span></div>
+          <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed, OCIA</span></span><span class="print-staff-phone">(623) 307-8268</span></div>
         </div>
+        <div class="print-pastor-line">Fr. Bing Colasito, Pastor</div>
       </div>
     </div>
     <div class="print-week-strip" id="print-week-strip"></div>
     <div class="print-qr-footer">
-      <div class="print-qr-text">Get the SaintRose app</div>
-      <div class="print-qr-codes">
-        <div class="print-qr-box">iOS QR</div>
-        <div class="print-qr-box">Android QR</div>
+      <div class="print-qr-group">
+        <div class="print-qr-text">Get the SaintRose app</div>
+        <div class="print-qr-codes">
+          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">iOS QR</div></div>
+          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">Android QR</div></div>
+        </div>
       </div>
-      <div class="print-qr-text">Give &amp; Worship</div>
-      <div class="print-qr-codes">
-        <div class="print-qr-box">Online Giving QR</div>
-        <div class="print-qr-box">Worship Aid QR</div>
+      <div class="print-qr-group">
+        <div class="print-qr-text">Give &amp; Worship</div>
+        <div class="print-qr-codes">
+          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">Online Giving QR</div></div>
+          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">Worship Aid QR</div></div>
+        </div>
       </div>
     </div>
     <div class="print-footer-address">2825 W Rose Canyon Circle, Anthem, AZ 85086 · (623) 465-9740 · saintroseanthem.com</div>
@@ -1051,6 +1076,7 @@ nav {
     <div class="print-reflection-closing" id="print-reflection-closing" style="display:none;"></div>
     <div class="print-section-title" style="margin-top:14px;">Around the Parish</div>
     <div class="notices-grid" id="print-notices-body"></div>
+    <div class="print-footer-address">2825 W Rose Canyon Circle, Anthem, AZ 85086 · (623) 465-9740 · saintroseanthem.com</div>
   </div>
 </div>
 
@@ -1417,7 +1443,12 @@ function trimPrintNotices() {
   // -- that margin also keeps fitBackPageToPage() from ever having to shrink.
   const pageTop = page.getBoundingClientRect().top;
   const padBottom = parseFloat(getComputedStyle(page).paddingBottom) || 0;
-  const maxBottom = page.clientHeight - padBottom - 6;
+  // Page 2 now carries the same address line as page 1, pinned to its bottom
+  // (margin-top:auto). Reserve its rendered height + its 12px padding-top so
+  // the notices grid never grows into it.
+  const backFooter = page.querySelector('.print-footer-address');
+  const footerH = backFooter ? backFooter.getBoundingClientRect().height + 12 : 0;
+  const maxBottom = page.clientHeight - padBottom - 6 - footerH;
   let shown = 0;
   for (const doc of printNoticeDocs) {
     printGrid.insertAdjacentHTML('beforeend', noticeCardHtml(doc));
