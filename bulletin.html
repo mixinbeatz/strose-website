@@ -594,8 +594,11 @@ nav {
   color: var(--burgundy);
   margin-bottom: 2px;
 }
+/* Reflection byline — now doubles as the parish's Pastor acknowledgement
+   ("Fr. Bing Colasito, Pastor · <liturgical date>"), so it carries a more
+   prominent size than a plain byline: 12.5px (was 11px). */
 .print-reflection-meta {
-  font-size: calc(11px * var(--bulletin-scale-back, 1));
+  font-size: calc(12.5px * var(--bulletin-scale-back, 1));
   color: var(--burgundy);
   font-style: italic;
   margin-bottom: calc(8px * var(--bulletin-scale-back, 1));
@@ -692,7 +695,7 @@ nav {
   align-items: baseline;
   justify-content: flex-start;
   column-gap: 3px;
-  font-size: 8px;
+  font-size: 8.5px;
   line-height: 1.3;
   color: var(--soil);
 }
@@ -700,7 +703,7 @@ nav {
 .print-week-strip-event-time {
   flex: 0 0 auto;
   font-family: 'Cinzel', serif;
-  font-size: 7px;
+  font-size: 7.5px;
   font-weight: 600;
   letter-spacing: 0.03em;
   color: var(--burgundy);
@@ -793,18 +796,6 @@ nav {
 .print-staff-name { color: var(--soil); font-weight: 700; }
 .print-staff-role { color: var(--burgundy); font-weight: 400; }
 .print-staff-phone { color: var(--burgundy); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
-/* Standalone pastor acknowledgement — sits just under the (now 4-line) Staff
-   Directory list. Deliberately not a .print-staff-row: no phone column and
-   no divider rule, so it reads as a caption rather than a directory entry.
-   Scaled with the rest of the front page's dynamic content. */
-.print-pastor-line {
-  margin-top: calc(3px * var(--bulletin-scale, 1));
-  font-family: 'Cinzel', serif;
-  font-size: calc(9px * var(--bulletin-scale, 1));
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--burgundy);
-}
 /* Pull-quote — right column, after Staff Directory. There's no dedicated
    quote/citation field on the weeklyReflection doc, so the quote text is
    derived from the already-fetched body (first sentence of its first
@@ -1046,7 +1037,6 @@ nav {
           <div class="print-staff-row"><span class="print-staff-name">Chris Bosn<span class="print-staff-role">, Youth &amp; Young Adult, Funeral Ministry</span></span><span class="print-staff-phone">(623) 307-8269</span></div>
           <div class="print-staff-row"><span class="print-staff-name">Renee Hunsaker<span class="print-staff-role">, Religious Ed, OCIA</span></span><span class="print-staff-phone">(623) 307-8268</span></div>
         </div>
-        <div class="print-pastor-line">Fr. Bing Colasito, Pastor</div>
       </div>
     </div>
     <div class="print-week-strip" id="print-week-strip"></div>
@@ -1198,7 +1188,14 @@ async function loadReflection() {
     const printTitle = document.getElementById('print-reflection-title');
     const printMeta = document.getElementById('print-reflection-meta');
     if (printTitle) printTitle.textContent = heading;
-    if (printMeta) printMeta.textContent = `${author}${liturgical ? ' · ' + liturgical : ''}`;
+    // Page 2's byline also stands in as the printed bulletin's Pastor
+    // acknowledgement (the standalone page-1 line was dropped), so tag the
+    // author with ", Pastor" when the reflection is Fr. Bing's — not when a
+    // guest author wrote it.
+    if (printMeta) {
+      const byline = /colasito/i.test(author) ? `${author}, Pastor` : author;
+      printMeta.textContent = `${byline}${liturgical ? ' · ' + liturgical : ''}`;
+    }
 
     // Liturgical date band (below the masthead) — right side. Same
     // liturgicalDate field already fetched above for #sunday-name /
