@@ -95,6 +95,7 @@
   .hero {
     position: relative;
     height: 100vh;
+    height: 100svh; /* size to the visible viewport, not iOS Safari's toolbar-collapsed max */
     min-height: 700px;
     display: flex; align-items: flex-start;
     overflow: hidden;
@@ -768,6 +769,13 @@
     .nav-links { display: none; }
     nav { padding: 0 24px; }
     section { padding: 60px 24px; }
+    /* Don't force the hero taller than a short phone screen (e.g. iPhone SE,
+       667px tall) — the 700px floor caused overflow that iOS clipped at the
+       bottom. 480px still holds the hero text if a phone is turned landscape. */
+    .hero { min-height: 480px; }
+    /* Portrait screens crop this 4:3 landscape photo on the sides under
+       background-size:cover; keep the church facade centered as the focal point. */
+    .hero-bg { background-position: center center; }
     .mass-strip { grid-template-columns: 1fr 1fr; padding: 0; }
     .mass-item { padding: 20px 20px; }
     .welcome { grid-template-columns: 1fr; }
