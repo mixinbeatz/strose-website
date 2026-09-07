@@ -596,7 +596,7 @@ nav {
 }
 .print-reflection-meta {
   font-size: calc(11px * var(--bulletin-scale-back, 1));
-  color: var(--dusty-rose);
+  color: var(--burgundy);
   font-style: italic;
   margin-bottom: calc(8px * var(--bulletin-scale-back, 1));
 }
@@ -621,7 +621,10 @@ nav {
 .print-main .intention-day { margin-bottom: calc(8px * var(--bulletin-scale, 1)); }
 .print-main .intention-day-label { font-size: calc(8.5px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
 .print-main .intention-row { font-size: calc(9.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
-.print-main .intention-time { font-size: calc(8.5px * var(--bulletin-scale, 1)); width: 46px; }
+/* Mass Intention time labels: burgundy in print (the shared .intention-time
+   base is --dusty-rose, which washes out in grayscale) -- print-scoped so the
+   on-screen bulletin keeps its lighter time colour. */
+.print-main .intention-time { font-size: calc(8.5px * var(--bulletin-scale, 1)); width: 46px; color: var(--burgundy); }
 
 /* Weekly calendar strip — 7 day cells, Sunday → Saturday, for the bulletin's
    week window. Pinned directly above the QR footer: it now carries the
@@ -695,7 +698,7 @@ nav {
   font-size: 7px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--dusty-rose);
+  color: var(--burgundy);
   white-space: nowrap;
 }
 .print-week-strip-event-title {
@@ -722,12 +725,12 @@ nav {
 .print-qr-box {
   width: 0.8in;
   height: 0.8in;
-  border: 1px dashed var(--dusty-rose);
+  border: 1px dashed var(--burgundy);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 8px;
-  color: var(--dusty-rose);
+  color: var(--burgundy);
   text-align: center;
 }
 .print-footer-address {
@@ -735,8 +738,14 @@ nav {
   text-align: center;
   font-size: 7.5px;
   letter-spacing: 0.02em;
-  color: var(--dusty-rose);
+  color: var(--burgundy);
 }
+/* Degraded-state messages ("Unable to load...", "No intentions/announcements
+   this week.") are shared screen+print classes coloured --dusty-rose; force
+   burgundy when they land on a printed page so a fetch-failure/empty week
+   still reads in grayscale. Screen copies keep the lighter colour. */
+.print-page .loading-state,
+.print-page .empty-state { color: var(--burgundy); }
 /* Print notices: masonry-style columns (not a grid) so short cards don't
    leave a stretched row gap — lets the ~20%-larger text still fit page 2
    without an Advertisers block. */
@@ -768,7 +777,7 @@ nav {
   margin-bottom: calc(1.5px * var(--bulletin-scale, 1));
 }
 .print-staff-name { color: var(--soil); font-weight: 700; }
-.print-staff-role { color: var(--dusty-rose); font-weight: 400; }
+.print-staff-role { color: var(--burgundy); font-weight: 400; }
 .print-staff-phone { color: var(--burgundy); font-weight: 600; flex-shrink: 0; white-space: nowrap; }
 /* Pull-quote — right column, after Staff Directory. There's no dedicated
    quote/citation field on the weeklyReflection doc, so the quote text is
@@ -791,7 +800,7 @@ nav {
 }
 .print-pullquote-citation {
   font-size: calc(8px * var(--bulletin-scale, 1));
-  color: var(--dusty-rose);
+  color: var(--burgundy);
   margin-top: calc(4px * var(--bulletin-scale, 1));
 }
 .print-pullquote-teaser {
