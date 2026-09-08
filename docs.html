@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Parish Document | Saint Rose Philippine Duchesne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #5C1A2E;
+    --dusty-rose: #C17A8A;
+    --gold: #C9A84C;
+    --linen: #E8DDD0;
+    --sand: #F7F3EE;
+    --soil: #3D2B2B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Faustina', serif;
+    background: var(--sand);
+    color: var(--soil);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .box { max-width: 420px; }
+  .spinner {
+    width: 34px;
+    height: 34px;
+    margin: 0 auto 22px;
+    border: 3px solid var(--linen);
+    border-top-color: var(--burgundy);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--burgundy);
+    margin-bottom: 10px;
+  }
+  p { font-size: 15px; line-height: 1.6; }
+  p a { color: var(--burgundy); }
+  .muted { color: var(--dusty-rose); font-size: 13px; margin-top: 16px; }
+  #fallback { display: none; }
+  #fallback .spinner { display: none; }
+</style>
+</head>
+<body>
+  <div class="box" id="loading">
+    <div class="spinner"></div>
+    <h1 id="loading-title">Parish Document</h1>
+    <p>Opening the document&hellip;</p>
+  </div>
+
+  <div class="box" id="fallback">
+    <h1>Parish Document</h1>
+    <p>That document link isn&rsquo;t valid. Please go back and try again, or
+       visit <a href="https://saintroseanthem.org/documents.html">Ministry Documents</a>.</p>
+  </div>
+
+<script>
+  // Branded redirect for staff-uploaded ministry documents. The app and the
+  // Ministry Documents page (documents.html) link here as
+  //   docs.html?url=<encoded Firebase Storage URL>&title=<document title>
+  // so any visible address bar reads saintroseanthem.org instead of the raw
+  // firebasestorage.googleapis.com path. Same thin-redirect idea as
+  // ministry-booklet.html, but the target URL is passed in rather than read
+  // from Firestore (each document already carries its own Storage URL).
+  //
+  // The url param is only honoured if it points at this project's Storage
+  // bucket -- this page must never become an open redirector.
+  (function () {
+    var ALLOWED_PREFIX = 'https://firebasestorage.googleapis.com/v0/b/saint-rose-anthem.firebasestorage.app/';
+
+    function showFallback() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('fallback').style.display = 'block';
+    }
+
+    function getParam(name) {
+      var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+      return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : '';
+    }
+
+    var url = getParam('url');
+    var title = getParam('title');
+
+    if (title) {
+      document.getElementById('loading-title').textContent = title;
+    }
+
+    if (url && url.indexOf(ALLOWED_PREFIX) === 0) {
+      window.location.replace(url);
+    } else {
+      showFallback();
+    }
+  })();
+</script>
+</body>
+</html>

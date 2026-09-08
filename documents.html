@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Parish Calendar | Saint Rose Philippine Duchesne</title>
+<title>Ministry Documents | Saint Rose Philippine Duchesne</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
@@ -98,55 +98,36 @@
   .hero-title { font-family: 'Cinzel', serif; font-size: clamp(28px, 4.5vw, 44px); color: var(--linen); line-height: 1.2; }
   .hero-back { position: absolute; top: 24px; left: 24px; color: var(--linen); opacity: 0.7; text-decoration: none; font-size: 13px; }
 
-  /* ── MONTH NAV ── */
-  .month-nav {
-    max-width: 1000px; margin: -24px auto 0; padding: 0 24px;
-    position: relative; z-index: 5;
-    display: flex; align-items: center; justify-content: space-between;
-    background: var(--white); border-radius: 14px;
-    box-shadow: 0 8px 30px rgba(92,26,46,0.15);
-    padding: 18px 28px;
-  }
-  .month-nav button {
-    background: none; border: none; color: var(--burgundy);
-    font-size: 20px; cursor: pointer; padding: 4px 12px; border-radius: 8px;
-  }
-  .month-nav button:hover { background: var(--sand); }
-  .month-nav-label { font-family: 'Cinzel', serif; font-size: 18px; color: var(--burgundy); letter-spacing: 1px; }
+  /* ── DOCUMENTS ── */
+  .docs-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; }
+  .docs-intro { text-align: center; color: var(--soil); opacity: 0.75; font-size: 15px; line-height: 1.7; margin-bottom: 40px; }
 
-  /* ── CALENDAR GRID ── */
-  .calendar-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 24px 80px; }
-  .calendar-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr);
-    gap: 6px; margin-top: 20px;
+  .ministry-group { margin-bottom: 40px; }
+  .ministry-group h2 {
+    font-family: 'Cinzel', serif; font-size: 18px; color: var(--burgundy);
+    letter-spacing: 1px; padding-bottom: 10px; margin-bottom: 12px;
+    border-bottom: 1px solid var(--linen);
   }
-  .cal-weekday {
-    text-align: center; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--dusty-rose); padding-bottom: 8px; font-weight: 600;
+
+  .doc-link {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--white); border: 1px solid var(--linen); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 10px;
+    text-decoration: none; color: var(--soil);
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .cal-day {
-    background: var(--white); border-radius: 10px; min-height: 110px;
-    padding: 8px; border: 1px solid var(--linen);
-  }
-  .cal-day.empty { background: transparent; border: none; }
-  .cal-day.today { border: 2px solid var(--gold); }
-  .cal-day-num { font-family: 'Cinzel', serif; font-size: 13px; color: var(--soil); opacity: 0.7; margin-bottom: 4px; }
-  .cal-day.today .cal-day-num { color: var(--burgundy); font-weight: 700; opacity: 1; }
-  .cal-event {
-    font-size: 11px; line-height: 1.35; color: var(--burgundy);
-    background: rgba(201,168,76,0.15); border-left: 2px solid var(--gold);
-    padding: 2px 5px; border-radius: 3px; margin-bottom: 3px;
-  }
-  .cal-event-time { color: var(--dusty-rose); font-weight: 600; margin-right: 3px; }
-  .cal-empty-state { text-align: center; padding: 40px; color: var(--soil); opacity: 0.5; font-style: italic; }
+  .doc-link:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(92,26,46,0.10); }
+  .doc-icon { font-size: 20px; flex-shrink: 0; }
+  .doc-title { flex: 1; font-size: 15px; line-height: 1.4; }
+  .doc-arrow { color: var(--dusty-rose); font-size: 20px; flex-shrink: 0; }
+
+  .docs-empty { text-align: center; padding: 40px; color: var(--soil); opacity: 0.5; font-style: italic; }
 
   @media (max-width: 900px) {
     nav { padding: 0 24px; }
     .nav-links { display: none; }
     .hero { padding: 100px 20px 32px; }
-    .cal-day { min-height: 72px; font-size: 10px; }
-    .cal-weekday { font-size: 9px; }
-    .calendar-grid { gap: 3px; }
+    .docs-wrap { padding: 36px 20px 72px; }
   }
 </style>
 </head>
@@ -161,10 +142,10 @@
   <div class="nav-links">
     <a href="welcome.html">Welcome</a>
     <a href="index.html#mass-times">Mass Times</a>
-    <a href="calendar.html" class="active">Calendar</a>
+    <a href="calendar.html">Calendar</a>
     <a href="index.html#location">Visit</a>
     <a href="bulletin.html">Bulletin</a>
-    <a href="documents.html">Documents</a>
+    <a href="documents.html" class="active">Documents</a>
     <!-- "Directory" (advertisers.html) temporarily hidden from nav — see note in index.html.
          Un-comment here + in index.html (desktop + mobile) to bring it back. -->
     <!-- <a href="advertisers.html">Directory</a> -->
@@ -188,19 +169,16 @@
 <div class="hero" style="position:relative;">
   <a href="index.html" class="hero-back">← Back to Home</a>
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
-  <h1 class="hero-title">Parish Calendar</h1>
+  <h1 class="hero-title">Ministry Documents</h1>
 </div>
 
-<!-- MONTH NAV -->
-<div class="month-nav">
-  <button onclick="changeMonth(-1)" aria-label="Previous month">&#8592;</button>
-  <div class="month-nav-label" id="month-label">Loading...</div>
-  <button onclick="changeMonth(1)" aria-label="Next month">&#8594;</button>
-</div>
-
-<div class="calendar-wrap">
-  <div class="calendar-grid" id="calendar-grid">
-    <div class="cal-empty-state">Loading calendar...</div>
+<div class="docs-wrap">
+  <p class="docs-intro">
+    Calendars, forms, and handouts shared by our parish ministries. Tap any
+    document to open it.
+  </p>
+  <div id="docs-list">
+    <div class="docs-empty">Loading documents&hellip;</div>
   </div>
 </div>
 
@@ -218,95 +196,77 @@ function gf(doc, key) {
 function escHtml(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
-function dateKey(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+function escAttr(s) {
+  return escHtml(s).replace(/"/g,'&quot;');
 }
 
-let viewDate = new Date();
-viewDate.setDate(1);
-let allEvents = [];
-
-function changeMonth(delta) {
-  viewDate.setMonth(viewDate.getMonth() + delta);
-  renderCalendar();
-}
-
-async function loadAllEvents() {
+// The `ministries` collection is the source of truth for id -> display name.
+// Each ministry's documents live in the ministryDocuments/<id>/docs
+// subcollection (public read). Firestore rules don't allow a collection-group
+// query here, so fetch each ministry's docs individually -- a handful of tiny
+// requests, same shape the app uses.
+async function loadDocuments() {
+  const listEl = document.getElementById('docs-list');
+  let ministries;
   try {
-    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/events?key=${API_KEY}&orderBy=startAt&pageSize=300`);
+    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/ministries?key=${API_KEY}&pageSize=100`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    const docs = data.documents || [];
-    const now = new Date();
-    allEvents = docs.map(doc => {
-      const f = doc.fields || {};
-      const startAt = f.startAt?.stringValue || '';
-      const dateStr = f.date?.stringValue || '';
-      const expiresAt = f.expiresAt?.stringValue || '';
-      let date = startAt ? new Date(startAt) : null;
-      if (!date || isNaN(date)) {
-        const parsed = new Date(dateStr + ' ' + new Date().getFullYear());
-        if (!isNaN(parsed)) date = parsed;
-      }
-      return { title: gf(doc,'title'), time: gf(doc,'time'), date, expiresAt };
-    }).filter(e => {
-      if (!e.date || isNaN(e.date)) return false;
-      if (e.expiresAt && new Date(e.expiresAt) < now) return false;
-      return true;
+    ministries = (data.documents || []).map(d => {
+      const id = d.name.split('/').pop();
+      return { id, name: gf(d, 'name') || id };
     });
-  } catch(e) {
-    allEvents = [];
+  } catch (e) {
+    listEl.innerHTML = '<div class="docs-empty">Documents couldn’t be loaded right now. Please try again later.</div>';
+    return;
   }
-  renderCalendar();
-}
 
-function renderCalendar() {
-  const grid = document.getElementById('calendar-grid');
-  const label = document.getElementById('month-label');
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
-
-  label.textContent = viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-  const firstDay = new Date(year, month, 1);
-  const startOffset = firstDay.getDay(); // 0=Sun
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayKey = dateKey(new Date());
-
-  const eventsByDay = {};
-  allEvents.forEach(e => {
-    if (e.date.getFullYear() === year && e.date.getMonth() === month) {
-      const key = dateKey(e.date);
-      if (!eventsByDay[key]) eventsByDay[key] = [];
-      eventsByDay[key].push(e);
+  const groups = await Promise.all(ministries.map(async (m) => {
+    try {
+      const res = await fetch(`${BASE}/parishes/saint-rose-anthem/ministryDocuments/${encodeURIComponent(m.id)}/docs?key=${API_KEY}&orderBy=order&pageSize=50`);
+      if (!res.ok) return { ...m, docs: [] };
+      const data = await res.json();
+      const docs = (data.documents || [])
+        .map((d, idx) => ({
+          title: gf(d, 'title') || gf(d, 'fileName') || 'Document',
+          fileUrl: gf(d, 'fileUrl'),
+          contentType: gf(d, 'contentType'),
+          order: d.fields?.order?.integerValue !== undefined ? parseInt(d.fields.order.integerValue, 10) : idx,
+        }))
+        .filter(d => d.fileUrl)
+        .sort((a, b) => a.order - b.order);
+      return { ...m, docs };
+    } catch (e) {
+      return { ...m, docs: [] };
     }
-  });
-  Object.values(eventsByDay).forEach(list => list.sort((a,b) => a.date - b.date));
+  }));
 
-  const weekdayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d =>
-    `<div class="cal-weekday">${d}</div>`
-  ).join('');
+  const withDocs = groups
+    .filter(g => g.docs.length > 0)
+    .sort((a, b) => a.name.localeCompare(b.name));
 
-  let cells = '';
-  for (let i = 0; i < startOffset; i++) {
-    cells += '<div class="cal-day empty"></div>';
-  }
-  for (let day = 1; day <= daysInMonth; day++) {
-    const key = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-    const isToday = key === todayKey;
-    const dayEvents = eventsByDay[key] || [];
-    const eventsHtml = dayEvents.map(e => `
-      <div class="cal-event">${e.time ? '<span class="cal-event-time">'+escHtml(e.time)+'</span>' : ''}${escHtml(e.title)}</div>
-    `).join('');
-    cells += `<div class="cal-day${isToday ? ' today' : ''}"><div class="cal-day-num">${day}</div>${eventsHtml}</div>`;
+  if (withDocs.length === 0) {
+    listEl.innerHTML = '<div class="docs-empty">No documents have been posted yet. Please check back soon.</div>';
+    return;
   }
 
-  grid.innerHTML = weekdayLabels + cells;
+  listEl.innerHTML = withDocs.map(g => `
+    <div class="ministry-group">
+      <h2>${escHtml(g.name)}</h2>
+      ${g.docs.map(d => {
+        const href = 'docs.html?url=' + encodeURIComponent(d.fileUrl) + '&title=' + encodeURIComponent(d.title);
+        const icon = d.contentType === 'application/pdf' ? '\u{1F4C4}' : '\u{1F5BC}\u{FE0F}';
+        return `<a class="doc-link" href="${escAttr(href)}">
+          <span class="doc-icon">${icon}</span>
+          <span class="doc-title">${escHtml(d.title)}</span>
+          <span class="doc-arrow">&rsaquo;</span>
+        </a>`;
+      }).join('')}
+    </div>
+  `).join('');
 }
 
-loadAllEvents();
-
-// (The Ministry Booklet link moved to welcome.html — "Father's Welcome".
-// The old "Serving ▾" nav dropdown that held it was removed.)
+loadDocuments();
 </script>
 
 </body>
