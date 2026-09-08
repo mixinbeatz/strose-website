@@ -414,17 +414,19 @@ nav {
    overflow the 11in box. Consumed by the .print-reflection-* and
    .print-page-back .notice-* rules below. */
 .print-page-back { --bulletin-scale-back: 1; }
-/* Masthead: the circular logo is left-aligned to the page margin and taken
-   out of flow (position:absolute); the 3-line name block is its own group,
-   centered on the page (margin:0 auto on a max-content box) independent of
-   the logo. The three lines are tracked (letter-spacing) so they render to
-   the SAME width — a flush rectangle — rather than each line's natural
+/* Masthead: the 3-line name block is left-aligned to the page margin (its
+   own group, margin:0 on a max-content box); the circular logo is pinned to
+   the RIGHT margin and taken out of flow (position:absolute), so it doesn't
+   push the text. The three lines are tracked (letter-spacing) so they render
+   to the SAME width — a flush rectangle — rather than each line's natural
    width. "SAINT ROSE" is the widest; lines 2 and 3 are tracked out to meet
    it (line 3 still reads as normal small-caps tracking for 9px, not
-   stretched). The letter-spacing values are calibrated to THESE font sizes
-   — re-measure and re-tune all three together if the sizes, the font, or
-   the wording change (natural widths: L1 ~203px, L2 ~201px, L3 ~186px;
-   target ~217px). */
+   stretched). Left-aligned, the three lines' LEFT edges align exactly (no
+   leading letter-spacing); each carries a little trailing letter-spacing on
+   the right, same as before. The letter-spacing values are calibrated to
+   THESE font sizes — re-measure and re-tune all three together if the sizes,
+   the font, or the wording change (natural widths: L1 ~203px, L2 ~201px,
+   L3 ~186px; target ~217px). */
 .print-masthead {
   position: relative;
   padding-bottom: 10px;
@@ -432,7 +434,7 @@ nav {
 }
 .print-masthead-crest {
   position: absolute;
-  left: 0;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   height: 100px;
@@ -441,7 +443,7 @@ nav {
 }
 .print-masthead-text {
   width: max-content;
-  margin: 0 auto;
+  margin: 0;
   text-align: left;
 }
 .print-masthead-line1 {
@@ -508,25 +510,25 @@ nav {
 }
 .print-cols {
   display: grid;
-  /* left (Mass times) · center (artwork + reflection quote) · right (Mass
-     Intentions + Parish Office + Staff Directory). Left and right stay equal
-     width so the center column (and its image) stays centred on the page.
-     History: center was 1.35fr -> 1.08fr (Sep 2026); then the column gap was
-     halved 16 -> 8px and left/right rebalanced 1.135 -> 1.09fr (Sep 2026) to
-     close the empty strip between the Mass-times list and the image without
-     shrinking the image (~228px, unchanged to <1px). .print-art fills the
-     column at width:100%, so a narrower column shrinks the image
-     proportionally; the pull-quote font-size is fixed px * scale and does
-     NOT follow the column width. */
-  grid-template-columns: 1.09fr 1fr 1.09fr;
+  /* Three tracks. Position -> content (Sep 2026 swap): LEFT = artwork +
+     reflection quote; CENTER = the six schedule blocks (Daily Mass ..
+     Parish Office); RIGHT = Mass Intentions + Staff Directory (unchanged).
+     Track fr was swapped with the content so every column keeps the width
+     it had before the swap: image ~227px in the 1fr track, schedule ~248px
+     and Mass Intentions ~248px in the 1.09fr tracks. gap 8px (halved Sep
+     2026). .print-art fills its column at width:100%, so a narrower column
+     shrinks the image proportionally; the pull-quote font-size is fixed
+     px * scale and does NOT follow the column width. */
+  grid-template-columns: 1fr 1.09fr 1.09fr;
   gap: calc(8px * var(--bulletin-scale, 1));
 }
-/* Center column, front page — the "I am the bread of life" stained-glass
+/* Left column, front page — the "I am the bread of life" stained-glass
    window (its gold frame + arch are baked into the PNG, transparent
    corners), with the reflection pull-quote directly below it. Width scales
    with --bulletin-scale like the other dynamic front-page blocks so
-   fitFrontPageToPage() can still tighten a heavy week (height follows). */
-.print-col-center { display: flex; flex-direction: column; }
+   fitFrontPageToPage() can still tighten a heavy week (height follows).
+   flex column is what lets .print-art align-self:center. */
+.print-col-left { display: flex; flex-direction: column; }
 .print-art {
   display: block;
   align-self: center;
@@ -539,8 +541,9 @@ nav {
   /* Shrink the box to the title text so the gold underline spans only the
      words, not the whole column. width:fit-content keeps it block-level (no
      inline-block line-box strut, which would pad every title row). Left
-     column only (see .print-col-left override below); the Good Shepherd
-     Mission title wraps to two lines (both left-aligned) in this box. */
+     centre column only (the schedule blocks; see .print-col-center override
+     below); the Good Shepherd Mission title wraps to two lines (both
+     left-aligned) in this box. */
   width: fit-content;
   font-family: 'Cinzel', serif;
   font-size: calc(9px * var(--bulletin-scale, 1));
@@ -557,15 +560,15 @@ nav {
   line-height: 1.5;
   color: var(--soil);
 }
-/* Left column only — the six fixed-content blocks (Daily/Weekend Mass,
+/* Centre column only — the six fixed-content blocks (Daily/Weekend Mass,
    Reconciliation, Rosary, Good Shepherd Mission, Parish Office). Their
    length is identical every week (unlike Mass Intentions), so they carry a
    larger size than the base .print-sidebar-* above. Staff Directory is a
    different component (.print-section-title + .print-staff-*) and keeps its
    own sizing. Still multiplied by --bulletin-scale so fitFrontPageToPage()
    can pull the whole front page in on a genuinely heavy week. */
-.print-col-left .print-sidebar-title { font-size: calc(13px * var(--bulletin-scale, 1)); }
-.print-col-left .print-sidebar-line { font-size: calc(13.5px * var(--bulletin-scale, 1)); }
+.print-col-center .print-sidebar-title { font-size: calc(13px * var(--bulletin-scale, 1)); }
+.print-col-center .print-sidebar-line { font-size: calc(13.5px * var(--bulletin-scale, 1)); }
 .print-section-title {
   font-family: 'Cinzel', serif;
   font-size: 11px;
@@ -986,9 +989,23 @@ nav {
       <span class="print-week-band-item" id="print-week-band-liturgical"></span>
     </div>
     <div class="print-cols">
+      <!-- LEFT column position: artwork + reflection quote (swapped with the
+           schedule blocks Sep 2026 -- see .print-cols comment). -->
       <div class="print-col-left">
+        <!-- src is the bundled fallback; setWeekStrip() swaps in this week's
+             rotating image (locked into the weekly snapshot). -->
+        <img class="print-art" id="print-art" src="images/BreadofLife.png"
+             alt="Stained-glass window for this week's bulletin" />
+        <div class="print-pullquote" id="print-pullquote" style="display:none;">
+          <div class="print-pullquote-text" id="print-pullquote-text"></div>
+          <div class="print-pullquote-citation" id="print-pullquote-citation"></div>
+          <div class="print-pullquote-teaser">Read Fr. Bing's reflection on the back →</div>
+        </div>
+      </div>
+      <!-- CENTER column position: the six weekly schedule blocks. -->
+      <div class="print-col-center">
         <div class="print-sidebar-block">
-          <!-- All six left-column titles use one glyph (†) for consistency. -->
+          <!-- All six schedule titles use one glyph (†) for consistency. -->
           <div class="print-sidebar-title"><span class="print-title-icon">†</span>Daily Mass</div>
           <div class="print-sidebar-line">Mon, Tue, Wed, Fri — 7:30am</div>
           <div class="print-sidebar-line">Mon, Tue, Fri — 12:15pm</div>
@@ -1022,17 +1039,6 @@ nav {
           <div class="print-sidebar-line">Mon–Thu — 8:00am–4:00pm</div>
           <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
           <div class="print-sidebar-line">Closed Wed 1–3pm</div>
-        </div>
-      </div>
-      <div class="print-col-center">
-        <!-- src is the bundled fallback; setWeekStrip() swaps in this week's
-             rotating image (locked into the weekly snapshot). -->
-        <img class="print-art" id="print-art" src="images/BreadofLife.png"
-             alt="Stained-glass window for this week's bulletin" />
-        <div class="print-pullquote" id="print-pullquote" style="display:none;">
-          <div class="print-pullquote-text" id="print-pullquote-text"></div>
-          <div class="print-pullquote-citation" id="print-pullquote-citation"></div>
-          <div class="print-pullquote-teaser">Read Fr. Bing's reflection on the back →</div>
         </div>
       </div>
       <div class="print-col-right">
