@@ -102,9 +102,9 @@
   }
   .hero-bg {
     position: absolute; inset: 0;
-    background-image: url('images/hero-exterior.jpeg');
+    background-image: url('images/hero-permanent-home.jpeg');
     background-size: cover;
-    background-position: center 30%;
+    background-position: center 38%;
     opacity: 0;
     transform: scale(1.05);
     transition: opacity 0.6s ease, transform 8s ease-out;
@@ -804,8 +804,9 @@
        667px tall) — the 700px floor caused overflow that iOS clipped at the
        bottom. 480px still holds the hero text if a phone is turned landscape. */
     .hero { min-height: 480px; }
-    /* Portrait screens crop this 4:3 landscape photo on the sides under
-       background-size:cover; keep the church facade centered as the focal point. */
+    /* Portrait screens crop this near-square photo on the sides under
+       background-size:cover; keep the church facade + bell tower centered
+       as the focal point. */
     .hero-bg { background-position: center center; }
     .mass-strip { grid-template-columns: 1fr 1fr; padding: 0; }
     .mass-item { padding: 20px 20px; }
@@ -1689,7 +1690,7 @@
   loadParishDevOverrides();
   // Hero section overrides
   async function loadHeroOverrides() {
-    const DEFAULT_HERO_IMG = 'images/hero-exterior.jpeg';
+    const DEFAULT_HERO_IMG = 'images/hero-permanent-home.jpeg';
     let finalImageUrl = DEFAULT_HERO_IMG;
     try {
       const res = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/siteContent/hero?key=${API_KEY}`);
