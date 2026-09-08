@@ -534,6 +534,12 @@ nav {
 }
 .print-sidebar-block { margin-bottom: calc(10px * var(--bulletin-scale, 1)); }
 .print-sidebar-title {
+  /* Shrink the box to the title text so the gold underline spans only the
+     words, not the whole column. width:fit-content keeps it block-level (no
+     inline-block line-box strut, which would pad every title row). Left
+     column only (see .print-col-left override below); the Good Shepherd
+     Mission title wraps to two lines and centre-aligns line 2 in this box. */
+  width: fit-content;
   font-family: 'Cinzel', serif;
   font-size: calc(9px * var(--bulletin-scale, 1));
   font-weight: 700;
@@ -980,36 +986,37 @@ nav {
     <div class="print-cols">
       <div class="print-col-left">
         <div class="print-sidebar-block">
+          <!-- All six left-column titles use one glyph (†) for consistency. -->
           <div class="print-sidebar-title"><span class="print-title-icon">†</span>Daily Mass</div>
           <div class="print-sidebar-line">Mon, Tue, Wed, Fri — 7:30am</div>
           <div class="print-sidebar-line">Mon, Tue, Fri — 12:15pm</div>
           <div class="print-sidebar-line">Wed evening — 6:00pm</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">✦</span>Weekend Mass</div>
+          <div class="print-sidebar-title"><span class="print-title-icon">†</span>Weekend Mass</div>
           <div class="print-sidebar-line">Sat — 4:00pm</div>
           <div class="print-sidebar-line">Sun — 8:00am, 11:00am</div>
           <div class="print-sidebar-line">Last Sat/mo — Spanish 7:30am</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">●</span>Reconciliation</div>
+          <div class="print-sidebar-title"><span class="print-title-icon">†</span>Reconciliation</div>
           <div class="print-sidebar-line">Mon–Fri — 7:00–7:25am</div>
           <div class="print-sidebar-line">Wed — 5:15–5:45pm</div>
           <div class="print-sidebar-line">Sat — 2:30–3:30pm</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">◦</span>Rosary</div>
+          <div class="print-sidebar-title"><span class="print-title-icon">†</span>Rosary</div>
           <div class="print-sidebar-line">Mon–Sat — 6:55am, 3:25pm</div>
           <div class="print-sidebar-line">Sun — 7:25am, 10:25am</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">◆</span>Good Shepherd Mission</div>
+          <div class="print-sidebar-title" style="text-align:center;"><span class="print-title-icon">†</span>Good Shepherd<br>Mission</div>
           <div class="print-sidebar-line">Sun Mass — 9:00am</div>
           <div class="print-sidebar-line">Rosary Sun — 8:30am</div>
           <div class="print-sidebar-line">Adoration Thu — 7:00am</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">▪</span>Parish Office</div>
+          <div class="print-sidebar-title"><span class="print-title-icon">†</span>Parish Office</div>
           <div class="print-sidebar-line">Mon–Thu — 8:00am–4:00pm</div>
           <div class="print-sidebar-line">Fri — 8:00am–12:00pm</div>
           <div class="print-sidebar-line">Closed Wed 1–3pm</div>
