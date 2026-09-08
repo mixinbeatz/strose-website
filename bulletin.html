@@ -621,18 +621,21 @@ nav {
   color: var(--burgundy);
   text-align: center;
 }
-/* Sizes bumped ~+2px (Sep 2026): day labels 8.5 -> 10.5px, entry lines
-   9.5 -> 11.5px, time labels 8.5 -> 10.5px. The center column shrank and the
-   Staff Directory dropped from 10 rows to 4, freeing height + width in the
+/* Sizes bumped again (Sep 2026): day labels 10.5 -> 11px, entry lines
+   11.5 -> 12px, time labels 10.5 -> 11px (time column 54 -> 57px to match).
+   A larger bump (12/13/12) fit this week but left ~0px slack before
+   fitFrontPageToPage() has to shrink, so it landed on this smaller step.
+   Prior pass was 8.5/9.5/8.5 -> 10.5/11.5/10.5. The center column shrank and
+   the Staff Directory dropped from 10 rows to 4, freeing height + width in the
    right column, so Mass Intentions can carry a more readable size. Still
    * var(--bulletin-scale) so fitFrontPageToPage() can pull a heavy week back. */
 .print-main .intention-day { margin-bottom: calc(8px * var(--bulletin-scale, 1)); }
-.print-main .intention-day-label { font-size: calc(10.5px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
-.print-main .intention-row { font-size: calc(11.5px * var(--bulletin-scale, 1)); line-height: 1.4; }
+.print-main .intention-day-label { font-size: calc(11px * var(--bulletin-scale, 1)); margin-bottom: calc(3px * var(--bulletin-scale, 1)); padding-bottom: calc(2px * var(--bulletin-scale, 1)); }
+.print-main .intention-row { font-size: calc(12px * var(--bulletin-scale, 1)); line-height: 1.4; }
 /* Mass Intention time labels: burgundy in print (the shared .intention-time
    base is --dusty-rose, which washes out in grayscale) -- print-scoped so the
    on-screen bulletin keeps its lighter time colour. */
-.print-main .intention-time { font-size: calc(10.5px * var(--bulletin-scale, 1)); width: 54px; color: var(--burgundy); }
+.print-main .intention-time { font-size: calc(11px * var(--bulletin-scale, 1)); width: 57px; color: var(--burgundy); }
 
 /* Weekly calendar strip — 7 day cells, Sunday → Saturday, for the bulletin's
    week window. Pinned directly above the QR footer: it now carries the
