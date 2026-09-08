@@ -414,19 +414,17 @@ nav {
    overflow the 11in box. Consumed by the .print-reflection-* and
    .print-page-back .notice-* rules below. */
 .print-page-back { --bulletin-scale-back: 1; }
-/* Masthead: the 3-line name block is left-aligned to the page margin (its
-   own group, margin:0 on a max-content box); the circular logo is pinned to
-   the RIGHT margin and taken out of flow (position:absolute), so it doesn't
-   push the text. The three lines are tracked (letter-spacing) so they render
-   to the SAME width — a flush rectangle — rather than each line's natural
-   width. "SAINT ROSE" is the widest; lines 2 and 3 are tracked out to meet
-   it (line 3 still reads as normal small-caps tracking for 9px, not
-   stretched). Left-aligned, the three lines' LEFT edges align exactly (no
-   leading letter-spacing); each carries a little trailing letter-spacing on
-   the right, same as before. The letter-spacing values are calibrated to
-   THESE font sizes — re-measure and re-tune all three together if the sizes,
-   the font, or the wording change (natural widths: L1 ~203px, L2 ~201px,
-   L3 ~186px; target ~217px). */
+/* Masthead: the 3-line name block is its own group, centred on the page
+   (margin:0 auto on a max-content box); the circular logo is pinned to the
+   RIGHT margin and taken out of flow (position:absolute), so it doesn't
+   push or shift the centred text. The three lines are tracked
+   (letter-spacing) so they render to the SAME width — a flush rectangle —
+   rather than each line's natural width. "SAINT ROSE" is the widest; lines 2
+   and 3 are tracked out to meet it (line 3 still reads as normal small-caps
+   tracking for 9px, not stretched). The letter-spacing values are calibrated
+   to THESE font sizes — re-measure and re-tune all three together if the
+   sizes, the font, or the wording change (natural widths: L1 ~203px,
+   L2 ~201px, L3 ~186px; target ~217px). */
 .print-masthead {
   position: relative;
   padding-bottom: 10px;
@@ -443,7 +441,7 @@ nav {
 }
 .print-masthead-text {
   width: max-content;
-  margin: 0;
+  margin: 0 auto;
   text-align: left;
 }
 .print-masthead-line1 {
