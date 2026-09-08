@@ -538,10 +538,11 @@ nav {
 .print-sidebar-title {
   /* Shrink the box to the title text so the gold underline spans only the
      words, not the whole column. width:fit-content keeps it block-level (no
-     inline-block line-box strut, which would pad every title row). Left
-     centre column only (the schedule blocks; see .print-col-center override
-     below); the Good Shepherd Mission title wraps to two lines (both
-     left-aligned) in this box. */
+     inline-block line-box strut, which would pad every title row). Centre
+     column only (the schedule blocks; see .print-col-center override below).
+     The Good Shepherd Mission title wraps to two lines; its inline
+     text-align:center puts "Mission" centred under "Good Shepherd" within
+     this shrink-to-fit box. */
   width: fit-content;
   font-family: 'Cinzel', serif;
   font-size: calc(9px * var(--bulletin-scale, 1));
@@ -1027,7 +1028,7 @@ nav {
           <div class="print-sidebar-line">Sun — 7:25am, 10:25am</div>
         </div>
         <div class="print-sidebar-block">
-          <div class="print-sidebar-title"><span class="print-title-icon">†</span>Good Shepherd<br>Mission</div>
+          <div class="print-sidebar-title" style="text-align:center;"><span class="print-title-icon">†</span>Good Shepherd<br>Mission</div>
           <div class="print-sidebar-line">Sun Mass — 9:00am</div>
           <div class="print-sidebar-line">Rosary Sun — 8:30am</div>
           <div class="print-sidebar-line">Adoration Thu — 7:00am</div>
