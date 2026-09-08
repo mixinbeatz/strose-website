@@ -414,19 +414,25 @@ nav {
    overflow the 11in box. Consumed by the .print-reflection-* and
    .print-page-back .notice-* rules below. */
 .print-page-back { --bulletin-scale-back: 1; }
-/* Masthead: the 3-line name block is its own group, centred on the page
-   (margin:0 auto on a max-content box); the circular logo is pinned to the
-   RIGHT margin and taken out of flow (position:absolute), so it doesn't
-   push or shift the centred text. The three lines are tracked
-   (letter-spacing) so they render to the SAME width — a flush rectangle —
-   rather than each line's natural width. "SAINT ROSE" is the widest; lines 2
-   and 3 are tracked out to meet it (line 3 still reads as normal small-caps
-   tracking for 9px, not stretched). The letter-spacing values are calibrated
-   to THESE font sizes — re-measure and re-tune all three together if the
-   sizes, the font, or the wording change (natural widths: L1 ~203px,
-   L2 ~201px, L3 ~186px; target ~217px). */
+/* Masthead: the 3-line name block sits in the CENTRE column's footprint, so
+   it lines up with the schedule blocks (Daily Mass ...) below it. The
+   masthead is a grid with the SAME track template + gap as .print-cols, and
+   the text block is placed in column 2 (justify-self:start -> its left edge
+   meets the centre column's left edge). The circular logo is pinned to the
+   RIGHT margin and taken out of flow (position:absolute), so it's unaffected
+   by the grid. The three lines are tracked (letter-spacing) so they render
+   to the SAME width — a flush rectangle — rather than each line's natural
+   width. "SAINT ROSE" is the widest; lines 2 and 3 are tracked out to meet
+   it (line 3 still reads as normal small-caps tracking for 9px, not
+   stretched). The letter-spacing values are calibrated to THESE font sizes
+   — re-measure and re-tune all three together if the sizes, the font, or
+   the wording change (natural widths: L1 ~203px, L2 ~201px, L3 ~186px;
+   target ~217px). */
 .print-masthead {
   position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1.09fr 1.09fr; /* keep in sync with .print-cols */
+  column-gap: calc(8px * var(--bulletin-scale, 1));
   padding-bottom: 10px;
   margin-bottom: 14px;
 }
@@ -440,8 +446,9 @@ nav {
   object-fit: contain;
 }
 .print-masthead-text {
+  grid-column: 2; /* the centre-column track */
   width: max-content;
-  margin: 0 auto;
+  margin: 0;
   text-align: left;
 }
 .print-masthead-line1 {
