@@ -88,6 +88,42 @@
   }
   .nav-forms-menu a:hover { background: rgba(255,255,255,0.06); color: var(--gold); }
 
+  /* ── MOBILE NAV (matches index.html / welcome.html) ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--gold); border-radius: 2px; transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 68px; left: 0; right: 0;
+    background: var(--burgundy-dark);
+    z-index: 99; padding: 16px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    flex-direction: column;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: rgba(232,221,208,0.8); text-decoration: none;
+    font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 1.5px;
+    padding: 14px 32px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--gold); }
+  .mobile-menu a.active { color: var(--gold); }
+  .mobile-menu-divider { height: 1px; background: rgba(201,168,76,0.2); margin: 8px 0; }
+  .mobile-menu-admin { color: var(--dusty-rose) !important; font-size: 12px !important; }
+  .mobile-menu details > summary {
+    color: rgba(232,221,208,0.8); font-family: 'Cinzel', serif;
+    font-size: 14px; letter-spacing: 1.5px;
+    padding: 14px 32px; border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer; list-style: none;
+  }
+  .mobile-menu details > summary::-webkit-details-marker { display: none; }
+  .mobile-menu details > summary::after { content: ' \25BE'; opacity: 0.55; }
+  .mobile-menu details[open] > summary::after { content: ' \25B4'; }
+  .mobile-menu details > a { display: block; padding-left: 48px; }
+
   /* ── HERO ── */
   .hero {
     background: linear-gradient(160deg, var(--burgundy) 0%, var(--burgundy-dark) 100%);
@@ -126,6 +162,7 @@
   @media (max-width: 900px) {
     nav { padding: 0 24px; }
     .nav-links { display: none; }
+    .hamburger { display: flex; }
     .hero { padding: 100px 20px 32px; }
     .docs-wrap { padding: 36px 20px 72px; }
   }
@@ -163,7 +200,33 @@
     </div>
     <a href="index.html#app" class="nav-cta">Get the App</a>
   </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="welcome.html" onclick="toggleMenu()">Welcome</a>
+  <a href="index.html#mass-times" onclick="toggleMenu()">Mass Times</a>
+  <a href="calendar.html" onclick="toggleMenu()">Calendar</a>
+  <a href="index.html#location" onclick="toggleMenu()">Visit</a>
+  <a href="bulletin.html" onclick="toggleMenu()">Bulletin</a>
+  <a href="documents.html" class="active" onclick="toggleMenu()">Documents</a>
+  <!-- "Directory" (advertisers.html) temporarily hidden — see note in index.html. -->
+  <!-- FORMS: keep this list identical to the desktop dropdown above / index.html. -->
+  <details class="mobile-forms">
+    <summary>Forms</summary>
+    <a href="parish-registration.html" onclick="toggleMenu()">Parish Registration</a>
+    <a href="faith-formation-registration.html" onclick="toggleMenu()">Faith Formation Registration</a>
+    <a href="youth-ministry-registration.html" onclick="toggleMenu()">Youth Ministry Registration</a>
+    <a href="funeral-planning-form.html" onclick="toggleMenu()">Funeral Planning Form</a>
+    <a href="advertise.html" onclick="toggleMenu()">Become an Advertiser</a>
+    <a href="delete-account.html" onclick="toggleMenu()">Delete My Account</a>
+  </details>
+  <a href="index.html#app" onclick="toggleMenu()">Get the App</a>
+  <div class="mobile-menu-divider"></div>
+  <a href="https://portal.saintroseanthem.org" target="_blank" class="mobile-menu-admin">Admin Portal</a>
+  <a href="https://portal.saintroseanthem.org/finance.html" target="_blank" class="mobile-menu-admin">Finance Portal</a>
+</div>
 
 <!-- HERO -->
 <div class="hero" style="position:relative;">
@@ -186,6 +249,19 @@
 const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
 const PROJECT_ID = 'saint-rose-anthem';
 const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('mobileMenu');
+  const btn = document.getElementById('hamburger');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('open');
+  }
+});
 
 function gf(doc, key) {
   const f = doc.fields?.[key];
