@@ -25,6 +25,11 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Faustina', serif; background: var(--sand); color: var(--soil); }
   a { color: inherit; }
+  /* App's letter-avatar / discount "%" glyph deliberately use the OS system
+     font, not the branded Cinzel/Faustina pairing (see styles.premiumLogoText /
+     styles.discountPct in CommunityScreen.tsx) — mirrored here explicitly since
+     the page body otherwise defaults everything to Faustina. */
+  .system-font { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 
   .hero { background: var(--burgundy); background-image: radial-gradient(ellipse at 20% 50%, #7A2340 0%, transparent 50%), radial-gradient(ellipse at 80% 20%, #3D0F1E 0%, transparent 50%); padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden; z-index: 0; }
   .hero-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; height: 500px; object-fit: contain; opacity: 0.14; z-index: -1; pointer-events: none; }
@@ -49,35 +54,105 @@
   .listings-wrap { max-width: 1000px; margin: 0 auto; padding: 32px 24px 80px; }
   .tier-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--dusty-rose); margin: 32px 0 14px; }
   .tier-label:first-child { margin-top: 0; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  /* Gap #19 — app caps the grid at 2 columns (styles.listingCardHalf, isTablet
+     only, width>600) and otherwise stacks single-column; it never lets a wide
+     desktop viewport pack in 3+ columns the way auto-fill did. */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 601px) { .grid { grid-template-columns: repeat(2, 1fr); } }
 
-  .card-premium { background: var(--burgundy); border: 1.5px solid var(--gold); border-radius: 14px; padding: 20px; }
-  .card-premium .name { font-family: 'Cinzel', serif; font-size: 17px; color: var(--white); margin-bottom: 2px; }
-  .card-premium .cat { font-size: 12px; color: var(--dusty-rose); margin-bottom: 10px; }
-  .card-premium .tagline { font-size: 12px; font-style: italic; color: var(--gold-light); margin-bottom: 10px; }
-  .card-premium .desc { font-size: 13px; color: var(--linen); opacity: 0.85; line-height: 1.5; margin-bottom: 12px; }
-  .card-premium .offer { background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: 12px; color: var(--linen); }
-  .card-premium .offer strong { color: var(--gold-light); }
+  /* === Divider between tiers (gap #18) — line/label/line, matches
+     styles.standardDivider, replacing the old plain "Standard Advertisers"
+     tier-label heading. === */
+  .tier-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 12px; }
+  .tier-divider .line { flex: 1; height: 0.5px; background: var(--linen); }
+  .tier-divider .label { font-size: 12px; font-weight: 500; color: var(--dusty-rose); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
 
-  .card-standard { background: var(--white); border: 1px solid var(--linen); border-left: 3px solid var(--gold); border-radius: 12px; padding: 18px; }
-  .card-standard .name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--soil); margin-bottom: 2px; }
-  .card-standard .cat { font-size: 12px; color: var(--dusty-rose); margin-bottom: 8px; }
-  .card-standard .desc { font-size: 13px; color: var(--soil); opacity: 0.85; line-height: 1.5; margin-bottom: 12px; }
+  /* === Premium card — two-tone: burgundy header band + white body (gap #1),
+     gold glow shadow (gap #2). Matches styles.premiumCard/premiumCardInner. === */
+  .card-premium { background: var(--white); border: 1.5px solid var(--gold); border-radius: 14px; overflow: hidden; box-shadow: 0 5px 10px rgba(201,168,76,0.4); cursor: pointer; }
+  .premium-hero { background: var(--burgundy); padding: 14px; display: flex; align-items: center; gap: 12px; }
+  .premium-logo { width: 48px; height: 48px; border-radius: 10px; background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+  .premium-logo img { width: 100%; height: 100%; object-fit: contain; }
+  .premium-logo .letter { font-size: 20px; font-weight: 600; color: var(--burgundy); }
+  .premium-headtext { flex: 1; min-width: 0; }
+  .card-premium .name { font-size: 16px; font-weight: 600; color: var(--sand); margin-bottom: 1px; }
+  .card-premium .cat { font-size: 12px; color: var(--dusty-rose); }
+  .premium-body { padding: 14px; }
+  .badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+  .badge-parish { background: rgba(201,168,76,0.13); padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; color: #8a7230; }
+  .badge-hours { background: #E6F1FB; padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; color: #0C447C; }
+  .card-premium .desc { font-size: 14px; color: var(--soil); opacity: 0.85; line-height: 20px; margin-bottom: 10px; }
+  .offer { display: flex; align-items: center; gap: 8px; background: rgba(201,168,76,0.07); border: 0.5px solid rgba(201,168,76,0.27); border-radius: 8px; padding: 10px; margin-bottom: 12px; }
+  .offer .pct { font-size: 14px; font-weight: 600; color: var(--gold); }
+  .offer .text { font-size: 13px; color: var(--soil); flex: 1; }
 
-  .action-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .action-btn { flex: 1; min-width: 80px; text-align: center; padding: 8px 10px; border-radius: 8px; font-size: 12px; text-decoration: none; font-family: 'Faustina', serif; font-weight: 600; }
-  .card-premium .action-btn.primary { background: var(--gold); color: var(--burgundy-dark); }
-  .card-premium .action-btn.outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: var(--linen); }
-  .card-standard .action-btn.primary { background: var(--burgundy); color: var(--white); }
-  .card-standard .action-btn.outline { background: transparent; border: 1px solid var(--linen); color: var(--soil); }
+  .card-standard { background: var(--linen); border: 0.5px solid rgba(201,168,76,0.4); border-left: 3px solid var(--gold); border-radius: 12px; padding: 14px; cursor: pointer; }
+  .standard-inner { display: flex; gap: 12px; }
+  .standard-photo { width: 64px; height: 64px; border-radius: 8px; background: var(--linen); object-fit: cover; flex-shrink: 0; }
+  .standard-text { flex: 1; min-width: 0; }
+  .card-standard .name { font-size: 15px; font-weight: 600; color: var(--soil); margin-bottom: 1px; }
+  .card-standard .cat { font-size: 12px; color: #8B6914; }
+  .card-standard .desc { font-size: 13px; color: var(--soil); opacity: 0.8; line-height: 18px; margin-top: 4px; }
+  .standard-contact-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+  .standard-contact-row a { font-size: 12px; font-weight: 600; color: var(--burgundy); text-decoration: none; background: none; border: none; padding: 0; }
+
+  .action-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .btn { flex: 1; text-align: center; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; }
+  .btn-call { background: var(--burgundy); color: var(--sand); }
+  .btn-text { background: var(--linen); color: var(--burgundy); border: 1px solid var(--burgundy); }
+  .btn-web { background: var(--linen); color: var(--burgundy); border: 1px solid var(--dusty-rose); }
+
+  .share-btn { padding-top: 8px; text-align: center; font-size: 12px; color: var(--dusty-rose); opacity: 0.7; cursor: pointer; }
+  .tap-more { text-align: center; padding: 8px 0 4px; font-size: 11px; color: var(--gold); letter-spacing: 0.5px; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--dusty-rose); font-size: 14px; }
+
+  /* === Tap-to-expand detail modal (gap #17) — mirrors the app's Premium Detail
+     Modal (styles.modalOverlay/modalCard) content field-for-field. The app's
+     version is a bottom sheet; per direction this is a simple centered overlay
+     instead, keeping the same palette/typography (Cinzel-Bold is genuinely
+     modal-only in the app, so it's correct here). === */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(20,8,8,0.75); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
+  .modal-overlay.open { display: flex; }
+  .modal-card { position: relative; background: rgba(247,243,238,0.97); border: 1.5px solid rgba(201,168,76,0.4); border-radius: 20px; padding: 24px; max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; right: 8px; top: 8px; z-index: 10; width: 32px; height: 32px; border-radius: 16px; background: rgba(255,255,255,0.85); border: none; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; font-weight: 600; font-size: 16px; color: var(--soil); cursor: pointer; }
+  .modal-hero { width: 100%; max-height: 260px; object-fit: contain; border-radius: 12px; margin-bottom: 16px; }
+  .modal-gallery { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 16px; }
+  .modal-gallery img { width: 220px; height: 150px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+  .modal-headrow { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .modal-logo { width: 56px; height: 56px; border-radius: 12px; object-fit: contain; flex-shrink: 0; }
+  .modal-name { font-family: 'Cinzel', serif; font-size: 22px; color: var(--burgundy); padding-right: 36px; }
+  .modal-cat { font-size: 14px; color: var(--dusty-rose); margin-top: 2px; }
+  .modal-tagline { font-size: 16px; font-style: italic; color: var(--soil); opacity: 0.8; margin-bottom: 12px; }
+  .modal-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .modal-badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+  .modal-badge.advertiser { background: rgba(92,26,46,0.08); color: var(--burgundy); }
+  .modal-badge.parish { background: rgba(201,168,76,0.13); color: #8a7230; }
+  .modal-badge.hours { background: #E6F1FB; color: #0C447C; }
+  .modal-divider { height: 0.5px; background: var(--linen); margin: 12px 0; }
+  .modal-heading { font-family: 'Cinzel', serif; font-size: 16px; color: var(--burgundy); margin-bottom: 8px; }
+  .modal-body-text { font-size: 15px; color: var(--soil); line-height: 24px; opacity: 0.85; margin-bottom: 16px; }
+  .modal-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .modal-chip { background: var(--sand); border: 0.5px solid var(--linen); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--soil); }
+  .modal-offer { display: flex; align-items: center; gap: 8px; background: rgba(201,168,76,0.07); border: 0.5px solid rgba(201,168,76,0.27); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
+  .modal-offer .pct { font-size: 16px; font-weight: 600; color: var(--gold); }
+  .modal-offer .text { font-size: 14px; color: var(--soil); flex: 1; }
+  .modal-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; text-decoration: none; }
+  .modal-row .label { font-size: 14px; color: var(--soil); opacity: 0.8; flex: 1; }
+  .modal-row .directions { font-size: 12px; color: var(--burgundy); font-weight: 600; white-space: nowrap; }
+  .modal-actions { display: flex; gap: 8px; margin: 8px 0; }
+  .modal-btn { flex: 1; border-radius: 10px; padding: 14px; text-align: center; font-family: 'Cinzel', serif; font-size: 15px; text-decoration: none; }
+  .modal-btn.call { background: var(--burgundy); color: var(--white); }
+  .modal-btn.text { background: var(--linen); color: var(--burgundy); border: 1px solid var(--burgundy); }
+  .modal-btn.web { background: var(--linen); color: var(--burgundy); border: 1px solid var(--dusty-rose); }
+  .modal-share { text-align: center; padding: 12px 0; font-size: 13px; color: var(--dusty-rose); cursor: pointer; }
+  .modal-footer { text-align: center; padding: 8px 0 4px; font-family: 'Cinzel', serif; font-size: 11px; color: var(--gold); letter-spacing: 1px; }
 
   .footer { background: var(--soil); text-align: center; padding: 32px; }
   .footer-logo { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; }
   .footer-sub { font-size: 12px; color: var(--linen); opacity: 0.6; margin-top: 6px; }
 
-  @media(max-width:600px){ .hero{padding:44px 20px 40px;} .grid{grid-template-columns:1fr;} }
+  @media(max-width:600px){ .hero{padding:44px 20px 40px;} }
 </style>
 </head>
 <body>
@@ -101,6 +176,10 @@
 
 <div class="listings-wrap" id="listingsWrap"></div>
 
+<div class="modal-overlay" id="modalOverlay" onclick="if (event.target === this) closeModal();">
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
 <div class="footer">
   <div class="footer-logo">Sacred Apps</div>
   <div class="footer-sub">Powering the Saint Rose Philippine Duchesne Parish app · Anthem, Arizona</div>
@@ -109,30 +188,33 @@
 <script>
   // Advertiser listings are managed in the staff portal (portal.saintroseanthem.org,
   // "Partner Requests" tab): approving a request publishes a doc into the Firestore
-  // collection parishes/saint-rose-anthem/advertisers, which this page queries below.
-  // The hardcoded list here is the offline fallback (used if the fetch fails or the
-  // collection is empty), same pattern as the other pages' *_DEFAULTS.
+  // collection parishes/saint-rose-anthem/advertisers — the same collection the app's
+  // CommunityScreen.tsx reads. The hardcoded list here is the offline fallback (used
+  // if the fetch fails or the collection is empty); it mirrors the app's own
+  // BUSINESS_FALLBACK constant so the two stay in sync content-wise, not just visually.
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
   const ADVERTISERS_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem/advertisers?key=${API_KEY}&pageSize=300`;
 
   const ADVERTISERS_DEFAULTS = [
-    { name: 'North Valley Eye Care', category: 'Health', tier: 'premium', description: 'High quality and comprehensive eye care. Dr. Justin Kohls and Dr. Michelle Kohls.', phone: '623-582-3937', website: 'https://www.DrKohls.com', tagline: 'Your family eye care professionals since 2007.', discount: null },
-    { name: 'Gavilan Peak Dental Care', category: 'Health', tier: 'premium', description: "Dr. Alice L. Shaw, DMD. Cosmetic dentistry, preventive oral health, and restorative dentistry. Invisalign provider.", phone: '623-303-4110', website: 'https://gavilanpeakdentalcare.com/', tagline: 'Comprehensive, comfortable dental care for the whole family.', discount: null },
-    { name: 'RE/MAX Summit Properties', category: 'Real Estate', tier: 'premium', description: 'Nearly two decades of experience in Anthem and the North Valley. Buying, selling, or investing — trust the name your community already does.', phone: '602-677-4653', website: 'https://www.remaxsummitproperties.com', tagline: 'Your Anthem neighbors in real estate.', discount: null },
-    { name: 'Anthem Law', category: 'Legal', tier: 'premium', description: 'Your neighborhood law office. Wills and trusts, business law, personal injury, litigation, probate, and nursing home neglect.', phone: '623-551-9366', website: 'https://www.AnthemLaw.com', tagline: 'Where your attorney is your neighbor.', discount: null },
-    { name: 'Hansen Desert Hills Mortuary & Cemetery', category: 'Faith', tier: 'premium', description: 'Family owned and operated. Serving the Diocese of Phoenix since 1949.', phone: '480-991-5800', website: 'https://www.hansenmortuary.com', tagline: 'Serving families with dignity since 1949.', discount: null },
-    { name: 'Safeguard Estate & Financial', category: 'Financial', tier: 'premium', description: 'Living trusts, estate planning. Local, trusted, experienced professionals. Affordable, transparent pricing.', phone: '602-675-9000', website: 'https://safeguardyourestate.com/', tagline: 'Protecting what matters most.', discount: 'Mention the SaintRose app and receive 50% off the price of your living trust.' },
-    { name: 'Honest Hands Home Repair', category: 'Home', tier: 'standard', description: 'Christian-based handyman service in North Phoenix. No job too small. Transparent billing, hourly basis.', phone: '480-815-7723', website: 'https://www.honesthandshomerepair.com' },
-    { name: "Mike's Absolute Glass & Detail", category: 'Auto', tier: 'standard', description: 'PPF, clear bra, vinyl wraps, auto glass, detailing, and window tint.', phone: '623-986-2354', website: 'https://mikesabsolute.com' },
-    { name: 'DCM Pools', category: 'Home', tier: 'standard', description: 'Custom pools, remodeling, and complete outdoor living space.', phone: '480-570-6612', website: 'https://dcmpools.com' },
-    { name: 'Rain Man Roofing & Waterproofing', category: 'Home', tier: 'standard', description: 'Commercial, industrial, and residential roofing. Repairs, new installation, and maintenance. Licensed, bonded, and insured.', phone: '623-670-2835', website: 'https://rainmanroofing.com' },
-    { name: 'Dryer Vent Wizard', category: 'Home', tier: 'standard', description: 'Professionally trained technicians who inspect, clean, and repair dryer vents. Fire prevention and energy savings.', phone: '602-960-2917', website: 'https://dryerventwizard.com' },
-    { name: 'Merrill Gardens', category: 'Services', tier: 'standard', description: 'Senior living in Anthem. Visit today.', phone: '623-745-3689', website: 'https://merrillgardensanthem.com' },
-    { name: 'Sacred Apps', category: 'Tech', tier: 'standard', description: 'Mobile app development for Catholic parishes. Creator of the SaintRose app.', phone: null, website: 'https://sacredapps.com' },
+    // PREMIUM TIER
+    { name: 'North Valley Eye Care', category: 'Health', tier: 'premium', description: 'High quality and comprehensive eye care. Dr. Justin Kohls and Dr. Michelle Kohls.', phone: '623-582-3937', email: null, smsNumber: null, website: 'https://www.DrKohls.com', logo: null, photos: [], modalHero: null, modalLogo: null, discount: null, afterHours: false, parishionerOwned: true, address: '2525 W. Carefree Hwy. #116, Phoenix, AZ 85085', tagline: 'Your family eye care professionals since 2007.', about: 'Dr. Justin and Dr. Michelle Kohls have been providing quality eye care to the North Valley community since 2007. Both Arizona natives, they graduated with honors from the Southern California College of Optometry. Using state-of-the-art diagnostic technology, they specialize in comprehensive eye exams, ocular disease management, and the latest in lenses and fashionable frames for the whole family.', specialties: ['Comprehensive Eye Exams', 'Glaucoma Treatment', 'Diabetic Eye Care', 'Dry Eye Therapy', 'Pediatric Eye Care', 'Contact Lenses', 'Designer Frames'] },
+    { name: 'Gavilan Peak Dental Care', category: 'Health', tier: 'premium', description: 'Dr. Alice L. Shaw, DMD. Cosmetic dentistry, preventive oral health, and restorative dentistry. Invisalign provider.', phone: '623-303-4110', email: null, smsNumber: null, website: 'https://gavilanpeakdentalcare.com/', logo: null, photos: [], modalHero: null, modalLogo: null, discount: null, afterHours: false, parishionerOwned: false, address: '2355 W Anthem Way, Anthem, AZ 85086', tagline: 'Comprehensive, comfortable dental care for the whole family.', about: 'Led by Dr. Alice L. Shaw, DMD, Gavilan Peak Dental Care provides personalized dental care in Anthem with a focus on preventive, restorative, and cosmetic treatments. The practice combines modern technology with a warm, patient-first approach to help every patient achieve a healthy, confident smile.', specialties: ['Dental Cleanings & Checkups', 'Sealants', 'Mouth Guards', 'Root Canal Treatment', 'Dentures', 'Bridges', 'Invisalign® Clear Aligners'] },
+    { name: 'RE/MAX Summit Properties', category: 'Real Estate', tier: 'premium', description: 'Nearly two decades of experience in Anthem and the North Valley. Buying, selling, or investing — trust the name your community already does.', phone: '602-677-4653', email: null, smsNumber: '602-677-4653', website: 'https://www.remaxsummitproperties.com', logo: null, photos: [], modalHero: null, modalLogo: null, discount: null, afterHours: false, parishionerOwned: false, address: '41722 N. Gavilan Peak Pkwy D120, Anthem, AZ 85086', tagline: 'Your Anthem neighbors in real estate.', about: 'Led by Todd Ninneman, a Top 1% agent in Arizona and Top 100 nationwide within RE/MAX. Our agents live, work, and serve in the communities we represent. Whether you are a first-time homebuyer or a seasoned investor, we provide personalized guidance with a low-stress approach, honesty, and responsiveness throughout the entire process.', specialties: ['Residential Sales', 'Luxury Homes', 'New Construction', 'First-Time Buyers', 'Investment Properties', 'Relocation Services'] },
+    { name: 'Anthem Law', category: 'Legal', tier: 'premium', description: 'Your neighborhood law office. Wills and trusts, business law, personal injury, litigation, probate, and nursing home neglect.', phone: '623-551-9366', email: 'info@anthemlaw.com', smsNumber: null, website: 'https://www.AnthemLaw.com', logo: null, photos: [], modalHero: null, modalLogo: null, discount: null, afterHours: false, parishionerOwned: false, address: '3715 W. Anthem Way Suite 110, Anthem, AZ 85086', tagline: 'Where your attorney is your neighbor.', about: 'Anthem Law is a premier, full service law firm located in Anthem, Arizona. With over 50 years of combined legal expertise, our commitment to every client is to provide the best representation we possibly can. We are a family firm and our staff takes great pride in giving back to our community.', specialties: ['Estate Planning', 'Personal Injury', 'Business Law', 'Probate Law', 'Family Law', 'Elder Law'] },
+    { name: 'Hansen Desert Hills Mortuary & Cemetery', category: 'Faith', tier: 'premium', description: 'Family owned and operated. Serving the Diocese of Phoenix since 1949.', phone: '480-991-5800', email: null, smsNumber: null, website: 'https://www.hansenmortuary.com', logo: null, photos: [], modalHero: null, modalLogo: null, discount: null, afterHours: true, parishionerOwned: false, address: '6500 E. Bell Rd., Scottsdale, AZ 85254', tagline: 'Serving families with dignity since 1949.', about: 'Hansen Desert Hills Mortuary and Cemetery has been family owned and operated since 1949, faithfully serving the Diocese of Phoenix and the Catholic community for over 75 years. We provide compassionate, personalized funeral and burial services to honor your loved ones with the dignity and respect they deserve.', specialties: ['Traditional Funeral Services', 'Catholic Funeral Mass', 'Cremation Services', 'Pre-Planning', 'Cemetery & Burial', 'Memorial Services'] },
+    { name: 'Safeguard Estate & Financial', category: 'Financial', tier: 'premium', description: 'Living trusts, estate planning. Local, trusted, experienced professionals. Affordable, transparent pricing.', phone: '602-675-9000', email: null, smsNumber: null, website: 'https://safeguardyourestate.com/', logo: null, photos: [], modalHero: null, modalLogo: null, discount: 'Mention the SaintRose app and receive 50% off the price of your living trust.', afterHours: false, parishionerOwned: false, address: null, tagline: 'Protecting what matters most.', about: 'Safeguard Estate & Financial provides affordable, transparent estate planning services to families in the North Valley. Our experienced professionals specialize in living trusts and comprehensive estate plans designed to protect your assets and provide peace of mind for your family. Mention the SaintRose app and receive 50% off the price of your living trust.', specialties: ['Living Trusts', 'Estate Planning', 'Asset Protection', 'Power of Attorney', 'Healthcare Directives', 'Trust Administration'] },
+    // STANDARD TIER
+    { name: 'Honest Hands Home Repair', category: 'Home', tier: 'standard', description: 'Christian-based handyman service in North Phoenix. No job too small. Transparent billing, hourly basis.', phone: '480-815-7723', email: null, smsNumber: null, website: 'https://www.honesthandshomerepair.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: "Mike's Absolute Glass & Detail", category: 'Auto', tier: 'standard', description: 'PPF, clear bra, vinyl wraps, auto glass, detailing, and window tint.', phone: '623-986-2354', email: null, smsNumber: null, website: 'https://mikesabsolute.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: 'DCM Pools', category: 'Home', tier: 'standard', description: 'Custom pools, remodeling, and complete outdoor living space.', phone: '480-570-6612', email: null, smsNumber: null, website: 'https://dcmpools.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: 'Rain Man Roofing & Waterproofing', category: 'Home', tier: 'standard', description: 'Commercial, industrial, and residential roofing. Repairs, new installation, and maintenance. Licensed, bonded, and insured.', phone: '623-670-2835', email: 'service@rainmanroofing.com', smsNumber: null, website: 'https://rainmanroofing.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: 'Dryer Vent Wizard', category: 'Home', tier: 'standard', description: 'Professionally trained technicians who inspect, clean, and repair dryer vents. Fire prevention and energy savings.', phone: '602-960-2917', email: null, smsNumber: null, website: 'https://dryerventwizard.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: 'Merrill Gardens', category: 'Services', tier: 'standard', description: 'Senior living in Anthem. Visit today.', phone: '623-745-3689', email: null, smsNumber: null, website: 'https://merrillgardensanthem.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
+    { name: 'Sacred Apps', category: 'Tech', tier: 'standard', description: 'Mobile app development for Catholic parishes. Creator of the SaintRose app.', phone: null, email: null, smsNumber: null, website: 'https://sacredapps.com', logo: null, photos: [], discount: null, afterHours: false, parishionerOwned: false, address: null },
   ];
 
-  let ADVERTISERS = ADVERTISERS_DEFAULTS;
+  let ADVERTISERS = ADVERTISERS_DEFAULTS.map((a, i) => ({ ...a, _idx: i }));
   let CATEGORIES = buildCategories(ADVERTISERS);
   let activeCategory = 'All';
 
@@ -155,21 +237,46 @@
       if (!res.ok) throw new Error('fetch failed');
       const data = await res.json();
       const docs = data.documents || [];
+      // Field mapping mirrors CommunityScreen.tsx's mapDoc() exactly (name, tierPlan
+      // fallback to tier, specialties as a comma/newline-delimited string, logoUrl/
+      // modalLogoUrl/modalHeroUrl as Storage download URLs, Parish Pro listings
+      // excluded) so the website surfaces the same fields the app does — no more,
+      // no less. `about` has no separate Firestore field; the app aliases it to
+      // `description`, mirrored below.
       const mapped = docs
-        .map(d => d.fields || {})
-        .filter(f => fsVal(f.active) !== false)   // paused listings hidden
-        .map(f => ({
-          name: fsVal(f.name),
-          category: fsVal(f.category),
-          tier: String(fsVal(f.tier)).toLowerCase() === 'premium' ? 'premium' : 'standard',
-          description: fsVal(f.description),
-          phone: fsVal(f.phone) || null,
-          website: fsVal(f.website) || null,
-          tagline: fsVal(f.tagline) || null,
-          discount: fsVal(f.discount) || null,
-        }))
-        .filter(a => a.name);
-      if (mapped.length) ADVERTISERS = mapped;
+        .map(d => ({ id: d.name.split('/').pop(), fields: d.fields || {} }))
+        .filter(({ fields: f }) => fsVal(f.active) !== false)   // paused listings hidden
+        .map(({ id, fields: f }) => {
+          const rawTier = String(fsVal(f.tierPlan) || fsVal(f.tier) || 'standard').toLowerCase();
+          const isPro = rawTier.includes('parish') || rawTier.includes('pro');
+          const specialties = String(fsVal(f.specialties) || '').split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
+          const acceptTexts = fsVal(f.acceptTexts) === true;
+          return {
+            id,
+            name: fsVal(f.name),
+            category: fsVal(f.category) || 'Services',
+            description: fsVal(f.description),
+            about: fsVal(f.description),
+            tagline: fsVal(f.tagline) || null,
+            phone: fsVal(f.phone) || null,
+            smsNumber: (acceptTexts ? (fsVal(f.smsNumber) || fsVal(f.phone)) : fsVal(f.smsNumber)) || null,
+            website: fsVal(f.website) || null,
+            email: null,
+            address: fsVal(f.address) || null,
+            discount: fsVal(f.discount) || null,
+            afterHours: fsVal(f.afterHours) === true,
+            parishionerOwned: fsVal(f.parishionerOwned) === true,
+            logo: fsVal(f.logoUrl) || null,
+            modalLogo: fsVal(f.modalLogoUrl) || null,
+            modalHero: fsVal(f.modalHeroUrl) || null,
+            photos: [fsVal(f.photoUrl), fsVal(f.modalHeroUrl)].filter(Boolean),
+            specialties,
+            tier: (!isPro && rawTier === 'premium') ? 'premium' : 'standard',
+            isPro,
+          };
+        })
+        .filter(a => a.name && !a.isPro);
+      if (mapped.length) ADVERTISERS = mapped.map((a, i) => ({ ...a, _idx: i }));
     } catch (e) {
       // keep ADVERTISERS_DEFAULTS
     }
@@ -195,6 +302,14 @@
     const digits = String(raw || '').replace(/[^0-9+().\s-]/g, '').trim();
     return digits ? 'tel:' + digits : '';
   }
+  function safeSms(raw) {
+    const digits = String(raw || '').replace(/[^0-9+().\s-]/g, '').trim();
+    return digits ? 'sms:' + digits : '';
+  }
+  function safeMailto(raw) {
+    const s = String(raw || '').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) ? 'mailto:' + s : '';
+  }
 
   function renderFilters() {
     const row = document.getElementById('filterRow');
@@ -213,21 +328,182 @@
     render();
   }
 
+  // Tap-to-expand detail modal — content mirrors the app's Premium Detail Modal
+  // (CommunityScreen.tsx ~L1178-1320) section for section: hero image + gallery,
+  // logo/name/category, tagline, badges, About (falls back to plain description
+  // when there's no separate `about` field, same as the app), Services chips,
+  // discount box, address (Directions) + email, Call/Text/Website, share, and
+  // the "PROUD ADVERTISER" footer.
+  function openModal(idx) {
+    const a = ADVERTISERS[idx];
+    if (!a) return;
+
+    const heroSrc = safeUrl(a.modalHero || (a.photos && a.photos[0]));
+    const hero = heroSrc ? `<img class="modal-hero" src="${escapeHtml(heroSrc)}" alt="">` : '';
+
+    const gallery = (a.photos || []).map(safeUrl).filter(p => p && p !== heroSrc);
+    const galleryHtml = gallery.length ? `<div class="modal-gallery">${gallery.map(p => `<img src="${escapeHtml(p)}" alt="">`).join('')}</div>` : '';
+
+    const logoSrc = safeUrl(a.modalLogo || a.logo);
+    const logoImg = logoSrc ? `<img class="modal-logo" src="${escapeHtml(logoSrc)}" alt="">` : '';
+
+    const tagline = a.tagline ? `<div class="modal-tagline">${escapeHtml(a.tagline)}</div>` : '';
+
+    const badges = `<div class="modal-badges">
+        <div class="modal-badge advertiser">Advertiser</div>
+        ${a.parishionerOwned ? '<div class="modal-badge parish">Parishioner Owned</div>' : ''}
+        ${a.afterHours ? '<div class="modal-badge hours">After Hours</div>' : ''}
+      </div>`;
+
+    const aboutBlock = a.about
+      ? `<div class="modal-heading">About</div><div class="modal-body-text">${escapeHtml(a.about)}</div>`
+      : `<div class="modal-body-text">${escapeHtml(a.description)}</div>`;
+
+    const specialties = (a.specialties || []).length
+      ? `<div class="modal-heading">Services</div><div class="modal-chips">${a.specialties.map(s => `<div class="modal-chip">${escapeHtml(s)}</div>`).join('')}</div>`
+      : '';
+
+    const offer = a.discount
+      ? `<div class="modal-offer"><span class="pct system-font">%</span><span class="text">${escapeHtml(a.discount)}</span></div>`
+      : '';
+
+    const addressRow = a.address
+      ? `<a class="modal-row" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.address)}" target="_blank" rel="noopener">
+          <span class="label">📍 ${escapeHtml(a.address)}</span><span class="directions">Directions →</span>
+        </a>`
+      : '';
+    const emailHref = safeMailto(a.email);
+    const emailRow = emailHref
+      ? `<a class="modal-row" href="${escapeHtml(emailHref)}"><span class="label">✉️ ${escapeHtml(a.email)}</span></a>`
+      : '';
+
+    const tel = safeTel(a.phone), sms = safeSms(a.smsNumber), web = safeUrl(a.website);
+    const actions = `<div class="modal-actions">
+        ${tel ? `<a class="modal-btn call" href="${escapeHtml(tel)}">Call</a>` : ''}
+        ${sms ? `<a class="modal-btn text" href="${escapeHtml(sms)}">Text</a>` : ''}
+        ${web ? `<a class="modal-btn web" href="${escapeHtml(web)}" target="_blank" rel="noopener">Website</a>` : ''}
+      </div>`;
+
+    document.getElementById('modalCard').innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      ${hero}
+      ${galleryHtml}
+      <div class="modal-headrow">
+        ${logoImg}
+        <div>
+          <div class="modal-name">${escapeHtml(a.name)}</div>
+          <div class="modal-cat">${escapeHtml(a.category)}</div>
+        </div>
+      </div>
+      ${tagline}
+      ${badges}
+      <div class="modal-divider"></div>
+      ${aboutBlock}
+      ${specialties}
+      ${offer}
+      <div class="modal-divider"></div>
+      ${addressRow}
+      ${emailRow}
+      ${actions}
+      <div class="modal-share" onclick="shareListing(event, ${idx})">Share this business</div>
+      <div class="modal-footer">PROUD ADVERTISER</div>
+    `;
+    document.getElementById('modalOverlay').classList.add('open');
+    document.addEventListener('keydown', onModalKeydown);
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.removeEventListener('keydown', onModalKeydown);
+  }
+
+  function onModalKeydown(ev) {
+    if (ev.key === 'Escape') closeModal();
+  }
+
+  function shareListing(ev, idx) {
+    ev.stopPropagation();
+    const a = ADVERTISERS[idx];
+    const text = a.name + ' - ' + a.description + (a.phone ? ' Call: ' + a.phone : '') + (a.website ? ' ' + a.website : '') + ' | Found on the SaintRose App';
+    const el = ev.currentTarget;
+    if (navigator.share) {
+      navigator.share({ title: a.name, text }).catch(() => {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        const original = el.textContent;
+        el.textContent = 'Copied!';
+        setTimeout(() => { el.textContent = original; }, 1500);
+      }).catch(() => {});
+    }
+  }
+
+  function logoHtml(a) {
+    const src = safeUrl(a.logo);
+    return src
+      ? `<img src="${escapeHtml(src)}" alt="" />`
+      : `<span class="letter system-font">${escapeHtml((a.name || '?').charAt(0))}</span>`;
+  }
+
   function cardHtml(a) {
     const isPremium = a.tier === 'premium';
-    const cls = isPremium ? 'card-premium' : 'card-standard';
     const tel = safeTel(a.phone);
+    const sms = safeSms(a.smsNumber);
     const web = safeUrl(a.website);
-    const phoneBtn = tel ? `<a class="action-btn primary" href="${escapeHtml(tel)}">Call</a>` : '';
-    const webBtn = web ? `<a class="action-btn outline" href="${escapeHtml(web)}" target="_blank" rel="noopener">Website</a>` : '';
+    const email = safeMailto(a.email);
+
+    if (isPremium) {
+      const badges = (a.parishionerOwned || a.afterHours) ? `
+        <div class="badge-row">
+          ${a.parishionerOwned ? '<div class="badge-parish">Parishioner Owned</div>' : ''}
+          ${a.afterHours ? '<div class="badge-hours">After Hours</div>' : ''}
+        </div>` : '';
+      const offer = a.discount ? `
+        <div class="offer"><span class="pct system-font">%</span><span class="text">${escapeHtml(a.discount)}</span></div>` : '';
+      const callBtn = tel ? `<a class="btn btn-call" href="${escapeHtml(tel)}" onclick="event.stopPropagation()">Call</a>` : '';
+      const textBtn = sms ? `<a class="btn btn-text" href="${escapeHtml(sms)}" onclick="event.stopPropagation()">Text</a>` : '';
+      const webBtn = web ? `<a class="btn btn-web" href="${escapeHtml(web)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Website</a>` : '';
+      return `
+      <div class="card-premium" onclick="openModal(${a._idx})">
+        <div class="premium-hero">
+          <div class="premium-logo">${logoHtml(a)}</div>
+          <div class="premium-headtext">
+            <div class="name">${escapeHtml(a.name)}</div>
+            <div class="cat">${escapeHtml(a.category)}</div>
+          </div>
+        </div>
+        <div class="premium-body">
+          ${badges}
+          <div class="desc">${escapeHtml(a.description)}</div>
+          ${offer}
+          <div class="action-row">${callBtn}${textBtn}${webBtn}</div>
+          <div class="share-btn" onclick="shareListing(event, ${a._idx})">Share this listing</div>
+          <div class="tap-more">Tap to learn more</div>
+        </div>
+      </div>`;
+    }
+
+    const photo = safeUrl(a.logo || (a.photos && a.photos[0]));
+    const photoHtml = photo ? `<img class="standard-photo" src="${escapeHtml(photo)}" alt="" />` : '';
+    const stop = 'onclick="event.stopPropagation()"';
+    const callLink = tel ? `<a href="${escapeHtml(tel)}" ${stop}>Call</a>` : '';
+    const textLink = sms ? `<a href="${escapeHtml(sms)}" ${stop}>Text</a>` : '';
+    const webLink = web ? `<a href="${escapeHtml(web)}" target="_blank" rel="noopener" ${stop}>Website</a>` : '';
+    const emailLink = email ? `<a href="${escapeHtml(email)}" ${stop}>Email</a>` : '';
+    // The app's own standard-tier card isn't tappable (only Premium opens a detail
+    // modal there) — made clickable here too, per explicit direction, so both
+    // tiers get the same expand-for-detail affordance on the website.
     return `
-      <div class="${cls}">
-        <div class="name">${escapeHtml(a.name)}</div>
-        <div class="cat">${escapeHtml(a.category)}</div>
-        ${isPremium && a.tagline ? `<div class="tagline">${escapeHtml(a.tagline)}</div>` : ''}
-        <div class="desc">${escapeHtml(a.description)}</div>
-        ${isPremium && a.discount ? `<div class="offer"><strong>★ OFFER</strong> ${escapeHtml(a.discount)}</div>` : ''}
-        <div class="action-row">${phoneBtn}${webBtn}</div>
+      <div class="card-standard" onclick="openModal(${a._idx})">
+        <div class="standard-inner">
+          ${photoHtml}
+          <div class="standard-text">
+            <div class="name">${escapeHtml(a.name)}</div>
+            <div class="cat">${escapeHtml(a.category)}</div>
+            <div class="desc">${escapeHtml(a.description)}</div>
+            <div class="standard-contact-row">${callLink}${textLink}${webLink}${emailLink}</div>
+          </div>
+        </div>
+        <div class="share-btn" onclick="shareListing(event, ${a._idx})">Share this listing</div>
       </div>`;
   }
 
@@ -238,8 +514,9 @@
       const matchSearch = !q || a.name.toLowerCase().includes(q) || a.category.toLowerCase().includes(q) || a.description.toLowerCase().includes(q);
       return matchCat && matchSearch;
     };
-    const premium = ADVERTISERS.filter(a => a.tier === 'premium' && matches(a));
-    const standard = ADVERTISERS.filter(a => a.tier === 'standard' && matches(a));
+    const byName = (x, y) => x.name.localeCompare(y.name);
+    const premium = ADVERTISERS.filter(a => a.tier === 'premium' && matches(a)).sort(byName);
+    const standard = ADVERTISERS.filter(a => a.tier !== 'premium' && matches(a)).sort(byName);
     const wrap = document.getElementById('listingsWrap');
 
     if (premium.length === 0 && standard.length === 0) {
@@ -252,7 +529,8 @@
       html += '<div class="tier-label">Premium Advertisers</div><div class="grid">' + premium.map(cardHtml).join('') + '</div>';
     }
     if (standard.length) {
-      html += '<div class="tier-label">Standard Advertisers</div><div class="grid">' + standard.map(cardHtml).join('') + '</div>';
+      const label = premium.length > 0 ? 'More Advertisers' : 'Advertisers';
+      html += `<div class="tier-divider"><div class="line"></div><div class="label">${label}</div><div class="line"></div></div><div class="grid">` + standard.map(cardHtml).join('') + '</div>';
     }
     wrap.innerHTML = html;
   }
