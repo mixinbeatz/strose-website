@@ -1242,7 +1242,11 @@ async function loadReflection() {
         // contains embedded dialogue quotes — avoids a doubled closing
         // quote where ours would land right next to the sentence's own.
         const hasEmbeddedQuote = /["“”]/.test(quote);
-        document.getElementById('print-pullquote-text').textContent = hasEmbeddedQuote ? quote : ('“' + quote + '”');
+        // This field is plain textContent (no bold styling in the pull-quote
+        // box), so strip any **/*/*** markers rather than leak them as
+        // literal asterisks if the excerpt happens to include bold text.
+        const plainQuote = stripMdMarkers(quote);
+        document.getElementById('print-pullquote-text').textContent = hasEmbeddedQuote ? plainQuote : ('“' + plainQuote + '”');
         document.getElementById('print-pullquote-citation').textContent = heading;
         pullQuoteBox.style.display = '';
       }
@@ -1258,17 +1262,17 @@ async function loadReflection() {
     }
 
     document.getElementById('reflection-body').innerHTML =
-      bodyParas.map(p => `<p>${escHtml(p)}</p>`).join('');
+      bodyParas.map(p => `<p>${mdInline(escHtml(p))}</p>`).join('');
 
     const printBody = document.getElementById('print-reflection-body');
     if (printBody) printBody.innerHTML = document.getElementById('reflection-body').innerHTML;
 
     if (closingLine) {
-      document.getElementById('reflection-closing').textContent = closingLine;
+      document.getElementById('reflection-closing').innerHTML = mdInline(escHtml(closingLine));
       document.getElementById('reflection-closing').style.display = '';
       const printClosing = document.getElementById('print-reflection-closing');
       if (printClosing) {
-        printClosing.textContent = closingLine;
+        printClosing.innerHTML = mdInline(escHtml(closingLine));
         printClosing.style.display = '';
       }
     }
@@ -1493,6 +1497,24 @@ function trimPrintNotices() {
 function escHtml(s) {
   return String(s || '')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// Inline **bold** / *italic* / ***bold-italic*** markdown -> HTML, matching
+// welcome.html's mdInline and the app's renderFormattedWelcomeText -- so a
+// reflection pasted/imported with bold in the portal renders bold here too,
+// not as literal asterisks. Run AFTER escHtml so the source text is already
+// HTML-safe; the marker replacements only introduce our own tags.
+function mdInline(safe) {
+  return safe
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+}
+// Strips the same markers back out to plain text, for the few places a
+// reflection excerpt lands in a textContent field (the front-page pull-quote)
+// rather than innerHTML -- those can't render <strong>/<em>, so the next best
+// thing is not leaking literal asterisks into print.
+function stripMdMarkers(s) {
+  return String(s || '').replace(/\*\*\*(.+?)\*\*\*/g, '$1').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
 }
 
 // ── Front-page fit-to-page pass ─────────────────────────────────────────
