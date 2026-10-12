@@ -140,9 +140,10 @@ h1, h2 {
   border: 3px solid var(--gold); border-radius: 2.1rem;
 }
 .logo { width: min(16.5rem, 70%); height: auto; display: block; }
-.cover h1 { font-size: clamp(2.1rem, 9.5vw, 2.9rem); }
+.cover-mid { text-align: center; }
+.cover h1 { font-size: clamp(1.5rem, 8.2vw, 2.7rem); }
 .cover .sub { margin: 1rem 0 0; font-size: 1.4rem; color: var(--linen); }
-.cover-foot { display: flex; flex-direction: column; gap: .9rem; }
+.cover-foot { display: flex; flex-direction: column; align-items: center; gap: .9rem; text-align: center; }
 .rule { height: 3px; width: 6rem; background: var(--dusty-rose); }
 .cover-foot p { margin: 0; font-size: 1.15rem; color: var(--linen); }
 
@@ -263,8 +264,8 @@ h1, h2 {
         <img class="app-icon" src="/images/icon-512.png" alt="SaintRose app icon" width="136" height="136">
         <img class="logo" src="/images/app/logo-white.png" alt="St. Rose Philippine Duchesne" width="590" height="126">
       </div>
-      <div>
-        <h1>Your parish, in your pocket</h1>
+      <div class="cover-mid">
+        <h1>Your parish,<br>in your pocket</h1>
         <p class="sub">The new SaintRose app</p>
       </div>
       <div class="cover-foot">
