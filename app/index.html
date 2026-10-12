@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SaintRose App | Saint Rose Philippine Duchesne Parish</title>
+<meta name="description" content="Your parish, in your pocket. Meet the new SaintRose app from Saint Rose Philippine Duchesne Parish in Anthem, Arizona.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#5C1A2E">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Saint Rose Philippine Duchesne Parish">
+<meta property="og:title" content="The SaintRose app is here">
+<meta property="og:description" content="Your parish, in your pocket. Swipe through to see what's inside.">
+<meta property="og:url" content="https://saintroseanthem.org/app/">
+<meta property="og:image" content="https://saintroseanthem.org/images/app/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png?v=2">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png?v=2">
+<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Faustina:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --burgundy: #5C1A2E;
+  --burgundy-dark: #3F1120;
+  --dusty-rose: #C17A8A;
+  --gold: #C9A84C;
+  --linen: #E8DDD0;
+  --sand: #F7F3EE;
+  --soil: #3D2B2B;
+  --nav-h: 4.5rem;
+}
+
+* { box-sizing: border-box; }
+
+/* Let iPhone's Text Size setting scale everything, since many parishioners run large text */
+@supports (font: -apple-system-body) {
+  html { font: -apple-system-body; }
+}
+html { -webkit-text-size-adjust: 100%; }
+
+html, body { height: 100%; margin: 0; }
+body {
+  background: var(--burgundy-dark);
+  color: var(--soil);
+  font-family: 'Faustina', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  overflow: hidden;
+}
+
+h1, h2, .eyebrow, .btn, .next, .back { font-family: 'Cinzel', Georgia, serif; }
+
+/* ---------- Deck shell ---------- */
+.deck {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 30rem;
+  margin: 0 auto;
+  background: var(--burgundy);
+  overflow: hidden;
+}
+@media (min-width: 520px) {
+  .deck { box-shadow: 0 0 0 1px rgba(201,168,76,.35), 0 20px 60px rgba(0,0,0,.45); }
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.track::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .track { scroll-behavior: smooth; }
+}
+
+.slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow-y: auto;
+  padding: max(2rem, env(safe-area-inset-top)) 1.5rem calc(var(--nav-h) + 1.75rem + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.on-dark  { background: var(--burgundy); color: var(--sand); }
+.on-sand  { background: var(--sand);     color: var(--soil); }
+.on-linen { background: var(--linen);    color: var(--soil); }
+
+.eyebrow {
+  margin: 0 0 .75rem;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.on-dark .eyebrow { color: var(--gold); }
+.on-sand .eyebrow, .on-linen .eyebrow { color: var(--burgundy); }
+
+h1, h2 {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.15;
+  font-size: clamp(1.9rem, 8.6vw, 2.6rem);
+}
+.on-dark h1, .on-dark h2 { color: var(--sand); }
+.on-sand h1, .on-sand h2, .on-linen h1, .on-linen h2 { color: var(--burgundy); }
+
+.lead { margin: 1rem 0 0; font-size: 1.25rem; line-height: 1.4; }
+.on-dark .lead { color: var(--linen); }
+
+/* ---------- Cover ---------- */
+.cover { justify-content: space-between; }
+.cover-top {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1.5rem; text-align: center;
+}
+.cover-lines {
+  display: flex; flex-direction: column; align-items: center; gap: .35rem;
+  font-family: 'Cinzel', Georgia, serif; font-weight: 600;
+  letter-spacing: .18em; color: var(--gold); text-transform: uppercase;
+}
+.cover-lines .l1 { font-size: 1.35rem; }
+.cover-lines .l2, .cover-lines .l3 { font-size: .85rem; letter-spacing: .16em; }
+.app-icon {
+  width: 8.5rem; height: 8.5rem; display: block;
+  border: 3px solid var(--gold); border-radius: 2.1rem;
+}
+.logo { width: min(16.5rem, 70%); height: auto; display: block; }
+.cover h1 { font-size: clamp(2.1rem, 9.5vw, 2.9rem); }
+.cover .sub { margin: 1rem 0 0; font-size: 1.4rem; color: var(--linen); }
+.cover-foot { display: flex; flex-direction: column; gap: .9rem; }
+.rule { height: 3px; width: 6rem; background: var(--dusty-rose); }
+.cover-foot p { margin: 0; font-size: 1.15rem; color: var(--linen); }
+
+/* ---------- Bullet list (slides 2 and 5) ---------- */
+.items { display: flex; flex-direction: column; gap: 1.5rem; margin: 0; padding: 0; list-style: none; }
+.items li { display: flex; gap: 1rem; align-items: flex-start; }
+.items li::before {
+  content: ""; flex: 0 0 .7rem; height: .7rem; margin-top: .6rem;
+  border-radius: 50%; background: var(--gold);
+}
+.items strong {
+  display: block; font-weight: 600; font-size: 1.5rem; line-height: 1.2; color: var(--burgundy);
+}
+.items span { display: block; margin-top: .15rem; font-size: 1.2rem; line-height: 1.35; }
+.fine { margin: auto 0 0; font-size: 1.05rem; line-height: 1.4; }
+
+/* ---------- Screenshot slides ---------- */
+.shot {
+  flex: 1 0 18rem; min-height: 18rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.shot img {
+  display: block; height: 100%; max-height: 30rem; width: auto; max-width: 100%;
+  aspect-ratio: 640 / 1391; object-fit: cover;
+  border-radius: 1.9rem; border: 3px solid var(--burgundy);
+  box-shadow: 0 10px 28px rgba(61,43,43,.28);
+}
+.on-dark .shot img { border-color: var(--gold); box-shadow: 0 10px 28px rgba(0,0,0,.4); }
+
+/* ---------- Text-size slide ---------- */
+.sizes { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; gap: 1.1rem; }
+.size-card {
+  display: flex; align-items: baseline; justify-content: space-between;
+  background: var(--sand); border-radius: 1.4rem; padding: 1.1rem 1.5rem;
+}
+.size-card b { font-weight: 600; color: var(--soil); }
+.size-card i {
+  font-family: 'Cinzel', Georgia, serif; font-style: normal; font-weight: 700; color: var(--burgundy);
+}
+.size-card.s1 b { font-size: 1.15rem; } .size-card.s1 i { font-size: 1.7rem; }
+.size-card.s2 b { font-size: 1.4rem; }  .size-card.s2 i { font-size: 2.3rem; }
+.size-card.s3 { background: var(--burgundy); }
+.size-card.s3 b { font-size: 1.7rem; color: var(--sand); } .size-card.s3 i { font-size: 3.1rem; color: var(--gold); }
+
+/* ---------- Final slide ---------- */
+.get { justify-content: space-between; }
+.stores { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.75rem; }
+.btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem;
+  min-height: 4.25rem; padding: .9rem 1.25rem; border-radius: 1.2rem;
+  text-decoration: none; text-align: center; font-weight: 700;
+  font-size: 1.25rem; letter-spacing: .04em;
+  border: 2px solid var(--gold);
+}
+.btn small { font-family: 'Faustina', Georgia, serif; font-weight: 500; font-size: 1rem; letter-spacing: 0; }
+.btn.primary { background: var(--gold); color: var(--soil); }
+.btn.secondary { background: transparent; color: var(--sand); }
+.btn.disabled { background: rgba(247,243,238,.12); color: var(--linen); border-color: rgba(201,168,76,.55); cursor: default; }
+.get-foot { display: flex; flex-direction: column; gap: .9rem; }
+.get-foot p { margin: 0; font-size: 1.1rem; color: var(--linen); }
+.get-foot a { color: var(--gold); }
+
+/* ---------- Bottom navigation ---------- */
+.nav {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding: 0 .75rem env(safe-area-inset-bottom);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: .25rem; align-items: center;
+  background: var(--soil); color: var(--sand);
+  border-top: 1px solid rgba(201,168,76,.35);
+  box-shadow: 0 -10px 16px -6px rgba(0,0,0,.28);
+}
+.back, .next {
+  appearance: none; border: 0; cursor: pointer; min-height: 2.75rem;
+  font-weight: 600; font-size: .95rem; letter-spacing: .04em; white-space: nowrap;
+}
+.back { background: transparent; color: var(--linen); justify-self: start; padding: 0 .5rem; }
+.next {
+  background: var(--gold); color: var(--soil); border-radius: 1.4rem;
+  padding: 0 1rem; justify-self: end;
+}
+.back[hidden], .next[hidden] { display: block; visibility: hidden; }
+.dots { display: flex; justify-content: center; gap: 0; min-width: 0; }
+.dot {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  flex: 0 1 1.4rem; min-width: .8rem; height: 2.75rem; padding: 0; display: grid; place-items: center;
+}
+.dot::before {
+  content: ""; width: .6rem; height: .6rem; border-radius: 50%;
+  background: rgba(247,243,238,.35); transition: background .2s, transform .2s;
+}
+.dot[aria-current="true"]::before { background: var(--gold); transform: scale(1.25); }
+
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.on-sand :focus-visible, .on-linen :focus-visible { outline-color: var(--burgundy); }
+
+@media (max-width: 340px) {
+  .nav { padding: 0 .4rem env(safe-area-inset-bottom); }
+  .back, .next { font-size: .85rem; }
+  .back { padding: 0 .25rem; }
+  .next { padding: 0 .8rem; }
+}
+</style>
+</head>
+<body>
+
+<main class="deck" aria-label="SaintRose app introduction">
+  <div class="track" id="track" tabindex="-1">
+
+    <!-- 1 Cover -->
+    <section class="slide cover on-dark" aria-label="Slide 1 of 8">
+      <div class="cover-top">
+        <div class="cover-lines">
+          <div class="l1">Saint Rose</div>
+          <div class="l2">Philippine Duchesne Parish</div>
+          <div class="l3">Anthem, Arizona</div>
+        </div>
+        <img class="app-icon" src="/images/icon-512.png" alt="SaintRose app icon" width="136" height="136">
+        <img class="logo" src="/images/app/logo-white.png" alt="St. Rose Philippine Duchesne" width="590" height="126">
+      </div>
+      <div>
+        <h1>Your parish, in your pocket</h1>
+        <p class="sub">The new SaintRose app</p>
+      </div>
+      <div class="cover-foot">
+        <div class="rule"></div>
+        <p>Swipe to see what's inside.</p>
+      </div>
+    </section>
+
+    <!-- 2 What it is -->
+    <section class="slide on-sand" aria-label="Slide 2 of 8">
+      <div>
+        <p class="eyebrow">What it is</p>
+        <h2>One app for parish life</h2>
+      </div>
+      <ul class="items">
+        <li><div><strong>Read and reflect</strong><span>Weekly and daily reflections</span></div></li>
+        <li><div><strong>What's happening</strong><span>Events and announcements</span></div></li>
+        <li><div><strong>Get involved</strong><span>Ministries, polls and the Parish Family directory</span></div></li>
+        <li><div><strong>Watch live</strong><span>Parish livestreams</span></div></li>
+      </ul>
+    </section>
+
+    <!-- 3 Read and reflect -->
+    <section class="slide on-dark" aria-label="Slide 3 of 8">
+      <div>
+        <p class="eyebrow">Read and reflect</p>
+        <h2>Pause and reflect</h2>
+        <p class="lead">Read the weekly and daily reflections, right from the home screen.</p>
+      </div>
+      <div class="shot">
+        <img src="/images/app/home.jpg" alt="SaintRose app home screen showing the weekly and daily reflections" width="640" height="1391" loading="lazy">
+      </div>
+    </section>
+
+    <!-- 4 Stay in the loop -->
+    <section class="slide on-linen" aria-label="Slide 4 of 8">
+      <div>
+        <p class="eyebrow">Stay in the loop</p>
+        <h2>Never miss what's happening</h2>
+        <p class="lead">Parish events and announcements, right on your phone. Turn on notifications and the parish can reach you.</p>
+      </div>
+      <div class="shot">
+        <img src="/images/app/events.jpg" alt="SaintRose app Events tab listing upcoming parish events" width="640" height="1391" loading="lazy">
+      </div>
+    </section>
+
+    <!-- 5 Find your people -->
+    <section class="slide on-sand" aria-label="Slide 5 of 8">
+      <div>
+        <p class="eyebrow">Get connected</p>
+        <h2>Find your people</h2>
+      </div>
+      <ul class="items">
+        <li><div><strong>Ministries</strong><span>Browse parish ministries and join the conversation in ministry chat</span></div></li>
+        <li><div><strong>Parish Family</strong><span>Join the directory and get to know your neighbors</span></div></li>
+        <li><div><strong>Have your say</strong><span>Answer parish polls and reach out to the parish councils</span></div></li>
+      </ul>
+      <p class="fine">The Parish Family directory and ministry chat are for adults 18 and over.</p>
+    </section>
+
+    <!-- 6 Easy to read -->
+    <section class="slide on-linen" aria-label="Slide 6 of 8">
+      <div>
+        <p class="eyebrow">Made for everyone</p>
+        <h2>Easy to read, at any age</h2>
+        <p class="lead">Make the text as big as you like. Open the Me tab and choose Text size.</p>
+      </div>
+      <div class="sizes" aria-hidden="true">
+        <div class="size-card s1"><b>Regular</b><i>Aa</i></div>
+        <div class="size-card s2"><b>Large</b><i>Aa</i></div>
+        <div class="size-card s3"><b>Extra large</b><i>Aa</i></div>
+      </div>
+    </section>
+
+    <!-- 7 Watch live -->
+    <section class="slide on-sand" aria-label="Slide 7 of 8">
+      <div>
+        <p class="eyebrow">Watch live</p>
+        <h2>Join from anywhere</h2>
+        <p class="lead">Open the Video tab and tap Watch Live. During a streamed Mass you join live; any other time you see our latest video.</p>
+      </div>
+      <div class="shot">
+        <img src="/images/app/video.jpg" alt="SaintRose app Video tab with the Watch Live button" width="640" height="1391" loading="lazy">
+      </div>
+    </section>
+
+    <!-- 8 Get the app -->
+    <section class="slide get on-dark" aria-label="Slide 8 of 8" id="get">
+      <div>
+        <p class="eyebrow">Get the app</p>
+        <h2 id="get-title">Coming soon to your phone</h2>
+        <div class="stores" id="stores">
+          <span class="btn disabled" aria-disabled="true">iPhone<small>Coming soon</small></span>
+          <span class="btn disabled" aria-disabled="true">Android<small>Coming soon</small></span>
+        </div>
+      </div>
+      <div class="get-foot">
+        <div class="rule"></div>
+        <p>Saint Rose Philippine Duchesne Parish<br>Anthem, Arizona</p>
+        <p><a href="/">saintroseanthem.org</a></p>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="nav" aria-label="Slide navigation">
+    <button class="back" id="back" type="button" hidden>&larr; Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="next" id="next" type="button">Next &rarr;</button>
+  </nav>
+</main>
+
+<script>
+/* ============================================================
+   LAUNCH DAY: paste the two store links below, save, commit, push.
+   Leave a link as '' and its button stays "Coming soon".
+   ============================================================ */
+var IOS_URL     = '';   // e.g. 'https://apps.apple.com/us/app/saintrose/id0000000000'
+var ANDROID_URL = '';   // e.g. 'https://play.google.com/store/apps/details?id=com.sacredapps.saintrose'
+
+(function () {
+  var track = document.getElementById('track');
+  var slides = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var dotsEl = document.getElementById('dots');
+  var back = document.getElementById('back');
+  var next = document.getElementById('next');
+  var current = 0;
+
+  /* ---- Store buttons ---- */
+  function platform() {
+    var ua = navigator.userAgent || '';
+    if (/Android/i.test(ua)) return 'android';
+    if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+    return 'other';
+  }
+  function buildStores() {
+    var box = document.getElementById('stores');
+    var title = document.getElementById('get-title');
+    var items = [
+      { key: 'ios',     label: 'iPhone',  url: IOS_URL },
+      { key: 'android', label: 'Android', url: ANDROID_URL }
+    ];
+    var me = platform();
+    items.sort(function (a, b) { return (b.key === me) - (a.key === me); });
+
+    var anyLive = items.some(function (i) { return i.url; });
+    title.textContent = anyLive ? 'Get the app today' : 'Coming soon to your phone';
+    box.innerHTML = '';
+
+    items.forEach(function (it, idx) {
+      var el;
+      if (it.url) {
+        el = document.createElement('a');
+        el.href = it.url;
+        el.rel = 'noopener';
+        el.className = 'btn ' + (idx === 0 && me !== 'other' ? 'primary' : (me === 'other' ? 'primary' : 'secondary'));
+        el.innerHTML = 'Download for ' + it.label;
+      } else {
+        el = document.createElement('span');
+        el.className = 'btn disabled';
+        el.setAttribute('aria-disabled', 'true');
+        el.innerHTML = it.label + '<small>Coming soon</small>';
+      }
+      box.appendChild(el);
+    });
+  }
+  buildStores();
+
+  /* ---- Dots ---- */
+  slides.forEach(function (_, i) {
+    var d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ' of ' + slides.length);
+    d.addEventListener('click', function () { go(i); });
+    dotsEl.appendChild(d);
+  });
+  var dots = Array.prototype.slice.call(dotsEl.children);
+
+  function go(i) {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    track.scrollTo({ left: i * track.clientWidth });
+  }
+
+  function update() {
+    var i = Math.round(track.scrollLeft / track.clientWidth);
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    current = i;
+    dots.forEach(function (d, n) {
+      if (n === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+    });
+    back.hidden = (i === 0);
+    next.hidden = (i === slides.length - 1);
+  }
+
+  track.addEventListener('scroll', function () { window.requestAnimationFrame(update); }, { passive: true });
+  window.addEventListener('resize', function () { go(current); });
+  back.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { go(current + 1); }
+    else if (e.key === 'ArrowLeft') { go(current - 1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
