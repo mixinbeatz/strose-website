@@ -649,6 +649,7 @@
     border-radius: 8px;
     background: rgba(255,255,255,0.03);
   }
+  .app-qr-img { width: 110px; height: 110px; display: block; background: #fff; padding: 6px; border-radius: 8px; image-rendering: pixelated; }
   .app-qr-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(232,221,208,0.5); }
 
   /* ── LOCATION ── */
@@ -1108,20 +1109,20 @@
     </div>
   </div>
   <div class="app-cta-right reveal">
-    <a href="#" class="app-store-btn disabled" onclick="return false;" aria-disabled="true">
-      🍎 &nbsp; Coming Soon to the App Store
+    <a href="https://apps.apple.com/us/app/saintrose/id6762503079" class="app-store-btn" target="_blank" rel="noopener">
+      🍎 &nbsp; Download on the App Store
     </a>
-    <a href="#" class="app-store-btn disabled" onclick="return false;" aria-disabled="true">
-      ▶️ &nbsp; Coming Soon to Google Play
+    <a href="/android/" class="app-store-btn">
+      ▶️ &nbsp; Android: Join Early Access
     </a>
-    <p style="color:rgba(232,221,208,0.4);font-size:13px;">iOS &amp; Android · Free · No account required</p>
+    <p style="color:rgba(232,221,208,0.4);font-size:13px;">iPhone &amp; Android · Free · No account required</p>
     <div class="app-qr-row">
       <div class="app-qr-box">
-        <div class="app-qr-placeholder" id="app-qr-ios"><!-- replace with <img src="..."> when QR is ready --></div>
-        <span class="app-qr-label">iOS</span>
+        <img class="app-qr-img" id="app-qr-ios" src="images/qr-app-ios.png" alt="QR code: SaintRose on the App Store">
+        <span class="app-qr-label">iPhone</span>
       </div>
       <div class="app-qr-box">
-        <div class="app-qr-placeholder" id="app-qr-android"><!-- replace with <img src="..."> when QR is ready --></div>
+        <img class="app-qr-img" id="app-qr-android" src="images/qr-app-android.png" alt="QR code: Saint Rose app for Android">
         <span class="app-qr-label">Android</span>
       </div>
     </div>
