@@ -2047,7 +2047,21 @@ async function setWeekStrip() {
     if (locked) {
       let snap = await readSnapshot(weekStartISO);
       if (!snap) {
-        const events = await queryWeekEvents(weekStart, weekEnd);
+        // Live events plus whatever the nightly captureBulletinWeeks function
+        // already saved for this week (bulletinSnapshots/events-{weekStartISO}),
+        // so events that already happened -- and were swept out of the live
+        // calendar by expirePastEvents -- still make the printed bulletin.
+        const live = await queryWeekEvents(weekStart, weekEnd);
+        const kept = await readSnapshot('events-' + weekStartISO);
+        const events = {};
+        [kept && kept.byKey, live].forEach(src => {
+          Object.keys(src || {}).forEach(k => {
+            const list = (events[k] = events[k] || []);
+            src[k].forEach(e => {
+              if (!list.some(x => x.title === e.title && x.time === e.time)) list.push(e);
+            });
+          });
+        });
         // Resolve this week's center image and freeze it with the events:
         // recurring-date override → manual per-week override → sequential
         // rotation (which bases its "+1" on last week's locked slot, so a
