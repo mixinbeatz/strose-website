@@ -763,6 +763,8 @@ nav {
   height: 1in;
   border: 1px dashed var(--burgundy);
 }
+/* Real QR images (app links) fill the same 1in box, no dashed outline. */
+.print-qr-img { border: none; display: block; image-rendering: pixelated; }
 .print-qr-label {
   font-size: 8px;
   color: var(--burgundy);
@@ -1071,8 +1073,8 @@ nav {
       <div class="print-qr-group">
         <div class="print-qr-text">Get the SaintRose app</div>
         <div class="print-qr-codes">
-          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">iOS QR</div></div>
-          <div class="print-qr-item"><div class="print-qr-box"></div><div class="print-qr-label">Android QR</div></div>
+          <div class="print-qr-item"><img class="print-qr-box print-qr-img" src="images/qr-app-ios.png" alt="QR code: SaintRose on the App Store"><div class="print-qr-label">iPhone</div></div>
+          <div class="print-qr-item"><img class="print-qr-box print-qr-img" src="images/qr-app-android.png" alt="QR code: saintroseanthem.org/android"><div class="print-qr-label">Android</div></div>
         </div>
       </div>
       <div class="print-qr-group">
