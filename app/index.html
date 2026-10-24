@@ -201,6 +201,9 @@ h1, h2 {
 .btn small { font-family: 'Faustina', Georgia, serif; font-weight: 500; font-size: 1rem; letter-spacing: 0; }
 .btn.primary { background: var(--gold); color: var(--soil); }
 .btn.secondary { background: transparent; color: var(--sand); }
+.print-link { margin: 1.5rem 0 0; font-size: 1.05rem; text-align: center; }
+.print-link a { color: var(--linen); text-decoration: underline; text-underline-offset: 3px; }
+.print-link a:hover { color: var(--gold); }
 .btn.disabled { background: rgba(247,243,238,.12); color: var(--linen); border-color: rgba(201,168,76,.55); cursor: default; }
 .get-foot { display: flex; flex-direction: column; gap: .9rem; }
 .get-foot p { margin: 0; font-size: 1.1rem; color: var(--linen); }
@@ -361,6 +364,7 @@ h1, h2 {
           <span class="btn disabled" aria-disabled="true">iPhone<small>Coming soon</small></span>
           <span class="btn disabled" aria-disabled="true">Android<small>Coming soon</small></span>
         </div>
+        <p class="print-link"><a href="/app/print.html">Print a one-page flyer with QR codes</a></p>
       </div>
       <div class="get-foot">
         <div class="rule"></div>

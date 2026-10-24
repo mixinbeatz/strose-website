@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SaintRose App One-Sheet | Saint Rose Philippine Duchesne Parish</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png?v=2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Faustina:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #5C1A2E; --ink: #111; --ink2: #333; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: #e9e5df; font-family: 'Faustina', Georgia, serif; color: #1a1a1a; }
+
+  /* Screen-only toolbar (hidden when printing) */
+  .bar {
+    position: sticky; top: 0; z-index: 10; display: flex; gap: 12px; align-items: center;
+    justify-content: center; flex-wrap: wrap; padding: 12px 16px; background: #5C1A2E;
+  }
+  .bar a, .bar button {
+    font-family: 'Cinzel', Georgia, serif; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase;
+    text-decoration: none; border-radius: 6px; padding: 10px 18px; cursor: pointer; border: 1px solid #C9A84C;
+  }
+  .bar .print { background: #C9A84C; color: #3D0F1E; font-weight: 600; }
+  .bar .back { background: transparent; color: #E8DDD0; }
+  .bar span { color: #E8DDD0; font-size: 14px; }
+
+  .stage { padding: 24px 12px 48px; display: flex; justify-content: center; }
+  .sheet-wrap { width: 816px; max-width: 100%; }
+  .sheet {
+    width: 816px; height: 1056px; background: #fff; padding: 56px 64px 44px;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    box-shadow: 0 8px 30px rgba(0,0,0,.18); transform-origin: top left;
+  }
+  .eyebrow { font-family: 'Cinzel', Georgia, serif; font-size: 14px; letter-spacing: 4px; color: var(--accent); font-weight: 600; }
+  h1 { margin: 22px 0 0; font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 72px; line-height: 1; letter-spacing: 1px; color: var(--ink); }
+  .tag { margin: 18px 0 0; font-size: 24px; line-height: 1.3; color: var(--ink2); font-style: italic; }
+  .rule2 { width: 100%; height: 2px; background: var(--ink); margin: 24px 0 28px; }
+  .rule1 { width: 100%; height: 1px; background: var(--ink); }
+  .qrs { display: flex; gap: 56px; justify-content: center; width: 100%; }
+  .qr-col { display: flex; flex-direction: column; align-items: center; width: 300px; }
+  .qr-box { border: 3px solid var(--ink); padding: 14px; background: #fff; }
+  .qr-box img { width: 244px; height: 244px; display: block; image-rendering: pixelated; }
+  .qr-label { margin-top: 18px; font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 30px; letter-spacing: 1px; color: var(--ink); }
+  .qr-sub { margin-top: 6px; font-size: 17px; line-height: 1.35; color: var(--ink2); }
+  .cant { margin: 28px 0 0; font-size: 17px; color: var(--ink2); }
+  .cant strong { color: var(--ink); }
+  .inside-h { margin-top: 20px; font-family: 'Cinzel', Georgia, serif; font-size: 16px; letter-spacing: 3px; color: var(--accent); font-weight: 600; }
+  .rule1.mid { margin: 24px 0 0; }
+  .inside { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 48px; row-gap: 10px; margin-top: 16px; width: 100%; text-align: left; font-size: 19px; line-height: 1.3; }
+  .inside div { display: flex; gap: 10px; }
+  .inside b { font-weight: 700; }
+  .spacer { flex-grow: 1; }
+  .foot { margin: 14px 0 0; font-size: 15px; line-height: 1.4; color: var(--ink2); }
+
+  @page { size: letter portrait; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .bar { display: none !important; }
+    .stage { padding: 0; display: block; }
+    .sheet-wrap { width: auto; }
+    .sheet { box-shadow: none; transform: none !important; margin: 0; page-break-after: avoid; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="back" href="/app/#get">&larr; Back to the app tour</a>
+  <button class="print" type="button" onclick="window.print()">Print this page</button>
+  <span>Letter size, black &amp; white friendly</span>
+</div>
+
+<div class="stage">
+  <div class="sheet-wrap" id="wrap">
+    <div class="sheet" id="sheet">
+      <div class="eyebrow">SAINT ROSE PHILIPPINE DUCHESNE · ANTHEM, ARIZONA</div>
+      <h1>Get the<br>SaintRose app</h1>
+      <div class="tag">Your parish, in your pocket.</div>
+      <div class="rule2"></div>
+
+      <div class="qrs">
+        <div class="qr-col">
+          <div class="qr-box"><img src="/images/qr-app-ios.png" alt="QR code to download the SaintRose app from the App Store"></div>
+          <div class="qr-label">iPhone</div>
+          <div class="qr-sub">Scan to open the App Store</div>
+        </div>
+        <div class="qr-col">
+          <div class="qr-box"><img src="/images/qr-app-android.png" alt="QR code to the Android early-access page"></div>
+          <div class="qr-label">Android</div>
+          <div class="qr-sub">Scan to join early access<br>(takes about two minutes)</div>
+        </div>
+      </div>
+
+      <div class="cant">Can&rsquo;t scan? Visit <strong>saintroseanthem.org/app</strong></div>
+      <div class="rule1 mid"></div>
+      <div class="inside-h">WHAT&rsquo;S INSIDE</div>
+      <div class="inside">
+        <div><b>+</b><span>Daily and weekly reflections</span></div>
+        <div><b>+</b><span>Mass times and live stream</span></div>
+        <div><b>+</b><span>Events and announcements</span></div>
+        <div><b>+</b><span>Ministries, polls and sign-ups</span></div>
+        <div><b>+</b><span>Parish Family directory</span></div>
+        <div><b>+</b><span>Online giving</span></div>
+      </div>
+
+      <div class="spacer" style="min-height:20px"></div>
+      <div class="rule1"></div>
+      <div class="foot">2825 W Rose Canyon Circle, Anthem, AZ 85086 · (623) 465-9740 · saintroseanthem.org</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// On narrow screens, scale the letter-size sheet down to fit (screen only; print is unaffected).
+(function () {
+  var sheet = document.getElementById('sheet'), wrap = document.getElementById('wrap');
+  function fit() {
+    var avail = Math.min(816, document.documentElement.clientWidth - 24);
+    var s = avail / 816;
+    if (s < 1) { sheet.style.transform = 'scale(' + s + ')'; wrap.style.height = (1056 * s) + 'px'; wrap.style.width = avail + 'px'; }
+    else { sheet.style.transform = ''; wrap.style.height = ''; wrap.style.width = ''; }
+  }
+  window.addEventListener('resize', fit); fit();
+  window.addEventListener('beforeprint', function () { sheet.style.transform = 'none'; wrap.style.height = 'auto'; wrap.style.width = 'auto'; });
+  window.addEventListener('afterprint', fit);
+})();
+</script>
+</body>
+</html>
