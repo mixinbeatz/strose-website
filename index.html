@@ -275,6 +275,10 @@
   .hero-welcome-divider .divider-ornament {
     color: var(--gold); font-size: 13px; line-height: 1;
   }
+  .hero-welcome-divider.divider-sand { background: var(--sand); }
+  .hero-welcome-divider.divider-linen { background: var(--linen); }
+  /* hide the divider above Parish Development while that section is hidden */
+  .section-divider:has(+ #parish-development[style*="none"]) { display: none; }
   .welcome {
     background: var(--linen);
     display: grid;
@@ -943,6 +947,12 @@
   </div>
 </div>
 
+<div class="hero-welcome-divider section-divider divider-sand">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
+
 <!-- THIS WEEK -->
 <section class="this-week" id="mass-times">
   <div class="reveal">
@@ -954,6 +964,12 @@
   </div>
   <a href="bulletin.html" class="btn-primary" style="display:inline-block;margin-top:32px;font-size:12px;padding:12px 20px;">View This Week's Bulletin</a>
 </section>
+
+<div class="hero-welcome-divider section-divider divider-sand">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
 
 <!-- NEW CHURCH -->
 <section class="new-church" id="new-church">
@@ -985,6 +1001,12 @@
     </div>
   </div>
 </section>
+
+<div class="hero-welcome-divider section-divider divider-linen">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
 
 <!-- DEDICATION DAY -->
 <section class="dedication">
@@ -1018,6 +1040,12 @@
   </div>
 </section>
 
+<div class="hero-welcome-divider section-divider divider-linen">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
+
 <!-- AROUND THE PARISH -->
 <section class="dedication" id="around-parish">
   <div class="reveal">
@@ -1048,6 +1076,12 @@
     </div>
   </div>
 </section>
+<div class="hero-welcome-divider section-divider divider-linen">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
+
 <!-- PARISH DEVELOPMENT -->
 <section class="dedication" id="parish-development" style="display:none;">
   <div class="reveal">
@@ -1067,6 +1101,12 @@
     <div class="parish-dev-funded-body" id="parish-dev-funded-body">This project has been fully funded thanks to the generosity of our parish family. Contact Paul Novak for future giving opportunities.</div>
   </div>
 </section>
+<div class="hero-welcome-divider section-divider divider-linen">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
+
 <!-- QUICK LINKS -->
 <div class="quick-links">
   <a href="https://parishesonline.com/publication-page/st-rose-philippine-duchesne-roman-catholic-parish" class="quick-link-item">
@@ -1093,6 +1133,12 @@
     <div class="quick-link-title">Eucharistic Adoration</div>
     <div class="quick-link-sub">Sign up for a holy hour</div>
   </a>
+</div>
+
+<div class="hero-welcome-divider section-divider divider-linen">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
 </div>
 
 <!-- APP CTA -->
@@ -1129,6 +1175,12 @@
     </div>
   </div>
 </section>
+
+<div class="hero-welcome-divider section-divider divider-sand">
+  <div class="divider-line"></div>
+  <div class="divider-ornament">✦</div>
+  <div class="divider-line"></div>
+</div>
 
 <!-- LOCATION -->
 <section class="location" id="location">
