@@ -80,6 +80,9 @@
 
 <div class="wrap">
   <div class="section">
+    <div class="callout" id="chrome-tip" style="margin-top:0;">
+      <strong>If a button does nothing when you tap it,</strong> this page is open inside another app. <a id="chrome-link" href="#">Tap here to open it in Chrome</a>, then start again at step 1.
+    </div>
     <p class="lead">The Android app is in its <strong>early-access</strong> stage on Google Play. Anyone in the parish can join. It takes about two minutes. Do these steps <strong>on your Android phone or tablet</strong>.</p>
 
     <div class="step">
@@ -87,7 +90,7 @@
       <div class="step-body">
         <div class="step-title">Join the tester group</div>
         <p>Tap the button, then tap <strong>Join group</strong>. Use the same Google account that your phone's Play Store uses.</p>
-        <a class="btn" href="https://groups.google.com/g/saint-rose-android-testers" target="_blank" rel="noopener">Join the group</a>
+        <a class="btn" href="https://groups.google.com/g/saint-rose-android-testers">Join the group</a>
       </div>
     </div>
 
@@ -95,8 +98,8 @@
       <div class="num">2</div>
       <div class="step-body">
         <div class="step-title">Become a tester</div>
-        <p>Tap the button, then tap <strong>Become a tester</strong>.</p>
-        <a class="btn" id="optin-btn" href="#" target="_blank" rel="noopener">Become a tester</a>
+        <p>Tap the button, then tap <strong>Become a tester</strong>. If it says "item not found," wait a few minutes after joining the group and try again.</p>
+        <a class="btn" id="optin-btn" href="#">Become a tester</a>
       </div>
     </div>
 
@@ -105,7 +108,7 @@
       <div class="step-body">
         <div class="step-title">Install the app</div>
         <p>Tap the button to open the app in the Play Store, then tap <strong>Install</strong>. Sign in with Google, Apple, or email once it opens.</p>
-        <a class="btn" id="install-btn" href="#" target="_blank" rel="noopener">Open in Google Play</a>
+        <a class="btn" id="install-btn" href="#">Open in Google Play</a>
         <p class="note" style="margin-top:12px;">During early access the Play Store may show the app under a temporary name. That's expected.</p>
       </div>
     </div>
@@ -155,7 +158,22 @@ var INSTALL_URL = 'https://play.google.com/store/apps/details?id=com.thefaithful
     optin.className = 'btn disabled';
     optin.removeAttribute('href');
   }
-  install.href = INSTALL_URL;
+  var isAndroid = /Android/i.test(navigator.userAgent);
+  var fallback = encodeURIComponent(INSTALL_URL);
+  if (isAndroid) {
+    /* Opens the Play Store app directly; falls back to the web page. */
+    install.href = 'intent://details?id=com.thefaithfulones.app#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=' + fallback + ';end';
+  } else {
+    install.href = INSTALL_URL;
+  }
+  /* Hand the page off to Chrome (escapes camera/Lens/in-app viewers). */
+  var tip = document.getElementById('chrome-tip');
+  var link = document.getElementById('chrome-link');
+  if (isAndroid) {
+    link.href = 'intent://saintroseanthem.org/android/#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent('https://saintroseanthem.org/android/') + ';end';
+  } else {
+    tip.style.display = 'none';
+  }
 })();
 </script>
 </body>
