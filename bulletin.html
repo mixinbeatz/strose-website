@@ -794,6 +794,8 @@ nav {
 .print-page-back .notices-grid { display: block; column-count: 2; column-gap: calc(12px * var(--bulletin-scale-back, 1)); }
 .print-page-back .notice-card { padding: calc(6px * var(--bulletin-scale-back, 1)) calc(9px * var(--bulletin-scale-back, 1)); margin: 0 0 calc(6px * var(--bulletin-scale-back, 1)); break-inside: avoid; }
 .print-page-back .notice-title { font-size: calc(13.5px * var(--bulletin-scale-back, 1)); margin-bottom: 2px; }
+.notice-body a { color: inherit; text-decoration: underline; word-break: break-word; }
+@media print { .notice-body a.md-link:after { content: " (" attr(href) ")"; font-size: .85em; } }
 .print-page-back .notice-body { font-size: calc(12.5px * var(--bulletin-scale-back, 1)); line-height: 1.32; }
 /* Back-page section headers (Weekly Reflection / Around the Parish) — the
    front page's Mass Intentions header rides --bulletin-scale via the
@@ -1410,7 +1412,7 @@ function noticeCardHtml(doc) {
   return `
       <div class="notice-card">
         <div class="notice-title">${escHtml(gf(doc, 'title'))}</div>
-        <div class="notice-body">${escHtml(gf(doc, 'body'))}</div>
+        <div class="notice-body">${mdInline(escHtml(gf(doc, 'body')))}</div>
       </div>`;
 }
 async function loadNotices() {
@@ -1497,17 +1499,29 @@ function escHtml(s) {
 // not as literal asterisks. Run AFTER escHtml so the source text is already
 // HTML-safe; the marker replacements only introduce our own tags.
 function mdInline(safe) {
-  return safe
+  // [words](address) links and plain web addresses are set aside first so the
+  // bold/italic markers below can't mangle an address, then put back.
+  const held = [];
+  const hold = (html) => '\u0000' + (held.push(html) - 1) + '\u0000';
+  safe = safe.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^\s)"'<>]+)\)/gi,
+    (m, label, url) => hold('<a class="md-link" href="' + url + '" target="_blank" rel="noopener">' + label + '</a>'));
+  safe = safe.replace(/(https?:\/\/[^\s<>"']+)/gi, (m) => {
+    const t = m.match(/[.,;:!?)\]]+$/);
+    const url = t ? m.slice(0, m.length - t[0].length) : m;
+    return hold('<a class="auto-link" href="' + url + '" target="_blank" rel="noopener">' + url + '</a>') + (t ? t[0] : '');
+  });
+  safe = safe
     .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  return safe.replace(/\u0000(\d+)\u0000/g, (m, i) => held[+i]);
 }
 // Strips the same markers back out to plain text, for the few places a
 // reflection excerpt lands in a textContent field (the front-page pull-quote)
 // rather than innerHTML -- those can't render <strong>/<em>, so the next best
 // thing is not leaking literal asterisks into print.
 function stripMdMarkers(s) {
-  return String(s || '').replace(/\*\*\*(.+?)\*\*\*/g, '$1').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
+  return String(s || '').replace(/\[([^\]]+)\]\(\S+?\)/g, '$1').replace(/\*\*\*(.+?)\*\*\*/g, '$1').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
 }
 
 // ── Front-page fit-to-page pass ─────────────────────────────────────────

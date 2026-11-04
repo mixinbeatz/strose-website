@@ -151,6 +151,7 @@
   .welcome-body p + p { margin-top: 16px; }
   .welcome-body strong { font-family: 'Faustina', serif; font-weight: 700; }
   .welcome-body em { font-style: italic; }
+  .welcome-body a { color: var(--burgundy); text-decoration: underline; word-break: break-word; }
 
   /* ── FOOTER (matches index.html) ── */
   footer {
@@ -331,10 +332,22 @@
   // the app's renderFormattedWelcomeText. Run AFTER esc() so the source text
   // is already HTML-safe; the marker replacements only introduce our own tags.
   function mdInline(safe) {
-    return safe
+    // [words](address) links and plain web addresses are set aside first so the
+    // bold/italic markers below can't mangle an address, then put back.
+    const held = [];
+    const hold = (html) => '\u0000' + (held.push(html) - 1) + '\u0000';
+    safe = safe.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^\s)"'<>]+)\)/gi,
+      (m, label, url) => hold('<a class="md-link" href="' + url + '" target="_blank" rel="noopener">' + label + '</a>'));
+    safe = safe.replace(/(https?:\/\/[^\s<>"']+)/gi, (m) => {
+      const t = m.match(/[.,;:!?)\]]+$/);
+      const url = t ? m.slice(0, m.length - t[0].length) : m;
+      return hold('<a class="auto-link" href="' + url + '" target="_blank" rel="noopener">' + url + '</a>') + (t ? t[0] : '');
+    });
+    safe = safe
       .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>');
+    return safe.replace(/\u0000(\d+)\u0000/g, (m, i) => held[+i]);
   }
 
   // Welcome text + photo — live from siteContent/welcome (staff-set in the
