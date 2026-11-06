@@ -101,7 +101,7 @@
   <img class="hero-watermark" src="images/IHS.png" alt="" />
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
   <h1 class="hero-title">Faith Formation Registration</h1>
-  <p class="hero-sub">Children's Ministry 2026&ndash;2027 · PS through Grade 5. Register your child for Faith Formation classes and Sacramental Preparation. When you submit, this opens a pre-filled email to our Faith Formation office so nothing is lost.</p>
+  <p class="hero-sub">Children's Ministry <span id="ff-year">2026&ndash;2027</span> · PS through Grade 5. Register your child for Faith Formation classes and Sacramental Preparation. When you submit, this opens a pre-filled email to our Faith Formation office so nothing is lost.</p>
 </div>
 
 <div class="gold-divider"></div>
@@ -110,7 +110,7 @@
   <div class="form-section">
     <div id="form-content">
 
-      <p class="form-sub">Fields marked <span class="required">*</span> are required. Please read the Parent's Handbook, which explains our programs in detail. Registration is due on or before <strong>August 1, 2026</strong>.</p>
+      <p class="form-sub">Fields marked <span class="required">*</span> are required. Please read the Parent's Handbook, which explains our programs in detail. <span id="ff-due-wrap">Registration is due on or before <strong id="ff-due">August 1, 2026</strong>.</span></p>
 
       <!-- FAMILY INFORMATION -->
       <div class="form-block">
@@ -247,11 +247,11 @@
           <div class="fee-row"><span id="fee-sac-label">Sacramental Preparation (0 children)</span><span id="fee-sac-amount">$0</span></div>
           <div class="fee-row total"><span>Estimated Total</span><span id="fee-total-amount">$0</span></div>
           <div class="fee-note">
-            <strong>This is an estimate.</strong> $100 per child for the first 3 children, $60 for each additional child. Year 2 (Reconciliation) and Year 3 (Confirmation/Eucharist) each add a $60 Sacramental Preparation fee per child. Final fees are confirmed by the Faith Formation office.
+            <strong>This is an estimate.</strong> <span id="ff-fee-text">$100 per child for the first 3 children, $60 for each additional child. Year 2 (Reconciliation) and Year 3 (Confirmation/Eucharist) each add a $60 Sacramental Preparation fee per child. Final fees are confirmed by the Faith Formation office.</span>
           </div>
           <a class="weshare-btn" href="https://giving.myparishsoft.io/app/giving/WeShare-2050?tab=home" target="_blank" rel="noopener">Pay Online via WeShare →</a>
           <div class="fee-note">
-            Payment in full is requested at the time of registration. If you are unable to pay in full, or need payment arrangements, please contact the Faith Formation office at <strong>623-307-8268</strong> or <strong>rhunsaker@stroseanthem.com</strong>.
+            Payment in full is requested at the time of registration. If you are unable to pay in full, or need payment arrangements, please contact the Faith Formation office at <strong id="ff-phone">623-307-8268</strong> or <strong id="ff-email">rhunsaker@stroseanthem.com</strong>.
           </div>
         </div>
       </div>
@@ -283,12 +283,14 @@
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
   const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
-  const FAITH_FORMATION_EMAIL = 'rhunsaker@stroseanthem.com';
+  let FAITH_FORMATION_EMAIL = 'rhunsaker@stroseanthem.com';
+  let FORM_YEAR = '2026-2027';
+  let FEE_FIRST3 = 100, FEE_ADDITIONAL = 60, FEE_SAC = 60;
 
   const GRADES = ['PS', 'PK', 'K', '1', '2', '3', '4', '5'];
   const SACRAMENTS = ['Baptism', 'Reconciliation', 'First Eucharist', 'Confirmation', 'None of the Above'];
   // Class options — a single select per child enforces "Sunday OR Wednesday, not both".
-  const CLASS_OPTIONS = [
+  let CLASS_OPTIONS = [
     'PS / PK / Kindergarten — Sunday 9:15am (Spirituality Center)',
     'PS / PK / Kindergarten — Wednesday 4:30pm (Spirituality Center)',
     'Year 1 — Sunday 9:15am (Formation Center)',
@@ -301,6 +303,39 @@
     'Year 4/5 — Wednesday 4:30pm (Parish Office)',
     'OCIC / OCIT — Monday 4:30pm (Formation Center)'
   ];
+
+
+  // Portal-editable settings (siteContent/{docId}); every value falls back to the
+  // defaults baked into this page, so a failed fetch changes nothing.
+  function loadFormSettings(docId, apply) {
+    fetch(`${BASE}/siteContent/${docId}?key=${API_KEY}`)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d || !d.fields) return;
+        apply(function(k){ var f = d.fields[k]; return f && typeof f.stringValue === 'string' ? f.stringValue.trim() : ''; });
+      })
+      .catch(function(){ /* keep defaults */ });
+  }
+  function settingEmail(v, fallback) { return /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]+$/.test(v) ? v : fallback; }
+  function settingFee(v, fallback) { var n = parseInt(v, 10); return isFinite(n) && n >= 0 && n <= 100000 ? n : fallback; }
+  function setText(id, v) { var el = document.getElementById(id); if (el && v) el.textContent = v; }
+
+  loadFormSettings('faithFormationForm', function(g) {
+    var yr = g('schoolYear'); if (yr) { FORM_YEAR = yr.replace(/[\u2013\u2014]/g, '-'); setText('ff-year', yr); }
+    var due = g('dueDate');
+    if (due) { setText('ff-due', due); }
+    else if (g('dueDateHidden') === 'yes') { var w = document.getElementById('ff-due-wrap'); if (w) w.style.display = 'none'; }
+    FAITH_FORMATION_EMAIL = settingEmail(g('recipientEmail'), FAITH_FORMATION_EMAIL);
+    setText('ff-email', FAITH_FORMATION_EMAIL);
+    setText('ff-phone', g('contactPhone'));
+    FEE_FIRST3 = settingFee(g('feeFirst3'), FEE_FIRST3);
+    FEE_ADDITIONAL = settingFee(g('feeAdditional'), FEE_ADDITIONAL);
+    FEE_SAC = settingFee(g('feeSacPrep'), FEE_SAC);
+    setText('ff-fee-text', '$' + FEE_FIRST3 + ' per child for the first 3 children, $' + FEE_ADDITIONAL + ' for each additional child. Year 2 (Reconciliation) and Year 3 (Confirmation/Eucharist) each add a $' + FEE_SAC + ' Sacramental Preparation fee per child. Final fees are confirmed by the Faith Formation office.');
+    var classes = g('classOptions').split(/\r?\n/).map(function(x){ return x.trim(); }).filter(Boolean);
+    if (classes.length) CLASS_OPTIONS = classes;
+    if (typeof recalcFees === 'function') recalcFees();
+  });
 
   function formatPhoneInput(el) {
     let digits = el.value.replace(/\D/g, '').slice(0, 10);
@@ -413,9 +448,9 @@
     const n = children.filter(function(c){ return c.name; }).length;
     const first3 = Math.min(n, 3);
     const additional = Math.max(0, n - 3);
-    const registrationFee = first3 * 100 + additional * 60;
+    const registrationFee = first3 * FEE_FIRST3 + additional * FEE_ADDITIONAL;
     const sacCount = children.filter(function(c){ return c.name && isSacramentalClass(c.classRegistration); }).length;
-    const sacramentalPrepFee = sacCount * 60;
+    const sacramentalPrepFee = sacCount * FEE_SAC;
     return {
       childCount: n,
       first3: first3,
@@ -431,10 +466,10 @@
     const f = computeFees(collectChildren());
     document.getElementById('fee-reg-label').textContent =
       'Registration fee (' + f.childCount + (f.childCount === 1 ? ' child' : ' children') + ')' +
-      (f.additional > 0 ? ' — ' + f.first3 + ' @ $100 + ' + f.additional + ' @ $60' : '');
+      (f.additional > 0 ? ' — ' + f.first3 + ' @ $' + FEE_FIRST3 + ' + ' + f.additional + ' @ $' + FEE_ADDITIONAL : '');
     document.getElementById('fee-reg-amount').textContent = '$' + f.registrationFee;
     document.getElementById('fee-sac-label').textContent =
-      'Sacramental Preparation (' + f.sacramentalCount + (f.sacramentalCount === 1 ? ' child' : ' children') + ' @ $60)';
+      'Sacramental Preparation (' + f.sacramentalCount + (f.sacramentalCount === 1 ? ' child' : ' children') + ' @ $' + FEE_SAC + ')';
     document.getElementById('fee-sac-amount').textContent = '$' + f.sacramentalPrepFee;
     document.getElementById('fee-total-amount').textContent = '$' + f.total;
   }
@@ -443,7 +478,7 @@
   function buildSummary(children, fees) {
     const lines = [];
     lines.push('FAITH FORMATION REGISTRATION (PS–Grade 5) — Saint Rose Philippine Duchesne');
-    lines.push('Children’s Ministry 2026-2027');
+    lines.push('Children’s Ministry ' + FORM_YEAR);
     lines.push('Submitted: ' + new Date().toLocaleString('en-US'));
     lines.push('');
 
@@ -498,8 +533,8 @@
     ]);
     section('FEE ESTIMATE', [
       ['Children', String(fees.childCount)],
-      ['Registration fee', '$' + fees.registrationFee + (fees.additional > 0 ? '  (' + fees.first3 + ' @ $100 + ' + fees.additional + ' @ $60)' : '  (' + fees.first3 + ' @ $100)')],
-      ['Sacramental Preparation', '$' + fees.sacramentalPrepFee + '  (' + fees.sacramentalCount + ' @ $60)'],
+      ['Registration fee', '$' + fees.registrationFee + (fees.additional > 0 ? '  (' + fees.first3 + ' @ $' + FEE_FIRST3 + ' + ' + fees.additional + ' @ $' + FEE_ADDITIONAL + ')' : '  (' + fees.first3 + ' @ $' + FEE_FIRST3 + ')')],
+      ['Sacramental Preparation', '$' + fees.sacramentalPrepFee + '  (' + fees.sacramentalCount + ' @ $' + FEE_SAC + ')'],
       ['Estimated Total', '$' + fees.total + '  (estimate — confirmed by the Faith Formation office)'],
     ]);
 

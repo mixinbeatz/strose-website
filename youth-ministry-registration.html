@@ -105,7 +105,7 @@
   <img class="hero-watermark" src="images/IHS.png" alt="" />
   <div class="hero-eyebrow">Saint Rose Philippine Duchesne · Anthem, Arizona</div>
   <h1 class="hero-title">Youth Ministry Registration</h1>
-  <p class="hero-sub">St. Rose Edge &amp; Life Teen · 2026&ndash;2027. Registration is not complete unless the form is filled out in full. When you submit, this opens a pre-filled email to Chris Bosn so nothing is lost.</p>
+  <p class="hero-sub">St. Rose Edge &amp; Life Teen · <span id="ym-year">2026&ndash;2027</span>. Registration is not complete unless the form is filled out in full. When you submit, this opens a pre-filled email to Chris Bosn so nothing is lost.</p>
 </div>
 
 <div class="gold-divider"></div>
@@ -120,8 +120,8 @@
       <div class="form-block">
         <div class="form-block-title">Schedule</div>
         <div class="info-panel">
-          <strong>Middle School</strong> (Grades 6&ndash;8) &mdash; Sundays 9:15am&ndash;10:45am<br>
-          <strong>High School</strong> (Grades 9&ndash;12) &mdash; Sundays 12:15pm&ndash;1:45pm<br>
+          <strong>Middle School</strong> (Grades 6&ndash;8) &mdash; <span id="ym-ms-sched">Sundays 9:15am&ndash;10:45am</span><br>
+          <strong>High School</strong> (Grades 9&ndash;12) &mdash; <span id="ym-hs-sched">Sundays 12:15pm&ndash;1:45pm</span><br>
           Every teen is welcome to participate in our youth ministry activities.
         </div>
       </div>
@@ -214,7 +214,7 @@
       <!-- TEENS / CHILDREN -->
       <div class="form-block">
         <div class="form-block-title">Teens / Children</div>
-        <div class="form-block-sub">Add one card per teen (up to 4). Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) carries an additional $60 fee per child &mdash; check the box on the card if enrolling this year.</div>
+        <div class="form-block-sub">Add one card per teen (up to 4). Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) carries an additional $<span class="ym-sac-fee">60</span> fee per child &mdash; check the box on the card if enrolling this year.</div>
         <div id="children-list"></div>
         <button type="button" class="add-child-btn" id="add-child-btn" onclick="addChildRow()">+ Add Teen</button>
       </div>
@@ -355,11 +355,11 @@
           <div class="fee-row"><span id="fee-sac-label">Sacramental Preparation (0 children @ $60)</span><span id="fee-sac-amount">$0</span></div>
           <div class="fee-row total"><span>Estimated Total</span><span id="fee-total-amount">$0</span></div>
           <div class="fee-note">
-            <strong>This is an estimate.</strong> The suggested registration fee is $100 per teen &mdash; but <strong>no one is turned away due to cost</strong>. Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) adds $60 per child. We are happy to work with each family individually.
+            <strong>This is an estimate.</strong> The suggested registration fee is $<span class="ym-teen-fee">100</span> per teen &mdash; but <strong>no one is turned away due to cost</strong>. Sacramental Preparation (Reconciliation or Confirmation/First Eucharist) adds $<span class="ym-sac-fee">60</span> per child. We are happy to work with each family individually.
           </div>
           <a class="weshare-btn" href="https://giving.myparishsoft.io/App/Form/1430f286-8a38-499a-a52f-2958264408d4" target="_blank" rel="noopener">Pay Online &rarr;</a>
           <div class="fee-note">
-            If you are unable to pay online, or need a fee waiver, please contact Chris Bosn in the parish office at <strong>623-465-9740 ext. 102</strong> or <strong>chrisbosn@stroseanthem.com</strong>.
+            If you are unable to pay online, or need a fee waiver, please contact Chris Bosn in the parish office at <strong id="ym-phone">623-465-9740 ext. 102</strong> or <strong id="ym-email">chrisbosn@stroseanthem.com</strong>.
           </div>
         </div>
       </div>
@@ -391,7 +391,9 @@
   const API_KEY = 'AIzaSyBKjyHaRNkIjTV87zrhhvg6pBxarm3lcQ8';
   const PROJECT_ID = 'saint-rose-anthem';
   const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/parishes/saint-rose-anthem`;
-  const YOUTH_MINISTRY_EMAIL = 'chrisbosn@stroseanthem.com';
+  let YOUTH_MINISTRY_EMAIL = 'chrisbosn@stroseanthem.com';
+  let FORM_YEAR = '2026-2027';
+  let FEE_TEEN = 100, FEE_SAC = 60;
 
   const SACRAMENTS = ['Baptism', 'Reconciliation', 'First Eucharist', 'Confirmation', 'None of the Above'];
   const PROGRAMS = ['Middle School (Grades 6-8)', 'High School (Grades 9-12)'];
@@ -408,6 +410,36 @@
       })
       .catch(function(){ /* keep fallback */ });
   })();
+
+
+  // Portal-editable settings (siteContent/{docId}); every value falls back to the
+  // defaults baked into this page, so a failed fetch changes nothing.
+  function loadFormSettings(docId, apply) {
+    fetch(`${BASE}/siteContent/${docId}?key=${API_KEY}`)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (!d || !d.fields) return;
+        apply(function(k){ var f = d.fields[k]; return f && typeof f.stringValue === 'string' ? f.stringValue.trim() : ''; });
+      })
+      .catch(function(){ /* keep defaults */ });
+  }
+  function settingEmail(v, fallback) { return /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[^\s@<>"',;]+$/.test(v) ? v : fallback; }
+  function settingFee(v, fallback) { var n = parseInt(v, 10); return isFinite(n) && n >= 0 && n <= 100000 ? n : fallback; }
+  function setText(id, v) { var el = document.getElementById(id); if (el && v) el.textContent = v; }
+
+  loadFormSettings('youthMinistryForm', function(g) {
+    var yr = g('schoolYear'); if (yr) { FORM_YEAR = yr.replace(/[\u2013\u2014]/g, '-'); setText('ym-year', yr); }
+    setText('ym-ms-sched', g('scheduleMiddle'));
+    setText('ym-hs-sched', g('scheduleHigh'));
+    YOUTH_MINISTRY_EMAIL = settingEmail(g('recipientEmail'), YOUTH_MINISTRY_EMAIL);
+    setText('ym-email', YOUTH_MINISTRY_EMAIL);
+    setText('ym-phone', g('contactPhone'));
+    FEE_TEEN = settingFee(g('feeTeen'), FEE_TEEN);
+    FEE_SAC = settingFee(g('feeSacPrep'), FEE_SAC);
+    document.querySelectorAll('.ym-teen-fee').forEach(function(el){ el.textContent = FEE_TEEN; });
+    document.querySelectorAll('.ym-sac-fee').forEach(function(el){ el.textContent = FEE_SAC; });
+    if (typeof recalcFees === 'function') recalcFees();
+  });
 
   function formatPhoneInput(el) {
     let digits = el.value.replace(/\D/g, '').slice(0, 10);
@@ -484,7 +516,7 @@
           </div>
         </div>
         <div class="form-group form-full">
-          <label class="checkbox-item"><input type="checkbox" class="child-sacprep" onchange="recalcFees()" /> Enrolling in Sacramental Preparation this year (Reconciliation or Confirmation/First Eucharist) &mdash; adds $60</label>
+          <label class="checkbox-item"><input type="checkbox" class="child-sacprep" onchange="recalcFees()" /> Enrolling in Sacramental Preparation this year (Reconciliation or Confirmation/First Eucharist) &mdash; adds $${FEE_SAC}</label>
         </div>
         <div class="form-group form-full">
           <label class="form-label">Allergies / Medical / Behavior Concerns</label>
@@ -535,9 +567,9 @@
 
   function computeFees(children) {
     const n = children.filter(function(c){ return c.name; }).length;
-    const registrationFee = n * 100;
+    const registrationFee = n * FEE_TEEN;
     const sacCount = children.filter(function(c){ return c.name && c.sacramentalPrep; }).length;
-    const sacramentalPrepFee = sacCount * 60;
+    const sacramentalPrepFee = sacCount * FEE_SAC;
     return {
       teenCount: n,
       registrationFee: registrationFee,
@@ -549,9 +581,9 @@
 
   function recalcFees() {
     const f = computeFees(collectChildren());
-    document.getElementById('fee-teen-label').textContent = 'Registration fee (' + f.teenCount + (f.teenCount === 1 ? ' teen' : ' teens') + ' @ $100, suggested)';
+    document.getElementById('fee-teen-label').textContent = 'Registration fee (' + f.teenCount + (f.teenCount === 1 ? ' teen' : ' teens') + ' @ $' + FEE_TEEN + ', suggested)';
     document.getElementById('fee-teen-amount').textContent = '$' + f.registrationFee;
-    document.getElementById('fee-sac-label').textContent = 'Sacramental Preparation (' + f.sacramentalCount + (f.sacramentalCount === 1 ? ' child' : ' children') + ' @ $60)';
+    document.getElementById('fee-sac-label').textContent = 'Sacramental Preparation (' + f.sacramentalCount + (f.sacramentalCount === 1 ? ' child' : ' children') + ' @ $' + FEE_SAC + ')';
     document.getElementById('fee-sac-amount').textContent = '$' + f.sacramentalPrepFee;
     document.getElementById('fee-total-amount').textContent = '$' + f.total;
   }
@@ -560,7 +592,7 @@
   function buildSummary(children, fees) {
     const lines = [];
     lines.push('YOUTH MINISTRY REGISTRATION — Saint Rose Philippine Duchesne');
-    lines.push('St. Rose Edge & Life Teen · 2026-2027');
+    lines.push('St. Rose Edge & Life Teen · ' + FORM_YEAR);
     lines.push('Submitted: ' + new Date().toLocaleString('en-US'));
     lines.push('');
 
@@ -596,7 +628,7 @@
         ['Grade / Shirt Size', c.gradeShirtSize],
         ['Program', c.program],
         ['Sacraments Already Received', c.sacramentsReceived],
-        ['Enrolling in Sacramental Preparation', c.sacramentalPrep ? 'Yes (+$60)' : ''],
+        ['Enrolling in Sacramental Preparation', c.sacramentalPrep ? 'Yes (+$' + FEE_SAC + ')' : ''],
         ['Allergies / Medical / Behavior Concerns', c.concerns],
       ]);
     });
@@ -635,8 +667,8 @@
 
     section('FEE ESTIMATE', [
       ['Teens', String(fees.teenCount)],
-      ['Registration fee', '$' + fees.registrationFee + '  (' + fees.teenCount + ' @ $100, suggested)'],
-      ['Sacramental Preparation', '$' + fees.sacramentalPrepFee + '  (' + fees.sacramentalCount + ' @ $60)'],
+      ['Registration fee', '$' + fees.registrationFee + '  (' + fees.teenCount + ' @ $' + FEE_TEEN + ', suggested)'],
+      ['Sacramental Preparation', '$' + fees.sacramentalPrepFee + '  (' + fees.sacramentalCount + ' @ $' + FEE_SAC + ')'],
       ['Estimated Total', '$' + fees.total + '  (estimate — no one turned away due to cost; contact Chris Bosn)'],
     ]);
 
