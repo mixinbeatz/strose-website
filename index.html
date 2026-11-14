@@ -1190,7 +1190,7 @@
     <h2 class="section-title">Find Saint Rose</h2>
     <div class="location-detail">
       <div class="location-detail-label">ADDRESS</div>
-      <div class="location-detail-value">3901 W Anthem Way<br>Anthem, AZ 85086</div>
+      <div class="location-detail-value">2825 W Rose Canyon Circle<br>Anthem, AZ 85086</div>
     </div>
     <div class="location-detail">
       <div class="location-detail-label">PARISH OFFICE</div>
@@ -1198,9 +1198,13 @@
     </div>
     <div class="location-detail">
       <div class="location-detail-label">GOOD SHEPHERD MISSION</div>
-      <div class="location-detail-value">36423 N Black Canyon Hwy<br>Morristown, AZ 85342<br>Sunday 9:00 AM Mass</div>
+      <div class="location-detail-value">45033 N 12th St<br>New River, AZ 85087<br>Mass times listed above</div>
     </div>
-    <a href="https://maps.apple.com/?address=3901+W+Anthem+Way,+Anthem,+AZ+85086" class="btn-primary" style="display:inline-block;margin-top:8px;">Get Directions</a>
+    <div class="location-detail">
+      <div class="location-detail-label">ST. PHILIP BENIZI</div>
+      <div class="location-detail-value">Black Canyon City, AZ 85324<br>Mass times listed above</div>
+    </div>
+    <a href="https://maps.apple.com/?address=2825+W+Rose+Canyon+Circle,+Anthem,+AZ+85086" class="btn-primary" style="display:inline-block;margin-top:8px;">Get Directions</a>
   </div>
   <div class="reveal">
     <iframe src="https://maps.google.com/maps?q=Saint+Rose+Philippine+Duchesne+Parish+Anthem+AZ&output=embed" width="100%" height="400" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy"></iframe>
@@ -1212,7 +1216,7 @@
   <div>
     <div class="footer-brand">Saint Rose Philippine Duchesne</div>
     <div class="footer-sub">
-      3901 W Anthem Way<br>
+      2825 W Rose Canyon Circle<br>
       Anthem, Arizona 85086<br><br>
       A welcoming and joyful Catholic community<br>
       in the Diocese of Phoenix.
@@ -1455,7 +1459,7 @@
   }
 
   const MASS_SCHEDULE_DEFAULTS = {
-    dailyRow1Days: 'Mon, Tues, Wed, Thurs, Fri', dailyRow1Time: '7:30 AM',
+    dailyRow1Days: 'Monday - Saturday', dailyRow1Time: '7:30 AM',
     dailyRow2Days: 'Mon, Tues, Thurs, Fri', dailyRow2Time: '12:15 PM',
     dailyRow3Label: 'Wednesday Evenings', dailyRow3Time: '6:00 PM',
     satTime: '4:00 PM', sunTime: '8:00 AM, 11:00 AM',
@@ -1463,13 +1467,15 @@
     reconRow1Days: 'Monday - Friday', reconRow1Time: '7:00 - 7:25 AM',
     reconRow2Days: 'Wednesday', reconRow2Time: '5:15 - 5:45 PM',
     reconRow3Days: 'Saturday', reconRow3Time: '2:30 - 3:30 PM',
-    rosaryRow1Days: 'Monday - Saturday', rosaryRow1Time: '6:55 AM, 3:25 PM',
-    rosaryRow2Days: 'Sunday', rosaryRow2Time: '7:25 AM, 10:25 AM',
-    rosaryRow3Days: 'Last Saturday of the Month', rosaryRow3Time: '7:00 - 7:25 AM',
+    rosaryRow1Days: 'Monday - Saturday', rosaryRow1Time: '6:55 AM',
+    rosaryRow2Days: 'Saturday', rosaryRow2Time: '3:25 PM',
+    rosaryRow3Days: 'Sunday', rosaryRow3Time: '7:25 AM, 10:25 AM',
+    rosaryRow4Days: 'Last Saturday of the Month', rosaryRow4Time: '7:00 - 7:25 AM',
     officeRow1Days: 'Monday - Thursday', officeRow1Time: '8:00 AM - 4:00 PM',
     officeRow2Days: 'Friday', officeRow2Time: '8:00 AM - 12:00 PM',
     officeNote: 'Closed every Wednesday, 1-3 PM for Staff Meetings',
-    gsSundayMass: '9:00 AM', gsRosary: '8:30 AM', gsAdoration: 'Thursdays 7:00 AM',
+    gsSundayMass: '10:00 AM', gsRosary: '9:25 AM', gsAdoration: 'Thursdays 7:00 AM',
+    spbSundayMass: '8:30 AM',
   };
   function renderMassScheduleGrid(rawF) {
     const el = document.getElementById('mass-schedule-grid');
@@ -1503,6 +1509,7 @@
           <div class="schedule-row"><span>${f.rosaryRow1Days}</span><span class="schedule-time">${f.rosaryRow1Time}</span></div>
           <div class="schedule-row"><span>${f.rosaryRow2Days}</span><span class="schedule-time">${f.rosaryRow2Time}</span></div>
           <div class="schedule-row"><span>${f.rosaryRow3Days}</span><span class="schedule-time">${f.rosaryRow3Time}</span></div>
+          ${f.rosaryRow4Days && f.rosaryRow4Time ? `<div class="schedule-row"><span>${f.rosaryRow4Days}</span><span class="schedule-time">${f.rosaryRow4Time}</span></div>` : ''}
         </div>
       </div>
       <div class="schedule-static">
@@ -1518,6 +1525,10 @@
           <div class="schedule-row"><span>Rosary (Sunday)</span><span class="schedule-time">${f.gsRosary}</span></div>
           <div class="schedule-row"><span>Adoration</span><span class="schedule-time">${f.gsAdoration}</span></div>
         </div>
+        ${f.spbSundayMass ? `<div class="schedule-block">
+          <div class="schedule-day">ST. PHILIP BENIZI</div>
+          <div class="schedule-row"><span>Sunday Mass</span><span class="schedule-time">${f.spbSundayMass}</span></div>
+        </div>` : ''}
       </div>
     `;
   }
