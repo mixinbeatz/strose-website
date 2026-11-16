@@ -385,6 +385,10 @@
     padding-top: 2px;
   }
   .event-title { color: var(--soil); font-size: 15px; line-height: 1.4; }
+  .week-events { margin-top: 56px; padding-top: 48px; border-top: 1px solid var(--linen); }
+  .week-events-title { font-family: 'Cinzel', serif; font-weight: 400; color: var(--burgundy); font-size: clamp(22px, 2.2vw, 30px); margin: 6px 0 28px; }
+  .week-events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px 48px; min-height: 80px; }
+  .week-events-grid .events-empty { grid-column: 1 / -1; }
   .events-empty {
     color: var(--dusty-rose);
     font-size: 15px;
@@ -963,6 +967,13 @@
   <div class="mass-schedule-grid" id="mass-schedule-grid">
     <div class="events-empty">Loading...</div>
   </div>
+  <div class="week-events">
+    <span class="section-eyebrow">COMING UP</span>
+    <h3 class="week-events-title">This Week at Saint Rose</h3>
+    <div class="week-events-grid" id="events-container">
+      <div class="events-empty">Loading...</div>
+    </div>
+  </div>
   <a href="bulletin.html" class="btn-primary" style="display:inline-block;margin-top:32px;font-size:12px;padding:12px 20px;">View This Week's Bulletin</a>
 </section>
 
@@ -1499,7 +1510,7 @@
       </div>
       <div class="schedule-static">
         <div class="schedule-block">
-          <div class="schedule-day">RECONCILIATION</div>
+          <div class="schedule-day">CONFESSION</div>
           <div class="schedule-row"><span>${f.reconRow1Days}</span><span class="schedule-time">${f.reconRow1Time}</span></div>
           <div class="schedule-row"><span>${f.reconRow2Days}</span><span class="schedule-time">${f.reconRow2Time}</span></div>
           <div class="schedule-row"><span>${f.reconRow3Days}</span><span class="schedule-time">${f.reconRow3Time}</span></div>
@@ -1565,7 +1576,7 @@
           if (!date || isNaN(date) || date < now) {
             // Try parsing date string like "Jun 18" or "Sat, Jun 14"
             if (dateStr) {
-              const parsed = new Date(dateStr + ' 2026');
+              const parsed = new Date(dateStr + ' ' + now.getFullYear());
               if (!isNaN(parsed)) date = parsed;
             }
           }
@@ -1619,6 +1630,7 @@
   // "Get the App" -> #app) stranded partway down if you clicked before it loaded.
   renderMassScheduleGrid(MASS_SCHEDULE_DEFAULTS);
   loadMassScheduleWidget();
+  loadEvents();
 
   // (The Ministry Booklet link moved to its own top-level page, welcome.html
   // — "Father's Welcome" — which fetches siteContent/ministryBooklet.url the
