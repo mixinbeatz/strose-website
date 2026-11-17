@@ -256,6 +256,15 @@
         </div>
       </div>
 
+      <!-- ANYTHING ELSE -->
+      <div class="form-block">
+        <div class="form-block-title">Anything Else?</div>
+        <div class="form-group">
+          <label class="form-label">Is there anything else you think we should know?</label>
+          <textarea class="form-textarea" id="f-comments" placeholder="Optional. For example, you would like information about baptizing your child."></textarea>
+        </div>
+      </div>
+
       <div class="error-msg" id="error-msg"></div>
       <button class="submit-btn" id="submit-btn" onclick="submitRegistration()">Submit &amp; Open Email →</button>
       <div style="text-align:center;font-size:13px;color:var(--dusty-rose);margin-top:16px;">Submitting opens a pre-filled email to the Saint Rose Faith Formation office (Renee Hunsaker). Please press send in your mail app to deliver it.</div>
@@ -531,6 +540,7 @@
       ['Signature (typed)', val('sig-name')],
       ['Date', val('sig-date')],
     ]);
+    section('ANYTHING ELSE WE SHOULD KNOW', [['Notes', val('f-comments')]]);
     section('FEE ESTIMATE', [
       ['Children', String(fees.childCount)],
       ['Registration fee', '$' + fees.registrationFee + (fees.additional > 0 ? '  (' + fees.first3 + ' @ $' + FEE_FIRST3 + ' + ' + fees.additional + ' @ $' + FEE_ADDITIONAL + ')' : '  (' + fees.first3 + ' @ $' + FEE_FIRST3 + ')')],
@@ -612,6 +622,7 @@
           emergencyRelation: { stringValue: val('e-relation') },
           photoPermission: { stringValue: radioVal('photo-permission') },
           indemnityAgreed: { booleanValue: agreed },
+          comments: { stringValue: val('f-comments') },
           signatureName: { stringValue: sigName },
           signatureDate: { stringValue: val('sig-date') },
           children: { arrayValue: { values: childrenValues } },
