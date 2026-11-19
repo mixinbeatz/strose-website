@@ -1278,14 +1278,50 @@ async function loadReflection() {
   }
 }
 
+// Fetch every massIntentions doc in [startDate, endDate] (Date objects).
+// Firestore's plain list call returns at most 100 docs in no particular order,
+// so a date-range query is used, with a paginated list as a fallback.
+async function fetchIntentionDocs(base, startDate, endDate) {
+  const iso = (d, pad) => {
+    const x = new Date(d.getTime() + pad * 86400000);
+    return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+  };
+  try {
+    const body = { structuredQuery: {
+      from: [{ collectionId: 'massIntentions' }],
+      where: { compositeFilter: { op: 'AND', filters: [
+        { fieldFilter: { field: { fieldPath: 'date' }, op: 'GREATER_THAN_OR_EQUAL', value: { stringValue: iso(startDate, -1) } } },
+        { fieldFilter: { field: { fieldPath: 'date' }, op: 'LESS_THAN_OR_EQUAL', value: { stringValue: iso(endDate, 1) } } }
+      ] } },
+      limit: 1000
+    } };
+    const r = await fetch(base + '/parishes/saint-rose-anthem:runQuery?key=' + API_KEY, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error('runQuery ' + r.status);
+    const arr = await r.json();
+    if (!Array.isArray(arr)) throw new Error('runQuery shape');
+    return arr.filter(x => x.document).map(x => x.document);
+  } catch (e) {
+    const docs = [];
+    let token = '';
+    for (let i = 0; i < 30; i++) {
+      const r = await fetch(base + '/parishes/saint-rose-anthem/massIntentions?key=' + API_KEY + '&pageSize=300' + (token ? '&pageToken=' + encodeURIComponent(token) : ''));
+      const j = await r.json();
+      (j.documents || []).forEach(d => docs.push(d));
+      token = j.nextPageToken || '';
+      if (!token) break;
+    }
+    return docs;
+  }
+}
+
 // Load mass intentions — current week
 async function loadIntentions() {
   const container = document.getElementById('intentions-body');
   try {
-    const res = await fetch(`${BASE}/parishes/saint-rose-anthem/massIntentions?key=${API_KEY}&pageSize=100`);
-    const data = await res.json();
-    const docs = data.documents || [];
     const { weekStart, weekEnd } = getBulletinWeekWindow();
+    const docs = await fetchIntentionDocs(BASE, weekStart, weekEnd);
 
     function timeToMinutes(t) {
       const m = (t || '').match(/(\d{1,2}):(\d{2})\s*([AP]M)/i);
