@@ -69,6 +69,24 @@
   .nav-admin { color: rgba(232,221,208,0.3) !important; font-size: 11px !important; letter-spacing: 1px !important; }
   .nav-admin:hover { color: rgba(232,221,208,0.6) !important; }
 
+  /* Keep the top bar on one line at every desktop width (labels used to wrap onto two lines) */
+  .nav-brand, .nav-links a, .nav-forms > a { white-space: nowrap; }
+  nav { gap: 16px; }
+  @media (min-width: 901px) and (max-width: 1399px) {
+    nav { padding: 0 24px; }
+    .nav-links { gap: 18px; }
+    .nav-links a { letter-spacing: 1px; font-size: 12px; }
+    .nav-brand { font-size: 12px; letter-spacing: 1px; }
+    .nav-brand span { letter-spacing: 2px; }
+    .nav-cta { padding: 9px 14px; }
+    .nav-admin { display: none; }
+  }
+  @media (min-width: 901px) and (max-width: 1099px) {
+    .nav-links { gap: 12px; }
+    .nav-links a { letter-spacing: 0.5px; font-size: 11.5px; }
+    .nav-brand { font-size: 11px; letter-spacing: 0.5px; }
+  }
+
   /* ── FORMS NAV DROPDOWN (CSS-only, opens on hover/focus) — matches index.html ── */
   .nav-forms { position: relative; }
   .nav-forms-menu {
