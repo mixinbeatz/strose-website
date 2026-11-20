@@ -1,15 +1,17 @@
-/* Site analytics (Google tag for this site's GA stream) + the few actions we count.
+/* Site analytics (Google Analytics 4 tag for this site's web stream) + the few actions we count.
  * Every page loads this as the first thing in <head>:  <script src="/analytics.js"></script>
  * Anonymous totals only: no names, no form contents. */
 (function () {
-  var ID = 'GTM-WF7MTM53';
+  var ID = 'G-VJXMQP6M7Q';   // GA4 web stream for saintroseanthem.org
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
-  window.gtag = window.gtag || gtag;
+  window.gtag = gtag;
   gtag('js', new Date());
+  // 'beacon' sends hits even while the page is closing, so taps on links that leave the site still count
+  gtag('config', ID, { transport_type: 'beacon' });
   var s = document.createElement('script');
   s.async = true;
-  s.src = 'https://www.googletagmanager.com/gtm.js?id=' + ID;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
   document.head.appendChild(s);
 
   function track(name, params) { try { gtag('event', name, params || {}); } catch (e) {} }
