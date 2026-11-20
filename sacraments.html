@@ -225,6 +225,9 @@
   .sac-times .note { margin-top: 12px; font-size: 14px; opacity: 0.8; }
   .sac-times .note a { color: var(--gold-light); }
   @media (max-width: 900px) { .sac-intro { padding: 26px 22px; } }
+
+  /* keep top nav on one line: hamburger below 1200px */
+  @media (min-width: 901px) and (max-width: 1199px) { .nav-links { display: none; } .hamburger { display: flex; } }
 </style>
 </head>
 <body>

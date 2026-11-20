@@ -65,8 +65,11 @@
     '#sn-mobile details a{display:block;padding-left:48px}',
     '#sn-mobile .sn-div{height:1px;background:rgba(201,168,76,.2);margin:8px 0}',
     '#sn-mobile a.sn-admin{color:var(--sn-rose);font-size:12px}',
-    '@media(max-width:900px){#site-nav{padding:0 24px}#site-nav .sn-links{display:none}#site-nav .sn-print{display:none}#site-nav .sn-ham{display:flex}}',
-    '@media(min-width:901px){#sn-mobile .sn-print-item{display:none}}',
+    '/* sn-tight: keep the bar on one line at every desktop width */',
+    '#site-nav .sn-brand{white-space:nowrap;flex-shrink:0}',
+    '@media(min-width:1200px) and (max-width:1399px){#site-nav{padding:0 24px}#site-nav .sn-links{gap:18px}#site-nav .sn-links a{letter-spacing:1px;font-size:12px}#site-nav .sn-brand{font-size:12px;letter-spacing:1px}#site-nav .sn-brand span{letter-spacing:2px}#site-nav .sn-links a.sn-cta{padding:9px 14px}#site-nav .sn-print{padding:8px 12px;font-size:11px;letter-spacing:.5px}#site-nav.sn-has-print .sn-links{gap:14px}}',
+    '@media(max-width:1199px){#site-nav{padding:0 24px}#site-nav .sn-links{display:none}#site-nav .sn-print{display:none}#site-nav .sn-ham{display:flex}}',
+    '@media(min-width:1200px){#sn-mobile .sn-print-item{display:none}}',
     '@media print{#site-nav,#sn-mobile{display:none!important}body{padding-top:0!important}}'
   ].join('\n');
 
