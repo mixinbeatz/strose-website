@@ -11,7 +11,7 @@
     ['Welcome', 'welcome.html', 'welcome.html'],
     ['Mass Times', 'index.html#mass-times', ''],
     ['Calendar', 'calendar.html', 'calendar.html'],
-    ['Visit', 'index.html#location', ''],
+    ['Video', 'video.html', 'video.html'],
     ['Week at a Glance', 'bulletin.html', 'bulletin.html'],
     ['Documents', 'documents.html', 'documents.html'],
     ['Directory', 'advertisers.html', 'advertisers.html']
