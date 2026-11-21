@@ -82,8 +82,7 @@
     '<details' + (onForms ? ' open' : '') + '><summary>Forms</summary>' + forms.map(function (f) { return link(f[0], f[1], f[1] === page); }).join('') + '</details>' +
     '<a href="index.html#app">Get the App</a>' +
     (showPrint ? '<a href="#" class="sn-print-item" onclick="window.print();return false;">Print / Save PDF</a>' : '') + '<div class="sn-div"></div>' +
-    '<a class="sn-admin" href="https://portal.saintroseanthem.org" target="_blank" rel="noopener">Admin Portal</a>' +
-    '<a class="sn-admin" href="https://portal.saintroseanthem.org/finance.html" target="_blank" rel="noopener">Finance Portal</a>';
+    '<a class="sn-admin" href="https://portal.saintroseanthem.org" target="_blank" rel="noopener">Admin Portal</a>';
   var printBtn = showPrint ? '<button type="button" class="sn-print" onclick="window.print()">Print / Save PDF</button>' : '';
 
   var style = document.createElement('style');
